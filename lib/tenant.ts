@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 /**
  * Haalt de tenant_id op voor de ingelogde gebruiker.
@@ -36,7 +36,8 @@ export async function createTenant(params: {
   userId: string
   companyName: string
 }): Promise<string> {
-  const supabase = await createClient()
+  // Service role client — RLS bypassen voor tenant aanmaken
+  const supabase = createServiceClient()
 
   const slug = params.companyName
     .toLowerCase()
