@@ -25,21 +25,32 @@ export default function OnboardingPage() {
     setLoading(true)
     setError(null)
 
-    const res = await fetch('/api/onboarding', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ companyName }),
-    })
+    try {
+      const res = await fetch('/api/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyName }),
+      })
 
-    if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || 'Er is iets misgegaan.')
+      if (!res.ok) {
+        let message = `Fout ${res.status}`
+        try {
+          const data = await res.json()
+          message = data.error || message
+        } catch {
+          // API gaf geen JSON terug (bijv. HTML error pagina)
+        }
+        setError(message)
+        setLoading(false)
+        return
+      }
+
+      router.push('/dashboard')
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Netwerkfout — probeer opnieuw.')
       setLoading(false)
-      return
     }
-
-    router.push('/dashboard')
-    router.refresh()
   }
 
   return (
