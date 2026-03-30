@@ -9,7 +9,7 @@ export type Tenant = Database['public']['Tables']['tenants']['Row']
 export type TenantUser = Database['public']['Tables']['tenant_users']['Row']
 
 export type LeadStatus = Lead['status']
-export type LeadSource = Lead['source']
+export type LeadSource = NonNullable<Lead['source']>
 export type LeadLabel = NonNullable<Lead['ai_label']>
 
 export interface LeadWithMessages extends Lead {

@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
                 urgency: score.urgency,
                 intent: score.intent,
                 status: score.label,
-              })
+              } as any)
               .eq('id', newLead.id)
           } catch (err) {
             console.error('WhatsApp lead scoring mislukt:', err)

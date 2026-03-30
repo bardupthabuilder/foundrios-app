@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
             urgency: score.urgency,
             intent: score.intent,
             status: score.label,
-          })
+          } as any)
           .eq('id', newLead.id)
       } catch (err) {
         console.error('Meta lead scoring mislukt:', err)

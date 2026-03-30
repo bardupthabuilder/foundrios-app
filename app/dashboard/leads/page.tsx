@@ -109,8 +109,8 @@ export default async function LeadsPage({ searchParams }: PageProps) {
               </div>
 
               <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                <LeadSourceIcon source={lead.source} />
-                <LeadScoreBadge label={lead.ai_label} score={lead.ai_score} />
+                <LeadSourceIcon source={lead.source as any} />
+                <LeadScoreBadge label={lead.ai_label as any} score={lead.ai_score} />
                 <span className="text-xs text-zinc-400 hidden sm:block">
                   {formatDistanceToNow(new Date(lead.created_at), {
                     addSuffix: true,

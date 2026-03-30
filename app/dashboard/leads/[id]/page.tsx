@@ -4,6 +4,7 @@ import { requireTenant } from '@/lib/tenant'
 import { LeadScoreBadge } from '@/components/leads/LeadScoreBadge'
 import { LeadSourceIcon } from '@/components/leads/LeadSourceIcon'
 import { LeadStatusSelect } from '@/components/leads/LeadStatusSelect'
+import { ConvertToClient } from '@/components/leads/ConvertToClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
@@ -182,6 +183,14 @@ export default async function LeadDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+
+          {/* Conversie naar klant */}
+          <ConvertToClient
+            leadId={lead.id}
+            leadName={lead.name}
+            leadPhone={lead.phone}
+            leadEmail={lead.email}
+          />
 
           <Separator />
 

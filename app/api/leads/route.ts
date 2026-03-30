@@ -38,10 +38,10 @@ export async function GET(request: NextRequest) {
     .range(offset, offset + limit - 1)
 
   if (statusFilter) {
-    query = query.eq('status', statusFilter)
+    query = query.eq('status', statusFilter as any)
   }
   if (labelFilter) {
-    query = query.eq('ai_label', labelFilter)
+    query = query.eq('ai_label', labelFilter as any)
   }
 
   const { data, error } = await query
@@ -115,8 +115,8 @@ export async function POST(request: NextRequest) {
         budget_estimate: score.budget_estimate,
         urgency: score.urgency,
         intent: score.intent,
-        status: score.label, // status synchroon met AI label
-      })
+        status: score.label as any, // status synchroon met AI label
+      } as any)
       .eq('id', lead.id)
 
     await supabase.from('lead_events').insert({
