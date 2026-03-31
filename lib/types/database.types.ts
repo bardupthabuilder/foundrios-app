@@ -3617,6 +3617,194 @@ export type Database = {
           },
         ]
       }
+      work_order_hours: {
+        Row: {
+          created_at: string
+          description: string | null
+          employee_id: string | null
+          employee_name: string | null
+          hourly_rate_cents: number
+          hours: number
+          id: string
+          sort_order: number
+          total_cents: number
+          work_order_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          employee_id?: string | null
+          employee_name?: string | null
+          hourly_rate_cents?: number
+          hours: number
+          id?: string
+          sort_order?: number
+          total_cents?: number
+          work_order_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          employee_id?: string | null
+          employee_name?: string | null
+          hourly_rate_cents?: number
+          hours?: number
+          id?: string
+          sort_order?: number
+          total_cents?: number
+          work_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_order_hours_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_order_hours_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_order_materials: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          sort_order: number
+          total_cents: number
+          unit: string | null
+          unit_price_cents: number
+          work_order_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          sort_order?: number
+          total_cents?: number
+          unit?: string | null
+          unit_price_cents?: number
+          work_order_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          sort_order?: number
+          total_cents?: number
+          unit?: string | null
+          unit_price_cents?: number
+          work_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_order_materials_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_orders: {
+        Row: {
+          client_id: string | null
+          company_id: string | null
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          notes: string | null
+          project_id: string
+          signed_at: string | null
+          signed_by: string | null
+          status: Database["public"]["Enums"]["work_order_status"]
+          tenant_id: string | null
+          title: string
+          updated_at: string
+          work_order_number: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          notes?: string | null
+          project_id: string
+          signed_at?: string | null
+          signed_by?: string | null
+          status?: Database["public"]["Enums"]["work_order_status"]
+          tenant_id?: string | null
+          title: string
+          updated_at?: string
+          work_order_number?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string
+          signed_at?: string | null
+          signed_by?: string | null
+          status?: Database["public"]["Enums"]["work_order_status"]
+          tenant_id?: string | null
+          title?: string
+          updated_at?: string
+          work_order_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_margin"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "work_orders_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       work_sessions: {
         Row: {
           client_id: string | null
@@ -3921,6 +4109,7 @@ export type Database = {
       session_status: "planned" | "in_progress" | "completed" | "cancelled"
       task_status: "open" | "in_progress" | "done" | "blocked"
       tier: "free" | "pro" | "pro_plus"
+      work_order_status: "concept" | "actief" | "afgerond" | "gefactureerd"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4127,6 +4316,7 @@ export const Constants = {
       session_status: ["planned", "in_progress", "completed", "cancelled"],
       task_status: ["open", "in_progress", "done", "blocked"],
       tier: ["free", "pro", "pro_plus"],
+      work_order_status: ["concept", "actief", "afgerond", "gefactureerd"],
     },
   },
 } as const

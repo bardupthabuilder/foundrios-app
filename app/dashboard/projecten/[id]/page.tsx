@@ -27,7 +27,7 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
   gearchiveerd: 'bg-zinc-100 text-zinc-400',
 }
 
-type TabKey = 'overzicht' | 'uren' | 'materiaal' | 'planning'
+type TabKey = 'overzicht' | 'uren' | 'materiaal' | 'planning' | 'nacalculatie'
 
 interface ProjectDetail extends Project {
   clients: { id: string; name: string; contact_name: string | null; phone: string | null; email: string | null; address: string | null; city: string | null } | null
@@ -35,6 +35,27 @@ interface ProjectDetail extends Project {
   material_entries: MaterialEntry[]
   planning_entries: (PlanningEntry & { employees?: { id: string; name: string; color: string } | null })[]
   totals: { hours: number; material_cents: number; labor_cents: number }
+}
+
+interface NacalculatieData {
+  project: { id: string; name: string; budget_cents: number }
+  summary: {
+    total_hours: number
+    total_labor_cents: number
+    total_material_cents: number
+    wo_hours_cents: number
+    wo_materials_cents: number
+    total_cost_cents: number
+    budget_cents: number
+    remaining_cents: number
+    margin_pct: number
+    total_quoted_cents: number
+    total_invoiced_cents: number
+    total_paid_cents: number
+  }
+  work_orders: { id: string; title: string; status: string; date: string }[]
+  quotes: { id: string; title: string; status: string; amount_excl_vat: number }[]
+  invoices: { id: string; title: string; invoice_number: string; status: string; amount_excl_vat: number }[]
 }
 
 export default function ProjectDetailPage() {
@@ -46,6 +67,8 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<TabKey>('overzicht')
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [nacalculatie, setNacalculatie] = useState<NacalculatieData | null>(null)
+  const [nacLoading, setNacLoading] = useState(false)
 
   useEffect(() => {
     fetch(`/api/projects/${id}`)
@@ -54,6 +77,17 @@ export default function ProjectDetailPage() {
       .catch(() => router.push('/dashboard/projecten'))
       .finally(() => setLoading(false))
   }, [id, router])
+
+  useEffect(() => {
+    if (tab === 'nacalculatie' && !nacalculatie && !nacLoading) {
+      setNacLoading(true)
+      fetch(`/api/projects/${id}/nacalculatie`)
+        .then(r => r.json())
+        .then(setNacalculatie)
+        .catch(() => {})
+        .finally(() => setNacLoading(false))
+    }
+  }, [tab, id, nacalculatie, nacLoading])
 
   async function handleStatusChange(status: string) {
     setUpdatingStatus(true)
@@ -86,6 +120,7 @@ export default function ProjectDetailPage() {
     { key: 'uren', label: `Uren (${project.totals.hours}u)` },
     { key: 'materiaal', label: `Materiaal (${project.material_entries.length})` },
     { key: 'planning', label: `Planning (${project.planning_entries.length})` },
+    { key: 'nacalculatie', label: 'Nacalculatie' },
   ]
 
   return (
@@ -339,6 +374,158 @@ export default function ProjectDetailPage() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'nacalculatie' && (
+        <div>
+          {nacLoading ? (
+            <div className="py-8 text-center text-zinc-400">Laden...</div>
+          ) : !nacalculatie ? (
+            <Card>
+              <CardContent className="py-8 text-center text-zinc-500">
+                Kon nacalculatie niet laden.
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {/* Kosten overzicht */}
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-sm">Kostenoverzicht</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">Uren (urenregistratie)</span>
+                      <span>{nacalculatie.summary.total_hours}u · {formatCents(nacalculatie.summary.total_labor_cents)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">Materiaal (urenregistratie)</span>
+                      <span>{formatCents(nacalculatie.summary.total_material_cents)}</span>
+                    </div>
+                    {(nacalculatie.summary.wo_hours_cents > 0 || nacalculatie.summary.wo_materials_cents > 0) && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">Uren (werkbonnen)</span>
+                          <span>{formatCents(nacalculatie.summary.wo_hours_cents)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">Materiaal (werkbonnen)</span>
+                          <span>{formatCents(nacalculatie.summary.wo_materials_cents)}</span>
+                        </div>
+                      </>
+                    )}
+                    <div className="flex justify-between border-t pt-2 font-semibold">
+                      <span>Totale kosten</span>
+                      <span>{formatCents(nacalculatie.summary.total_cost_cents)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Budget vs Werkelijk */}
+              {nacalculatie.summary.budget_cents > 0 && (
+                <Card>
+                  <CardHeader className="pb-2"><CardTitle className="text-sm">Budget vs Werkelijk</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-500">Budget</span>
+                        <span className="font-medium">{formatCents(nacalculatie.summary.budget_cents)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-500">Besteed</span>
+                        <span className="font-medium">{formatCents(nacalculatie.summary.total_cost_cents)}</span>
+                      </div>
+                      <div className="w-full bg-zinc-100 rounded-full h-3">
+                        <div
+                          className={`h-3 rounded-full transition-all ${nacalculatie.summary.remaining_cents < 0 ? 'bg-red-500' : nacalculatie.summary.margin_pct < 20 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                          style={{ width: `${Math.min(100, Math.round((nacalculatie.summary.total_cost_cents / nacalculatie.summary.budget_cents) * 100))}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-500">Resterend</span>
+                        <span className={`font-semibold ${nacalculatie.summary.remaining_cents < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                          {formatCents(nacalculatie.summary.remaining_cents)} ({nacalculatie.summary.margin_pct}%)
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Financieel */}
+              <div className="grid sm:grid-cols-3 gap-3">
+                <Card>
+                  <CardContent className="py-3">
+                    <div className="text-xs text-zinc-500">Geoffreerd (akkoord)</div>
+                    <div className="text-xl font-bold mt-1">{formatCents(nacalculatie.summary.total_quoted_cents)}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="py-3">
+                    <div className="text-xs text-zinc-500">Gefactureerd</div>
+                    <div className="text-xl font-bold mt-1">{formatCents(nacalculatie.summary.total_invoiced_cents)}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="py-3">
+                    <div className="text-xs text-zinc-500">Betaald</div>
+                    <div className="text-xl font-bold mt-1 text-green-600">{formatCents(nacalculatie.summary.total_paid_cents)}</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Werkbonnen lijst */}
+              {nacalculatie.work_orders.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-2"><CardTitle className="text-sm">Werkbonnen ({nacalculatie.work_orders.length})</CardTitle></CardHeader>
+                  <CardContent className="space-y-1">
+                    {nacalculatie.work_orders.map(wo => (
+                      <div key={wo.id} className="flex items-center justify-between text-sm py-1.5 border-b last:border-0">
+                        <div>
+                          <span className="font-medium">{wo.title}</span>
+                          <span className="text-zinc-400 ml-2">{formatDateShort(wo.date)}</span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs capitalize">{wo.status}</Badge>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Offertes + Facturen */}
+              {(nacalculatie.quotes.length > 0 || nacalculatie.invoices.length > 0) && (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {nacalculatie.quotes.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2"><CardTitle className="text-sm">Offertes</CardTitle></CardHeader>
+                      <CardContent className="space-y-1">
+                        {nacalculatie.quotes.map(q => (
+                          <div key={q.id} className="flex items-center justify-between text-sm py-1.5 border-b last:border-0">
+                            <span className="font-medium truncate">{q.title}</span>
+                            <span className="shrink-0 ml-2">{formatCents(q.amount_excl_vat)}</span>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+                  {nacalculatie.invoices.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2"><CardTitle className="text-sm">Facturen</CardTitle></CardHeader>
+                      <CardContent className="space-y-1">
+                        {nacalculatie.invoices.map(inv => (
+                          <div key={inv.id} className="flex items-center justify-between text-sm py-1.5 border-b last:border-0">
+                            <span className="font-medium truncate">{inv.invoice_number || inv.title}</span>
+                            <span className="shrink-0 ml-2">{formatCents(inv.amount_excl_vat)}</span>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
