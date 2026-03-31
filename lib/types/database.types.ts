@@ -1553,6 +1553,50 @@ export type Database = {
           },
         ]
       }
+      invoice_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          sort_order: number
+          total_cents: number
+          unit: string | null
+          unit_price_cents: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          sort_order?: number
+          total_cents?: number
+          unit?: string | null
+          unit_price_cents?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          sort_order?: number
+          total_cents?: number
+          unit?: string | null
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount_excl_vat: number
@@ -1564,9 +1608,13 @@ export type Database = {
           id: string
           invoice_number: string | null
           issue_date: string | null
+          notes: string | null
           paid_at: string | null
           project_id: string | null
+          quote_id: string | null
           status: Database["public"]["Enums"]["invoice_status"]
+          tenant_id: string | null
+          title: string | null
           vat_pct: number
         }
         Insert: {
@@ -1579,9 +1627,13 @@ export type Database = {
           id?: string
           invoice_number?: string | null
           issue_date?: string | null
+          notes?: string | null
           paid_at?: string | null
           project_id?: string | null
+          quote_id?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
+          tenant_id?: string | null
+          title?: string | null
           vat_pct?: number
         }
         Update: {
@@ -1594,9 +1646,13 @@ export type Database = {
           id?: string
           invoice_number?: string | null
           issue_date?: string | null
+          notes?: string | null
           paid_at?: string | null
           project_id?: string | null
+          quote_id?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
+          tenant_id?: string | null
+          title?: string | null
           vat_pct?: number
         }
         Relationships: [
@@ -1626,6 +1682,20 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -2523,6 +2593,152 @@ export type Database = {
           },
           {
             foreignKeyName: "projects_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          quote_id: string
+          sort_order: number
+          total_cents: number
+          unit: string | null
+          unit_price_cents: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          quote_id: string
+          sort_order?: number
+          total_cents?: number
+          unit?: string | null
+          unit_price_cents?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          quote_id?: string
+          sort_order?: number
+          total_cents?: number
+          unit?: string | null
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          accepted_at: string | null
+          amount_excl_vat: number
+          amount_incl_vat: number
+          client_id: string | null
+          company_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          notes: string | null
+          project_id: string | null
+          quote_number: string | null
+          rejected_at: string | null
+          sent_at: string | null
+          status: Database["public"]["Enums"]["quote_status"]
+          tenant_id: string | null
+          title: string
+          updated_at: string
+          valid_until: string | null
+          vat_pct: number
+        }
+        Insert: {
+          accepted_at?: string | null
+          amount_excl_vat?: number
+          amount_incl_vat?: number
+          client_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          quote_number?: string | null
+          rejected_at?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["quote_status"]
+          tenant_id?: string | null
+          title: string
+          updated_at?: string
+          valid_until?: string | null
+          vat_pct?: number
+        }
+        Update: {
+          accepted_at?: string | null
+          amount_excl_vat?: number
+          amount_incl_vat?: number
+          client_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          quote_number?: string | null
+          rejected_at?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["quote_status"]
+          tenant_id?: string | null
+          title?: string
+          updated_at?: string
+          valid_until?: string | null
+          vat_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_margin"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "quotes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -3695,6 +3911,12 @@ export type Database = {
         | "opgeleverd"
         | "gefactureerd"
         | "gearchiveerd"
+      quote_status:
+        | "concept"
+        | "verstuurd"
+        | "akkoord"
+        | "afgewezen"
+        | "verlopen"
       service_status: "active" | "inactive"
       session_status: "planned" | "in_progress" | "completed" | "cancelled"
       task_status: "open" | "in_progress" | "done" | "blocked"
@@ -3893,6 +4115,13 @@ export const Constants = {
         "opgeleverd",
         "gefactureerd",
         "gearchiveerd",
+      ],
+      quote_status: [
+        "concept",
+        "verstuurd",
+        "akkoord",
+        "afgewezen",
+        "verlopen",
       ],
       service_status: ["active", "inactive"],
       session_status: ["planned", "in_progress", "completed", "cancelled"],
