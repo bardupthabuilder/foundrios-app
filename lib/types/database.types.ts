@@ -689,6 +689,54 @@ export type Database = {
         }
         Relationships: []
       }
+      content_assets: {
+        Row: {
+          asset_type: string
+          content_item_id: string
+          created_at: string
+          file_name: string | null
+          id: string
+          sort_order: number
+          tenant_id: string
+          url: string | null
+        }
+        Insert: {
+          asset_type?: string
+          content_item_id: string
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          sort_order?: number
+          tenant_id: string
+          url?: string | null
+        }
+        Update: {
+          asset_type?: string
+          content_item_id?: string
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          sort_order?: number
+          tenant_id?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_assets_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_assets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_cadence: {
         Row: {
           company_id: string
@@ -699,6 +747,7 @@ export type Database = {
           is_active: boolean | null
           notes: string | null
           subtypes: string[] | null
+          tenant_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -710,6 +759,7 @@ export type Database = {
           is_active?: boolean | null
           notes?: string | null
           subtypes?: string[] | null
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -721,6 +771,7 @@ export type Database = {
           is_active?: boolean | null
           notes?: string | null
           subtypes?: string[] | null
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -729,6 +780,67 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_cadence_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_distributions: {
+        Row: {
+          content_item_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          platform: string
+          post_url: string | null
+          published_at: string | null
+          scheduled_at: string | null
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          content_item_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          platform: string
+          post_url?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          content_item_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          platform?: string
+          post_url?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_distributions_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_distributions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -741,6 +853,7 @@ export type Database = {
           feedback_text: string | null
           id: string
           rating: string
+          tenant_id: string | null
         }
         Insert: {
           company_id?: string
@@ -749,6 +862,7 @@ export type Database = {
           feedback_text?: string | null
           id?: string
           rating: string
+          tenant_id?: string | null
         }
         Update: {
           company_id?: string
@@ -757,6 +871,7 @@ export type Database = {
           feedback_text?: string | null
           id?: string
           rating?: string
+          tenant_id?: string | null
         }
         Relationships: [
           {
@@ -773,15 +888,24 @@ export type Database = {
             referencedRelation: "content_items"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "content_feedback_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
         ]
       }
       content_items: {
         Row: {
           ai_generated: boolean | null
           angle: string | null
+          batch_id: string | null
           body: string | null
           clarity_score: number | null
           company_id: string | null
+          content_template: string | null
           created_at: string | null
           cta: string | null
           cta_strength: number | null
@@ -792,23 +916,30 @@ export type Database = {
           id: string
           metrics: Json | null
           platform: string | null
+          platforms: string[] | null
           primary_topic: string | null
           published_date: string | null
           scheduled_date: string | null
+          script: string | null
           status: string | null
           tags: string[] | null
+          tenant_id: string | null
           title: string
           type: string | null
           updated_at: string | null
           vakman_academy_ref: string | null
+          visual_prompt: string | null
+          visual_type: string | null
           week_number: string | null
         }
         Insert: {
           ai_generated?: boolean | null
           angle?: string | null
+          batch_id?: string | null
           body?: string | null
           clarity_score?: number | null
           company_id?: string | null
+          content_template?: string | null
           created_at?: string | null
           cta?: string | null
           cta_strength?: number | null
@@ -819,23 +950,30 @@ export type Database = {
           id?: string
           metrics?: Json | null
           platform?: string | null
+          platforms?: string[] | null
           primary_topic?: string | null
           published_date?: string | null
           scheduled_date?: string | null
+          script?: string | null
           status?: string | null
           tags?: string[] | null
+          tenant_id?: string | null
           title: string
           type?: string | null
           updated_at?: string | null
           vakman_academy_ref?: string | null
+          visual_prompt?: string | null
+          visual_type?: string | null
           week_number?: string | null
         }
         Update: {
           ai_generated?: boolean | null
           angle?: string | null
+          batch_id?: string | null
           body?: string | null
           clarity_score?: number | null
           company_id?: string | null
+          content_template?: string | null
           created_at?: string | null
           cta?: string | null
           cta_strength?: number | null
@@ -846,15 +984,20 @@ export type Database = {
           id?: string
           metrics?: Json | null
           platform?: string | null
+          platforms?: string[] | null
           primary_topic?: string | null
           published_date?: string | null
           scheduled_date?: string | null
+          script?: string | null
           status?: string | null
           tags?: string[] | null
+          tenant_id?: string | null
           title?: string
           type?: string | null
           updated_at?: string | null
           vakman_academy_ref?: string | null
+          visual_prompt?: string | null
+          visual_type?: string | null
           week_number?: string | null
         }
         Relationships: [
@@ -863,6 +1006,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_items_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -879,6 +1029,7 @@ export type Database = {
           pillars: string[] | null
           platform: string | null
           posting_frequency: string | null
+          tenant_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -892,6 +1043,7 @@ export type Database = {
           pillars?: string[] | null
           platform?: string | null
           posting_frequency?: string | null
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -905,6 +1057,7 @@ export type Database = {
           pillars?: string[] | null
           platform?: string | null
           posting_frequency?: string | null
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -913,6 +1066,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_strategies_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]

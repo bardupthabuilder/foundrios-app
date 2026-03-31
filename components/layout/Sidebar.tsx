@@ -19,6 +19,7 @@ import {
   FileText,
   Receipt,
   ClipboardList,
+  Newspaper,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -45,6 +46,12 @@ const navGroups = [
       { href: '/dashboard/planning', label: 'Planning', icon: CalendarDays },
       { href: '/dashboard/uren', label: 'Uren', icon: Clock },
       { href: '/dashboard/werkbonnen', label: 'Werkbonnen', icon: ClipboardList },
+    ],
+  },
+  {
+    label: 'Content',
+    items: [
+      { href: '/dashboard/content', label: 'Content', icon: Newspaper },
     ],
   },
   {
