@@ -1,10 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Inbox, TrendingUp, Clock, Star, FolderOpen, CalendarDays, Users } from 'lucide-react'
+import { Inbox, TrendingUp, Clock, Star, FolderOpen, CalendarDays, Users, Euro, Receipt, FileText, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { DemoSeedBanner } from '@/components/DemoSeedBanner'
+import { AlertsBanner } from '@/components/AlertsBanner'
 import { formatDistanceToNow } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -34,6 +35,8 @@ export default async function DashboardPage() {
     activeProjectsResult,
     weekHoursResult,
     todayPlanningResult,
+    invoicesResult,
+    pipelineQuotesResult,
   ] = await Promise.all([
     supabase
       .from('leads')
@@ -68,6 +71,16 @@ export default async function DashboardPage() {
       .select('id, employee_id, planned_hours, employees(name), projects(name, city)')
       .eq('tenant_id', tenantId)
       .eq('planned_date', todayStr),
+    // Financieel
+    supabase
+      .from('invoices')
+      .select('amount_excl_vat, status, due_date, paid_at')
+      .eq('tenant_id', tenantId),
+    supabase
+      .from('quotes')
+      .select('amount_excl_vat, status')
+      .eq('tenant_id', tenantId)
+      .in('status', ['concept', 'verstuurd']),
   ])
 
   const isEmpty = (leadsResult.count ?? 0) === 0 && (activeProjectsResult.count ?? 0) === 0
@@ -87,6 +100,20 @@ export default async function DashboardPage() {
     { title: 'Conversie', value: `${conversionRate}%`, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { title: 'Actieve projecten', value: activeProjects, icon: FolderOpen, color: 'text-green-600', bg: 'bg-green-50' },
   ]
+
+  // Financieel
+  const invoices = invoicesResult.data ?? []
+  const paidInvoices = invoices.filter((i) => i.status === 'paid')
+  const openInvoices = invoices.filter((i) => i.status === 'sent' || i.status === 'draft')
+  const overdueInvoices = invoices.filter((i) => i.status === 'sent' && i.due_date && new Date(i.due_date) < new Date())
+  const revenueThisMonth = paidInvoices
+    .filter((i) => i.paid_at && new Date(i.paid_at).getMonth() === new Date().getMonth() && new Date(i.paid_at).getFullYear() === new Date().getFullYear())
+    .reduce((sum, i) => sum + (i.amount_excl_vat ?? 0), 0)
+  const totalOpen = openInvoices.reduce((sum, i) => sum + (i.amount_excl_vat ?? 0), 0)
+  const totalOverdue = overdueInvoices.reduce((sum, i) => sum + (i.amount_excl_vat ?? 0), 0)
+  const pipelineValue = (pipelineQuotesResult.data ?? []).reduce((sum, q) => sum + (q.amount_excl_vat ?? 0), 0)
+
+  const fmtEur = (cents: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(cents / 100)
 
   // Hot leads die actie nodig hebben
   const hotLeadsList = recentLeads.filter((l) => l.ai_label === 'hot' && l.status !== 'won' && l.status !== 'lost')
@@ -125,6 +152,45 @@ export default async function DashboardPage() {
           )
         })}
       </div>
+
+      {/* Financieel overzicht */}
+      {!isEmpty && (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 mt-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-zinc-500">Omzet deze maand</CardTitle>
+              <div className="rounded-lg p-2 bg-green-50"><Euro className="h-4 w-4 text-green-600" /></div>
+            </CardHeader>
+            <CardContent><div className="text-2xl font-bold text-zinc-900">{fmtEur(revenueThisMonth)}</div></CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-zinc-500">Openstaand</CardTitle>
+              <div className="rounded-lg p-2 bg-blue-50"><Receipt className="h-4 w-4 text-blue-600" /></div>
+            </CardHeader>
+            <CardContent><div className="text-2xl font-bold text-zinc-900">{fmtEur(totalOpen)}</div></CardContent>
+          </Card>
+          <Card className={totalOverdue > 0 ? 'border-red-200' : ''}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-zinc-500">Verlopen</CardTitle>
+              <div className={`rounded-lg p-2 ${totalOverdue > 0 ? 'bg-red-50' : 'bg-zinc-50'}`}>
+                <AlertTriangle className={`h-4 w-4 ${totalOverdue > 0 ? 'text-red-600' : 'text-zinc-400'}`} />
+              </div>
+            </CardHeader>
+            <CardContent><div className={`text-2xl font-bold ${totalOverdue > 0 ? 'text-red-600' : 'text-zinc-900'}`}>{fmtEur(totalOverdue)}</div></CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-zinc-500">Pipeline (offertes)</CardTitle>
+              <div className="rounded-lg p-2 bg-purple-50"><FileText className="h-4 w-4 text-purple-600" /></div>
+            </CardHeader>
+            <CardContent><div className="text-2xl font-bold text-zinc-900">{fmtEur(pipelineValue)}</div></CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Alerts */}
+      {!isEmpty && <AlertsBanner />}
 
       {/* Actie-banner voor hot leads */}
       {hotLeadsList.length > 0 && (

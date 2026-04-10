@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Send, Check, Ban, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Send, Check, Ban, AlertTriangle, Download } from 'lucide-react'
 
 type InvoiceItem = {
   id: string
@@ -106,6 +106,12 @@ export default function InvoiceDetailPage() {
           <p className="text-sm text-zinc-500 mt-1">{invoice.invoice_number}</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => window.open(`/dashboard/facturen/${id}/print`, '_blank')}
+            className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+          >
+            <Download className="h-4 w-4" /> PDF
+          </button>
           {actions.map(a => {
             const Icon = a.icon
             return (
