@@ -59,6 +59,11 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
     social_facebook: (tenant?.social_facebook as string) || '',
     social_google_business: (tenant?.social_google_business as string) || '',
     social_tiktok: (tenant?.social_tiktok as string) || '',
+    premium_tagline: (tenant?.premium_tagline as string) || '',
+    premium_guarantees: ((tenant?.premium_guarantees as string[]) || []).join('\n'),
+    premium_usp: ((tenant?.premium_usp as string[]) || []).join('\n'),
+    google_review_count: (tenant?.google_review_count as number)?.toString() || '',
+    google_review_score: (tenant?.google_review_score as number)?.toString() || '',
   })
 
   function update(field: string, value: string) {
@@ -78,6 +83,14 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
         ? form.services.split(',').map((s) => s.trim()).filter(Boolean)
         : [],
       team_size: form.team_size ? parseInt(form.team_size) : null,
+      premium_guarantees: form.premium_guarantees
+        ? form.premium_guarantees.split('\n').map((s) => s.trim()).filter(Boolean)
+        : [],
+      premium_usp: form.premium_usp
+        ? form.premium_usp.split('\n').map((s) => s.trim()).filter(Boolean)
+        : [],
+      google_review_count: form.google_review_count ? parseInt(form.google_review_count) : null,
+      google_review_score: form.google_review_score ? parseFloat(form.google_review_score) : null,
     }
 
     try {
@@ -303,6 +316,74 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
                 placeholder="https://tiktok.com/@..."
                 value={form.social_tiktok}
                 onChange={(e) => update('social_tiktok', e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Premium Pricing */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Premium positionering</CardTitle>
+          <CardDescription>
+            Deze gegevens verschijnen automatisch op je offertes — zo verantwoord je een premium prijs.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="premium_tagline">Tagline</Label>
+            <Input
+              id="premium_tagline"
+              placeholder="bijv. Kwaliteit die je ziet — en voelt"
+              value={form.premium_tagline}
+              onChange={(e) => update('premium_tagline', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="premium_usp">Waarom wij (USP's)</Label>
+            <Textarea
+              id="premium_usp"
+              placeholder={"15+ jaar ervaring\nAlleen A-kwaliteit materiaal\nPersoonlijk contact met de eigenaar\nVaste ploeg — geen wisselende gezichten"}
+              value={form.premium_usp}
+              onChange={(e) => update('premium_usp', e.target.value)}
+              rows={4}
+            />
+            <p className="text-xs text-zinc-400">Eén per regel — verschijnt op je offerte PDF</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="premium_guarantees">Garanties</Label>
+            <Textarea
+              id="premium_guarantees"
+              placeholder={"5 jaar garantie op al ons werk\nGeen meerwerk zonder overleg\nOplevering op de afgesproken datum"}
+              value={form.premium_guarantees}
+              onChange={(e) => update('premium_guarantees', e.target.value)}
+              rows={3}
+            />
+            <p className="text-xs text-zinc-400">Eén per regel</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="google_review_score">Google review score</Label>
+              <Input
+                id="google_review_score"
+                type="number"
+                step="0.1"
+                min="1"
+                max="5"
+                placeholder="4.8"
+                value={form.google_review_score}
+                onChange={(e) => update('google_review_score', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="google_review_count">Aantal reviews</Label>
+              <Input
+                id="google_review_count"
+                type="number"
+                placeholder="47"
+                value={form.google_review_count}
+                onChange={(e) => update('google_review_count', e.target.value)}
               />
             </div>
           </div>

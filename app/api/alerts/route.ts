@@ -68,7 +68,52 @@ export async function GET() {
     })
   }
 
-  // 3. Projecten over budget (uren × tarief > budget)
+  // 3. Offertes zonder opvolging (verstuurd > 3 dagen geleden, geen reactie)
+  const threeDaysAgo = new Date(now.getTime() - 3 * 86400000).toISOString()
+  const { data: staleQuotes } = await supabase
+    .from('quotes')
+    .select('id, title, quote_number, amount_excl_vat, sent_at, clients(company_name)')
+    .eq('tenant_id', tenantId)
+    .eq('status', 'verstuurd')
+    .lt('sent_at', threeDaysAgo)
+    .limit(5)
+
+  for (const q of staleQuotes ?? []) {
+    const days = Math.round((now.getTime() - new Date(q.sent_at!).getTime()) / (1000 * 60 * 60 * 24))
+    const clientName = (q.clients as any)?.company_name || ''
+    const fmt = new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(q.amount_excl_vat / 100)
+    alerts.push({
+      type: 'invoice',
+      severity: days >= 7 ? 'urgent' : 'warning',
+      title: `Offerte ${q.quote_number || q.title} wacht ${days} dagen op reactie`,
+      description: `${fmt} voor ${clientName} — tijd om op te volgen`,
+      link: `/dashboard/offertes/${q.id}`,
+    })
+  }
+
+  // 4. Onderhoudscontracten met verlopen bezoekdatum
+  const { data: overdueVisits } = await supabase
+    .from('maintenance_contracts' as any)
+    .select('id, title, next_visit, clients(company_name)')
+    .eq('tenant_id', tenantId)
+    .eq('status', 'active')
+    .lt('next_visit', todayStr)
+    .limit(5)
+
+  for (const _mc of (overdueVisits ?? []) as any[]) {
+    const mc = _mc as { id: string; title: string; next_visit: string; clients: { company_name: string } | null }
+    const days = Math.round((now.getTime() - new Date(mc.next_visit).getTime()) / (1000 * 60 * 60 * 24))
+    const clientName = mc.clients?.company_name || ''
+    alerts.push({
+      type: 'project',
+      severity: days >= 7 ? 'urgent' : 'warning',
+      title: `Onderhoudsbezoek ${mc.title} is ${days} dagen verlopen`,
+      description: `${clientName} — plan het bezoek in`,
+      link: '/dashboard/onderhoud',
+    })
+  }
+
+  // 5. Projecten over budget (uren × tarief > budget)
   const { data: activeProjects } = await supabase
     .from('projects')
     .select('id, name, budget, budget_cents, hourly_rate_cents, time_entries(hours)')

@@ -20,6 +20,8 @@ import {
   Receipt,
   ClipboardList,
   Newspaper,
+  CalendarCheck,
+  Megaphone,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -46,6 +48,13 @@ const navGroups = [
       { href: '/dashboard/planning', label: 'Planning', icon: CalendarDays },
       { href: '/dashboard/uren', label: 'Uren', icon: Clock },
       { href: '/dashboard/werkbonnen', label: 'Werkbonnen', icon: ClipboardList },
+    ],
+  },
+  {
+    label: 'Groei',
+    items: [
+      { href: '/dashboard/onderhoud', label: 'Onderhoud', icon: CalendarCheck },
+      { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
     ],
   },
   {

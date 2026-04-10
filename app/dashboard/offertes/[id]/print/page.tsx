@@ -144,6 +144,45 @@ export default function QuotePrintPage() {
           </div>
         )}
 
+        {/* Premium sectie: Waarom wij */}
+        {(((tenant as any).premium_guarantees?.length > 0) || ((tenant as any).premium_usp?.length > 0) || (tenant as any).google_review_score) && (
+          <div style={{ padding: 20, background: '#18181b', borderRadius: 8, marginBottom: 32, color: '#fff' }}>
+            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>
+              Waarom kiezen voor {tenant.name}?
+            </div>
+            {(tenant as any).premium_tagline && (
+              <div style={{ fontSize: 13, color: '#a1a1aa', marginBottom: 12, fontStyle: 'italic' }}>{(tenant as any).premium_tagline}</div>
+            )}
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' as const }}>
+              {((tenant as any).premium_usp as string[] ?? []).map((usp: string, i: number) => (
+                <div key={i} style={{ flex: '1 1 200px', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                  <span style={{ color: '#22c55e', fontSize: 16, lineHeight: 1 }}>✓</span>
+                  <span style={{ fontSize: 13 }}>{usp}</span>
+                </div>
+              ))}
+            </div>
+            {((tenant as any).premium_guarantees as string[] ?? []).length > 0 && (
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #333' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Onze garanties</div>
+                {((tenant as any).premium_guarantees as string[]).map((g: string, i: number) => (
+                  <div key={i} style={{ fontSize: 13, display: 'flex', gap: 6, alignItems: 'center', marginBottom: 4 }}>
+                    <span style={{ color: '#f59e0b' }}>★</span> {g}
+                  </div>
+                ))}
+              </div>
+            )}
+            {(tenant as any).google_review_score && (
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #333', display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ fontSize: 20 }}>⭐</span>
+                <div>
+                  <span style={{ fontSize: 14, fontWeight: 700 }}>{(tenant as any).google_review_score}/5</span>
+                  {(tenant as any).google_review_count && <span style={{ fontSize: 12, color: '#a1a1aa' }}> op basis van {(tenant as any).google_review_count} reviews</span>}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Footer */}
         <div style={{ borderTop: '1px solid #e4e4e7', paddingTop: 16, fontSize: 12, color: '#a1a1aa', textAlign: 'center' }}>
           {tenant.name} {tenant.email ? `· ${tenant.email}` : ''} {tenant.website ? `· ${tenant.website}` : ''}
