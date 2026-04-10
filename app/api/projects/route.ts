@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('projects')
-    .select('*, clients(id, name, phone)')
+    .select('*, clients(id, name, phone), time_entries(hours)')
     .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false })
 

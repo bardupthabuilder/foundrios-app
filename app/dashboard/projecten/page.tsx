@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { FolderOpen, Plus, MapPin, Calendar, Euro } from 'lucide-react'
+import { FolderOpen, Plus, MapPin, Calendar, Euro, Clock } from 'lucide-react'
 import type { ProjectWithClient, Client, ProjectStatus, ProjectType } from '@/lib/types/project'
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -260,6 +260,26 @@ export default function ProjectenPage() {
                         {formatCents(project.budget_cents)}
                       </span>
                     )}
+                    {(() => {
+                      const entries = (project as any).time_entries as { hours: number }[] | undefined
+                      const totalHours = entries?.reduce((sum: number, e: { hours: number }) => sum + (e.hours ?? 0), 0) ?? 0
+                      if (totalHours === 0) return null
+                      const costCents = project.hourly_rate_cents ? totalHours * project.hourly_rate_cents : 0
+                      const marginPct = project.budget_cents && costCents > 0 ? Math.round(((project.budget_cents - costCents) / project.budget_cents) * 100) : null
+                      return (
+                        <>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {totalHours}u geregistreerd
+                          </span>
+                          {marginPct !== null && (
+                            <span className={`font-medium ${marginPct >= 30 ? 'text-green-600' : marginPct >= 10 ? 'text-orange-500' : 'text-red-500'}`}>
+                              {marginPct}% marge
+                            </span>
+                          )}
+                        </>
+                      )
+                    })()}
                   </div>
                 </div>
               </CardContent>

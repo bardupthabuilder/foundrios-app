@@ -147,6 +147,19 @@ export default function UrenPage() {
     }
   }
 
+  const pendingEntries = entries.filter((e) => e.status === 'ingevoerd')
+
+  async function handleApproveAll() {
+    for (const entry of pendingEntries) {
+      await fetch(`/api/time-entries/${entry.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'goedgekeurd' }),
+      })
+    }
+    setEntries((prev) => prev.map((e) => e.status === 'ingevoerd' ? { ...e, status: 'goedgekeurd' } : e))
+  }
+
   // Build week grid data: employee → day → hours
   const gridData = useMemo(() => {
     const empMap = new Map<string, { name: string; days: Record<string, { hours: number; entries: TimeEntryWithDetails[] }> }>()
@@ -233,6 +246,11 @@ export default function UrenPage() {
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Uren invoeren</Button>
             </DialogTrigger>
+            {pendingEntries.length > 0 && (
+              <Button variant="outline" onClick={handleApproveAll}>
+                Alles goedkeuren ({pendingEntries.length})
+              </Button>
+            )}
             <DialogContent>
               <DialogHeader><DialogTitle>Uren invoeren</DialogTitle></DialogHeader>
               <div className="space-y-4 pt-2">

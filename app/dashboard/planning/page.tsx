@@ -253,6 +253,33 @@ export default function PlanningPage() {
                 </>
               ))}
             </div>
+
+            {/* Capaciteitsbalk per dag */}
+            <div className="mt-3 grid gap-px" style={{ gridTemplateColumns: '160px repeat(5, 1fr)' }}>
+              <div className="text-xs text-zinc-400 flex items-center px-2">Bezetting</div>
+              {weekDates.map((d) => {
+                const dateStr = toDateStr(d)
+                const dayHours = entries
+                  .filter((e) => e.planned_date === dateStr)
+                  .reduce((sum, e) => sum + (e.planned_hours ?? 8), 0)
+                const capacity = employees.length * 8
+                const pct = capacity > 0 ? Math.min(Math.round((dayHours / capacity) * 100), 100) : 0
+                return (
+                  <div key={dateStr} className="px-2">
+                    <div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
+                      <span>{dayHours}u / {capacity}u</span>
+                      <span className={pct >= 90 ? 'text-green-600 font-medium' : pct >= 50 ? 'text-orange-500' : 'text-zinc-400'}>{pct}%</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${pct >= 90 ? 'bg-green-500' : pct >= 50 ? 'bg-orange-400' : 'bg-zinc-300'}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           {/* Mobile: Day list */}

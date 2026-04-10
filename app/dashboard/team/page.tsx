@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { HardHat, Plus, Phone, Mail } from 'lucide-react'
+import { HardHat, Plus, Phone, Mail, Pencil } from 'lucide-react'
 import type { Employee } from '@/lib/types/project'
 
 const ROLE_LABELS: Record<string, string> = {
@@ -66,6 +66,48 @@ export default function TeamPage() {
   async function handleDeactivate(id: string) {
     await fetch(`/api/employees/${id}`, { method: 'DELETE' })
     setEmployees((prev) => prev.filter((e) => e.id !== id))
+  }
+
+  // Edit state
+  const [editOpen, setEditOpen] = useState(false)
+  const [editId, setEditId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [editRole, setEditRole] = useState('monteur')
+  const [editColor, setEditColor] = useState('#6366f1')
+  const [editSaving, setEditSaving] = useState(false)
+
+  function openEdit(emp: Employee) {
+    setEditId(emp.id)
+    setEditName(emp.name)
+    setEditPhone(emp.phone || '')
+    setEditEmail(emp.email || '')
+    setEditRole(emp.role || 'monteur')
+    setEditColor(emp.color || '#6366f1')
+    setEditOpen(true)
+  }
+
+  async function handleEdit() {
+    if (!editId) return
+    setEditSaving(true)
+    const res = await fetch(`/api/employees/${editId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: editName,
+        phone: editPhone || null,
+        email: editEmail || null,
+        role: editRole,
+        color: editColor,
+      }),
+    })
+    if (res.ok) {
+      const updated = await res.json()
+      setEmployees((prev) => prev.map((e) => e.id === editId ? { ...e, ...updated } : e))
+      setEditOpen(false)
+    }
+    setEditSaving(false)
   }
 
   return (
@@ -155,14 +197,71 @@ export default function TeamPage() {
                     {emp.email && <span className="hidden sm:flex items-center gap-1"><Mail className="h-3 w-3" />{emp.email}</span>}
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-red-600" onClick={() => handleDeactivate(emp.id)}>
-                  Deactiveren
-                </Button>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" onClick={() => openEdit(emp)}>
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-red-600" onClick={() => handleDeactivate(emp.id)}>
+                    Deactiveren
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Edit Dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Medewerker bewerken</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div>
+              <Label>Naam *</Label>
+              <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Telefoon</Label>
+                <Input value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
+              </div>
+              <div>
+                <Label>E-mail</Label>
+                <Input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
+              </div>
+            </div>
+            <div>
+              <Label>Rol</Label>
+              <Select value={editRole} onValueChange={setEditRole}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {Object.entries(ROLE_LABELS).map(([k, v]) => (
+                    <SelectItem key={k} value={k}>{v}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Kleur</Label>
+              <div className="flex gap-2 mt-1">
+                {COLORS.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setEditColor(c)}
+                    className={`h-7 w-7 rounded-full border-2 transition-all ${editColor === c ? 'border-zinc-900 scale-110' : 'border-transparent'}`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            </div>
+            <Button onClick={handleEdit} disabled={!editName.trim() || editSaving} className="w-full">
+              {editSaving ? 'Opslaan...' : 'Opslaan'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
