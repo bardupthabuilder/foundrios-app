@@ -1,16 +1,23 @@
 import OpenAI from 'openai'
 import type { AiScoreResult } from './types/lead'
 
-// ─── OpenRouter Client ───────────────────────────────────────────────────────
+// ─── OpenRouter Client (lazy — voorkomt build-time crash zonder key) ─────────
 
-const openrouter = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://vakbedrijfos.netlify.app',
-    'X-Title': 'FoundriOS',
-  },
-})
+let _client: OpenAI | null = null
+
+function getClient(): OpenAI {
+  if (!_client) {
+    _client = new OpenAI({
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.OPENROUTER_API_KEY || 'missing',
+      defaultHeaders: {
+        'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://vakbedrijfos.netlify.app',
+        'X-Title': 'FoundriOS',
+      },
+    })
+  }
+  return _client
+}
 
 // ─── Model Config ────────────────────────────────────────────────────────────
 
@@ -96,7 +103,7 @@ Geef een eerlijke score op basis van de beschikbare informatie. Als er weinig in
 Antwoord uitsluitend in JSON-formaat volgens dit schema:
 ${JSON.stringify(SCORE_SCHEMA.properties, null, 2)}`
 
-  const response = await openrouter.chat.completions.create({
+  const response = await getClient().chat.completions.create({
     model: getModel(model),
     max_tokens: 1024,
     response_format: { type: 'json_object' },
@@ -181,7 +188,7 @@ Schrijf alsof de eigenaar van het bedrijf zelf praat — ik-vorm, vanuit eigen e
 
 ${CONTENT_SCHEMA_DESCRIPTION}`
 
-  const response = await openrouter.chat.completions.create({
+  const response = await getClient().chat.completions.create({
     model: getModel(model),
     max_tokens: 2048,
     response_format: { type: 'json_object' },
@@ -266,7 +273,7 @@ export async function generateContentField(
 Schrijf alleen ${fieldDescriptions[params.field]}.
 Geef uitsluitend de tekst terug, geen uitleg, geen label, geen aanhalingstekens.`
 
-  const response = await openrouter.chat.completions.create({
+  const response = await getClient().chat.completions.create({
     model: getModel(model),
     max_tokens: 512,
     messages: [
