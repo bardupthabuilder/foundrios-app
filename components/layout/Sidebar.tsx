@@ -23,7 +23,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const navGroups = [
   {
@@ -80,6 +80,14 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [tenantName, setTenantName] = useState('FoundriOS')
+
+  useEffect(() => {
+    fetch('/api/tenant')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.name) setTenantName(data.name) })
+      .catch(() => {})
+  }, [])
 
   async function handleLogout() {
     const supabase = createClient()
@@ -98,9 +106,9 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center gap-2.5 border-b px-5">
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white text-xs font-bold">
-          V
+          {tenantName[0]?.toUpperCase() || 'F'}
         </div>
-        <span className="font-semibold tracking-tight">Vakbedrijf OS</span>
+        <span className="font-semibold tracking-tight truncate">{tenantName}</span>
       </div>
 
       {/* Nav Groups */}
@@ -158,9 +166,9 @@ export function Sidebar() {
         </button>
         <div className="flex items-center gap-2">
           <div className="flex h-6 w-6 items-center justify-center rounded bg-zinc-900 text-white text-[10px] font-bold">
-            V
+            {tenantName[0]?.toUpperCase() || 'F'}
           </div>
-          <span className="text-sm font-semibold">Vakbedrijf OS</span>
+          <span className="text-sm font-semibold truncate">{tenantName}</span>
         </div>
       </div>
 

@@ -84,9 +84,12 @@ export default async function DashboardPage() {
   const kpis = [
     { title: 'Leads deze maand', value: totalLeads, icon: Inbox, color: 'text-blue-600', bg: 'bg-blue-50' },
     { title: 'Hot leads', value: hotLeads, icon: Star, color: 'text-orange-600', bg: 'bg-orange-50' },
+    { title: 'Conversie', value: `${conversionRate}%`, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { title: 'Actieve projecten', value: activeProjects, icon: FolderOpen, color: 'text-green-600', bg: 'bg-green-50' },
-    { title: 'Uren deze week', value: `${weekHours}u`, icon: Clock, color: 'text-purple-600', bg: 'bg-purple-50' },
   ]
+
+  // Hot leads die actie nodig hebben
+  const hotLeadsList = recentLeads.filter((l) => l.ai_label === 'hot' && l.status !== 'won' && l.status !== 'lost')
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto">
@@ -122,6 +125,32 @@ export default async function DashboardPage() {
           )
         })}
       </div>
+
+      {/* Actie-banner voor hot leads */}
+      {hotLeadsList.length > 0 && (
+        <div className="mt-4 rounded-xl border border-orange-200 bg-orange-50 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100">
+                <Star className="h-4 w-4 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-orange-900">
+                  {hotLeadsList.length} hot lead{hotLeadsList.length > 1 ? 's' : ''} wacht{hotLeadsList.length === 1 ? '' : 'en'} op actie
+                </p>
+                <p className="text-xs text-orange-700">
+                  {hotLeadsList.map(l => l.name).join(', ')}
+                </p>
+              </div>
+            </div>
+            <Link href="/dashboard/leads?label=hot">
+              <Button size="sm" variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
+                Bekijk
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 gap-4 mt-6">
         {/* Vandaag geplande projecten */}

@@ -11,7 +11,7 @@ function getClient(): OpenAI {
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey: process.env.OPENROUTER_API_KEY || 'missing',
       defaultHeaders: {
-        'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://vakbedrijfos.netlify.app',
+        'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://foundrios-app.vercel.app',
         'X-Title': 'FoundriOS',
       },
     })

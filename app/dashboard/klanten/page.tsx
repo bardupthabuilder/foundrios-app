@@ -125,7 +125,7 @@ export default function KlantenPage() {
       ) : (
         <div className="grid gap-3">
           {clients.map((client) => (
-            <Card key={client.id} className="cursor-pointer hover:bg-zinc-50 transition-colors">
+            <Card key={client.id} className="cursor-pointer hover:bg-zinc-50 transition-colors" onClick={() => router.push(`/dashboard/klanten/${client.id}`)}>
               <CardContent className="flex items-center gap-4 py-4">
                 <div className="h-10 w-10 rounded-full bg-zinc-100 shrink-0 flex items-center justify-center text-zinc-600 text-sm font-bold">
                   {client.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
