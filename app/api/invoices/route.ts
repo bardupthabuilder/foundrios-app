@@ -72,7 +72,6 @@ export async function POST(request: NextRequest) {
     .from('invoices')
     .insert({
       tenant_id: tenantId,
-      company_id: tenantId,
       invoice_number: invoiceNumber,
       status: 'draft' as any,
       ...parsed.data,

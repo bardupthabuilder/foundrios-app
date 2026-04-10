@@ -49,7 +49,6 @@ export async function POST(
     .from('invoices')
     .insert({
       tenant_id: tenantId,
-      company_id: tenantId,
       client_id: quote.client_id,
       client_name: (quote as any).clients?.company_name || (quote as any).clients?.name || null,
       project_id: quote.project_id,
