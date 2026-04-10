@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Inbox, TrendingUp, Clock, Star, FolderOpen, CalendarDays, Users } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { DemoSeedBanner } from '@/components/DemoSeedBanner'
 import { formatDistanceToNow } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -69,6 +70,7 @@ export default async function DashboardPage() {
       .eq('planned_date', todayStr),
   ])
 
+  const isEmpty = (leadsResult.count ?? 0) === 0 && (activeProjectsResult.count ?? 0) === 0
   const totalLeads = leadsResult.count ?? 0
   const hotLeads = hotLeadsResult.count ?? 0
   const wonLeads = leadsResult.data?.filter((l) => l.status === 'won').length ?? 0
@@ -98,6 +100,8 @@ export default async function DashboardPage() {
           <Link href="/dashboard/projecten"><Button size="sm">Projecten</Button></Link>
         </div>
       </div>
+
+      {isEmpty && <DemoSeedBanner />}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

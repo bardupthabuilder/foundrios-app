@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
-import { generateContent } from '@/lib/claude'
+import { generateContent } from '@/lib/ai'
 
 // POST /api/content/batch — batch AI content generatie voor meerdere onderwerpen
 export async function POST(request: NextRequest) {

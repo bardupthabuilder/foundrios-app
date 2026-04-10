@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { CompanyProfileForm } from './CompanyProfileForm'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -22,13 +23,13 @@ export default async function SettingsPage() {
   ]
 
   return (
-    <div className="p-6 max-w-2xl">
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900">Instellingen</h1>
+    <div className="p-6 max-w-2xl space-y-6">
+      <h1 className="text-2xl font-bold text-zinc-900">Instellingen</h1>
 
-      {/* Bedrijfsinfo */}
-      <Card className="mb-6">
+      {/* Account status */}
+      <Card>
         <CardHeader>
-          <CardTitle>Bedrijfsinformatie</CardTitle>
+          <CardTitle>Account</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between text-sm">
@@ -45,6 +46,9 @@ export default async function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Bedrijfsprofiel */}
+      <CompanyProfileForm tenant={tenant} />
 
       {/* Integraties */}
       <Card>

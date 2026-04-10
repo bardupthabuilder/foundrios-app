@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { scoreLead } from '@/lib/claude'
+import { scoreLead } from '@/lib/ai'
 
 // Meta webhook verificatie
 export async function GET(request: NextRequest) {
