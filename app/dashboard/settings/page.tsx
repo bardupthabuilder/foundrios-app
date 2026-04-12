@@ -3,6 +3,7 @@ import { requireTenant } from '@/lib/tenant'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CompanyProfileForm } from './CompanyProfileForm'
+import { UsersSection } from './UsersSection'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -46,6 +47,9 @@ export default async function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Gebruikers */}
+      <UsersSection />
 
       {/* Bedrijfsprofiel */}
       <CompanyProfileForm tenant={tenant} />

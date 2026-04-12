@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Publieke routes
-  const publicRoutes = ['/login', '/register', '/onboarding', '/']
+  const publicRoutes = ['/login', '/register', '/onboarding', '/invite', '/']
   const isPublicRoute = publicRoutes.some((route) => pathname === route)
 
   // API webhooks zijn altijd publiek (worden beveiligd via signature validation)
