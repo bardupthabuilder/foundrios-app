@@ -61,7 +61,7 @@ export default function KlantenPage() {
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Klanten</h1>
+          <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Klanten</h1>
           <p className="text-sm text-zinc-400 mt-1">Je opdrachtgevers en contacten</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -127,7 +127,7 @@ export default function KlantenPage() {
           {clients.map((client) => (
             <Card key={client.id} className="cursor-pointer hover:bg-white/5 transition-colors" onClick={() => router.push(`/dashboard/klanten/${client.id}`)}>
               <CardContent className="flex items-center gap-4 py-4">
-                <div className="h-10 w-10 rounded-full bg-[#282A2E] shrink-0 flex items-center justify-center text-zinc-300 text-sm font-bold">
+                <div className="h-10 w-10 rounded-full bg-foundri-card shrink-0 flex items-center justify-center text-zinc-300 text-sm font-bold">
                   {client.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">

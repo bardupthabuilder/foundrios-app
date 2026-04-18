@@ -28,13 +28,13 @@ export function ReplyBox({ leadId }: { leadId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t border-white/5 bg-[#111317] px-6 py-3">
+    <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t border-white/5 bg-foundri-surface px-6 py-3">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Schrijf een notitie of bericht..."
         rows={1}
-        className="flex-1 resize-none rounded-lg border-0 bg-[#282A2E] px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-foundri-yellow/50 focus:outline-none"
+        className="flex-1 resize-none rounded-lg border-0 bg-foundri-card px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-foundri-yellow/50 focus:outline-none"
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()

@@ -13,7 +13,7 @@ type WorkOrder = {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  concept: { label: 'Concept', color: 'bg-[#282A2E] text-zinc-200' },
+  concept: { label: 'Concept', color: 'bg-foundri-card text-zinc-200' },
   actief: { label: 'Actief', color: 'bg-blue-500/10 text-blue-400' },
   afgerond: { label: 'Afgerond', color: 'bg-green-500/10 text-green-400' },
   gefactureerd: { label: 'Gefactureerd', color: 'bg-emerald-500/10 text-emerald-400' },
@@ -214,7 +214,7 @@ export default function WerkbonDetailPage() {
       {/* Add Hour Dialog */}
       {showAddHour && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddHour(false)}>
-          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-foundri-deep p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Uren toevoegen</h2>
             <form onSubmit={addHour} className="space-y-3">
               <div>
@@ -253,7 +253,7 @@ export default function WerkbonDetailPage() {
       {/* Add Material Dialog */}
       {showAddMat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddMat(false)}>
-          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-foundri-deep p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Materiaal toevoegen</h2>
             <form onSubmit={addMaterial} className="space-y-3">
               <div>
@@ -288,7 +288,7 @@ export default function WerkbonDetailPage() {
       {/* Sign Dialog */}
       {showSign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowSign(false)}>
-          <div className="w-full max-w-sm rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-sm rounded-xl bg-foundri-deep p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Werkbon aftekenen</h2>
             <div className="space-y-3">
               <div>

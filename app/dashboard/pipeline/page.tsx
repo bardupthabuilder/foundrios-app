@@ -49,7 +49,7 @@ export default async function PipelinePage() {
         {PIPELINE_STAGES.map((stage) => {
           const stageLeads = (leads || []).filter((l) => l.pipeline_stage === stage.key)
           return (
-            <div key={stage.key} className="flex h-full w-72 shrink-0 flex-col rounded-lg border border-white/5 bg-[#1A1F29]">
+            <div key={stage.key} className="flex h-full w-72 shrink-0 flex-col rounded-lg border border-white/5 bg-foundri-deep">
               <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
                 <h3 className={`text-sm font-semibold ${stage.color}`}>{stage.label}</h3>
                 <span className="text-xs text-zinc-500">{stageLeads.length}</span>
@@ -59,7 +59,7 @@ export default async function PipelinePage() {
                   <Link
                     href={`/dashboard/leads/${lead.id}`}
                     key={lead.id}
-                    className="block rounded-lg border border-white/5 bg-[#111317] p-3 transition-colors hover:border-white/10"
+                    className="block rounded-lg border border-white/5 bg-foundri-surface p-3 transition-colors hover:border-white/10"
                   >
                     <div className="flex items-center gap-2">
                       <div

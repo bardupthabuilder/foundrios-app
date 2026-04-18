@@ -51,7 +51,7 @@ const STATUSES = [
   { key: 'te_maken', label: 'Te maken', color: 'bg-blue-500/10 text-blue-400' },
   { key: 'in_productie', label: 'In productie', color: 'bg-yellow-500/10 text-yellow-400' },
   { key: 'klaar', label: 'Klaar', color: 'bg-green-500/10 text-green-400' },
-  { key: 'gepubliceerd', label: 'Gepubliceerd', color: 'bg-[#282A2E] text-zinc-200' },
+  { key: 'gepubliceerd', label: 'Gepubliceerd', color: 'bg-foundri-card text-zinc-200' },
   { key: 'herbruikbaar', label: 'Herbruikbaar', color: 'bg-emerald-500/10 text-emerald-400' },
 ]
 
@@ -120,7 +120,7 @@ function KanbanCard({ item, onClick }: { item: ContentItem; onClick: () => void 
       style={style}
       {...listeners}
       {...attributes}
-      className={`group rounded-lg border bg-[#1A1F29] p-3 shadow-sm cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md ${
+      className={`group rounded-lg border bg-foundri-deep p-3 shadow-sm cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md ${
         isDragging ? 'opacity-40 shadow-lg' : ''
       }`}
     >
@@ -134,7 +134,7 @@ function KanbanCard({ item, onClick }: { item: ContentItem; onClick: () => void 
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 flex-wrap">
           {item.content_template && (
-            <span className="rounded-full bg-[#282A2E] px-2 py-0.5 text-[10px] font-medium text-zinc-300">
+            <span className="rounded-full bg-foundri-card px-2 py-0.5 text-[10px] font-medium text-zinc-300">
               {getTemplateLabel(item.content_template)}
             </span>
           )}
@@ -191,7 +191,7 @@ function KanbanColumn({
       <div
         ref={setNodeRef}
         className={`flex-1 rounded-xl p-2 space-y-2 min-h-[120px] transition-colors ${
-          isOver ? 'bg-[#111317] ring-2 ring-zinc-200' : 'bg-[#111317]/50'
+          isOver ? 'bg-foundri-surface ring-2 ring-zinc-200' : 'bg-foundri-surface/50'
         }`}
       >
         {items.map((item) => (
@@ -290,7 +290,7 @@ function WeekView({
 
               {/* Day content area */}
               <div
-                className="rounded-lg bg-[#111317] p-1.5 min-h-[120px] cursor-pointer hover:bg-white/10 transition-colors space-y-1"
+                className="rounded-lg bg-foundri-surface p-1.5 min-h-[120px] cursor-pointer hover:bg-white/10 transition-colors space-y-1"
                 onClick={() => onDayClick(date)}
               >
                 {dayItems.map((item) => {
@@ -298,7 +298,7 @@ function WeekView({
                   return (
                     <div
                       key={item.id}
-                      className="rounded-md bg-[#1A1F29] border p-1.5 cursor-pointer hover:shadow-sm transition-shadow"
+                      className="rounded-md bg-foundri-deep border p-1.5 cursor-pointer hover:shadow-sm transition-shadow"
                       onClick={(e) => {
                         e.stopPropagation()
                         onCardClick(item)
@@ -398,7 +398,7 @@ function LijstView({
               <div
                 key={item.id}
                 onClick={() => onCardClick(item)}
-                className="flex items-center gap-3 rounded-lg border bg-[#1A1F29] px-4 py-3 cursor-pointer hover:bg-white/5 transition-colors"
+                className="flex items-center gap-3 rounded-lg border bg-foundri-deep px-4 py-3 cursor-pointer hover:bg-white/5 transition-colors"
               >
                 {/* Title */}
                 <div className="flex-1 min-w-0">
@@ -410,7 +410,7 @@ function LijstView({
 
                 {/* Template badge */}
                 {item.content_template && (
-                  <span className="hidden sm:inline-block shrink-0 rounded-full bg-[#282A2E] px-2 py-0.5 text-[11px] font-medium text-zinc-300">
+                  <span className="hidden sm:inline-block shrink-0 rounded-full bg-foundri-card px-2 py-0.5 text-[11px] font-medium text-zinc-300">
                     {getTemplateLabel(item.content_template)}
                   </span>
                 )}
@@ -528,7 +528,7 @@ function NewContentDialog({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl"
+        className="w-full max-w-md rounded-xl bg-foundri-deep p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-4">Nieuw content item</h2>
@@ -704,7 +704,7 @@ function AIBatchDialog({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl"
+        className="w-full max-w-md rounded-xl bg-foundri-deep p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 mb-4">
@@ -949,7 +949,7 @@ export default function ContentPage() {
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* View toggle */}
-          <div className="flex items-center rounded-lg border bg-[#1A1F29] p-0.5 gap-0.5">
+          <div className="flex items-center rounded-lg border bg-foundri-deep p-0.5 gap-0.5">
             {viewButtons.map((b) => (
               <button
                 key={b.key}
@@ -999,7 +999,7 @@ export default function ContentPage() {
           </div>
           <button
             onClick={() => setShowBatch(true)}
-            className="rounded-lg bg-foundri-yellow px-4 py-2 text-sm font-semibold text-[#0F1115] transition-all hover:shadow-[0_0_16px_rgba(246,201,69,0.3)]"
+            className="rounded-lg bg-foundri-yellow px-4 py-2 text-sm font-semibold text-foundri-graphite transition-all hover:shadow-[0_0_16px_rgba(246,201,69,0.3)]"
           >
             Genereer content
           </button>
@@ -1034,13 +1034,13 @@ export default function ContentPage() {
           {/* Drag overlay */}
           <DragOverlay>
             {activeItem ? (
-              <div className="rounded-lg border bg-[#1A1F29] p-3 shadow-xl w-64 rotate-2 cursor-grabbing">
+              <div className="rounded-lg border bg-foundri-deep p-3 shadow-xl w-64 rotate-2 cursor-grabbing">
                 <p className="text-sm font-medium text-white leading-snug mb-2">
                   {activeItem.title}
                 </p>
                 <div className="flex items-center gap-1.5">
                   {activeItem.content_template && (
-                    <span className="rounded-full bg-[#282A2E] px-2 py-0.5 text-[10px] font-medium text-zinc-300">
+                    <span className="rounded-full bg-foundri-card px-2 py-0.5 text-[10px] font-medium text-zinc-300">
                       {getTemplateLabel(activeItem.content_template)}
                     </span>
                   )}

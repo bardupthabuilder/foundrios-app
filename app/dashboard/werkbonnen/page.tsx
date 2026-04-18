@@ -17,7 +17,7 @@ type WorkOrder = {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  concept: { label: 'Concept', color: 'bg-[#282A2E] text-zinc-200' },
+  concept: { label: 'Concept', color: 'bg-foundri-card text-zinc-200' },
   actief: { label: 'Actief', color: 'bg-blue-500/10 text-blue-400' },
   afgerond: { label: 'Afgerond', color: 'bg-green-500/10 text-green-400' },
   gefactureerd: { label: 'Gefactureerd', color: 'bg-emerald-500/10 text-emerald-400' },
@@ -98,7 +98,7 @@ export default function WerkbonnenPage() {
         </div>
         <div className="flex gap-1">
           {tabs.map(t => (
-            <button key={t.key} onClick={() => setFilter(t.key)} className={`rounded-lg px-3 py-1.5 text-xs font-medium ${filter === t.key ? 'bg-zinc-900 text-white' : 'bg-[#282A2E] text-zinc-300 hover:bg-white/15'}`}>
+            <button key={t.key} onClick={() => setFilter(t.key)} className={`rounded-lg px-3 py-1.5 text-xs font-medium ${filter === t.key ? 'bg-zinc-900 text-white' : 'bg-foundri-card text-zinc-300 hover:bg-white/15'}`}>
               {t.label}
             </button>
           ))}
@@ -138,7 +138,7 @@ export default function WerkbonnenPage() {
 
       {showNew && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNew(false)}>
-          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-foundri-deep p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Nieuwe werkbon</h2>
             <form onSubmit={create} className="space-y-3">
               <div>

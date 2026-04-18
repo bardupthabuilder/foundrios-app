@@ -29,9 +29,9 @@ export function DemoSeedBanner() {
   if (done) return null
 
   return (
-    <Card className="border-dashed border-white/15 bg-[#111317]/50">
+    <Card className="border-dashed border-white/15 bg-foundri-surface/50">
       <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#282A2E]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foundri-card">
           <Sparkles className="h-5 w-5 text-zinc-400" />
         </div>
         <div>

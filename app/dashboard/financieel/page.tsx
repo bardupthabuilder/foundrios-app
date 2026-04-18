@@ -170,7 +170,7 @@ export default async function FinancieelPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Financieel overzicht</h1>
+          <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Financieel overzicht</h1>
           <p className="mt-0.5 text-sm text-zinc-400">
             Omzet, marges en openstaande posten in een oogopslag
           </p>
@@ -193,7 +193,7 @@ export default async function FinancieelPage() {
           <a
             href="/api/export?type=invoices&format=csv"
             download
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A1F29] px-3 py-2 text-sm font-medium text-zinc-300 hover:bg-[#282A2E] transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-foundri-deep px-3 py-2 text-sm font-medium text-zinc-300 hover:bg-foundri-card transition-colors"
           >
             <Download className="h-4 w-4" />
             Export
@@ -216,7 +216,7 @@ export default async function FinancieelPage() {
                   ? 'border-foundri-yellow/20 bg-foundri-yellow/5'
                   : isWarning
                     ? 'border-red-500/20 bg-red-500/5'
-                    : 'border-white/5 bg-[#1A1F29]'
+                    : 'border-white/5 bg-foundri-deep'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -245,7 +245,7 @@ export default async function FinancieelPage() {
       </div>
 
       {/* Projectmarge overzicht */}
-      <div className="rounded-xl border border-white/5 bg-[#1A1F29] overflow-hidden">
+      <div className="rounded-xl border border-white/5 bg-foundri-deep overflow-hidden">
         <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
           <div>
             <h2 className="text-base font-semibold text-white">Projectmarge overzicht</h2>

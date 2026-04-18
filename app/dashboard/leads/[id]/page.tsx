@@ -58,7 +58,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
       {/* Main — Thread */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
-        <div className="flex items-center gap-4 border-b bg-[#1A1F29] px-6 py-4">
+        <div className="flex items-center gap-4 border-b bg-foundri-deep px-6 py-4">
           <Link
             href="/dashboard/leads"
             className="flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200"
@@ -109,7 +109,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 <div
                   className={`max-w-[80%] rounded-xl px-4 py-2.5 text-sm ${
                     msg.direction === 'inbound'
-                      ? 'bg-[#282A2E] text-zinc-100'
+                      ? 'bg-foundri-card text-zinc-100'
                       : msg.channel === 'system'
                       ? 'bg-blue-500/10 text-blue-400 text-xs italic'
                       : 'bg-zinc-900 text-white'
@@ -130,7 +130,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
       </div>
 
       {/* Sidebar — Lead info */}
-      <aside className="w-80 flex-shrink-0 overflow-y-auto border-l bg-[#1A1F29]">
+      <aside className="w-80 flex-shrink-0 overflow-y-auto border-l bg-foundri-deep">
         <div className="p-5 space-y-5">
           {/* AI Samenvatting */}
           {lead.ai_summary && (

@@ -27,8 +27,8 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
   actief: 'bg-green-500/10 text-green-400',
   pauze: 'bg-yellow-500/10 text-yellow-400',
   opgeleverd: 'bg-purple-500/10 text-purple-400',
-  gefactureerd: 'bg-[#282A2E] text-zinc-200',
-  gearchiveerd: 'bg-[#282A2E] text-zinc-400',
+  gefactureerd: 'bg-foundri-card text-zinc-200',
+  gearchiveerd: 'bg-foundri-card text-zinc-400',
 }
 
 const TYPE_LABELS: Record<ProjectType, string> = {
@@ -120,7 +120,7 @@ export default function ProjectenPage() {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Projecten</h1>
+          <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Projecten</h1>
           <p className="text-sm text-zinc-400 mt-1">Je opdrachten en werkzaamheden</p>
         </div>
         <div className="flex items-center gap-2">

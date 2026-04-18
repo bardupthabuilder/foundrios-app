@@ -262,7 +262,7 @@ export default function ContentDetailPage() {
             <input
               value={item.title ?? ''}
               onChange={(e) => updateField('title', e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-4 py-3 text-2xl font-bold text-white placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+              className="w-full rounded-lg border border-white/10 bg-foundri-deep px-4 py-3 text-2xl font-bold text-white placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
               placeholder="Titel van dit content item..."
             />
 
@@ -273,7 +273,7 @@ export default function ContentDetailPage() {
                 <button
                   onClick={() => handleGenerateField('hook')}
                   disabled={generatingField === 'hook'}
-                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-foundri-card px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'hook' ? 'Bezig...' : 'AI'}
@@ -282,7 +282,7 @@ export default function ContentDetailPage() {
               <input
                 value={item.hook ?? ''}
                 onChange={(e) => updateField('hook', e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                 placeholder="Pakkende eerste zin die direct aandacht trekt..."
               />
             </div>
@@ -294,7 +294,7 @@ export default function ContentDetailPage() {
                 <button
                   onClick={() => handleGenerateField('body')}
                   disabled={generatingField === 'body'}
-                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-foundri-card px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'body' ? 'Bezig...' : 'AI'}
@@ -304,7 +304,7 @@ export default function ContentDetailPage() {
                 rows={6}
                 value={item.body ?? ''}
                 onChange={(e) => updateField('body', e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
+                className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
                 placeholder="De volledige tekst / caption voor dit content item..."
               />
             </div>
@@ -316,7 +316,7 @@ export default function ContentDetailPage() {
                 <button
                   onClick={() => handleGenerateField('cta')}
                   disabled={generatingField === 'cta'}
-                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-foundri-card px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'cta' ? 'Bezig...' : 'AI'}
@@ -325,7 +325,7 @@ export default function ContentDetailPage() {
               <input
                 value={item.cta ?? ''}
                 onChange={(e) => updateField('cta', e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                 placeholder="Reacteer, stuur een DM, klik de link in de bio..."
               />
             </div>
@@ -338,7 +338,7 @@ export default function ContentDetailPage() {
                   <button
                     onClick={() => handleGenerateField('script')}
                     disabled={generatingField === 'script'}
-                    className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-md bg-foundri-card px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                   >
                     <Bot className="h-3.5 w-3.5" />
                     {generatingField === 'script' ? 'Bezig...' : 'AI'}
@@ -348,7 +348,7 @@ export default function ContentDetailPage() {
                   rows={4}
                   value={item.script ?? ''}
                   onChange={(e) => updateField('script', e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
+                  className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
                   placeholder="Script voor de video of reel..."
                 />
               </div>
@@ -361,7 +361,7 @@ export default function ContentDetailPage() {
                 <button
                   onClick={() => handleGenerateField('visual_prompt')}
                   disabled={generatingField === 'visual_prompt'}
-                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-foundri-card px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'visual_prompt' ? 'Bezig...' : 'AI'}
@@ -371,7 +371,7 @@ export default function ContentDetailPage() {
                 rows={3}
                 value={item.visual_prompt ?? ''}
                 onChange={(e) => updateField('visual_prompt', e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
+                className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
                 placeholder="Beschrijf het beeld: hoek, licht, compositie, sfeer..."
               />
             </div>
@@ -390,7 +390,7 @@ export default function ContentDetailPage() {
                   <select
                     value={item.status ?? ''}
                     onChange={(e) => updateField('status', e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   >
                     <option value="">— Selecteer —</option>
                     {STATUSES.map((s) => (
@@ -403,7 +403,7 @@ export default function ContentDetailPage() {
                   <select
                     value={item.content_template ?? ''}
                     onChange={(e) => updateField('content_template', e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   >
                     <option value="">— Selecteer —</option>
                     {TEMPLATES.map((t) => (
@@ -416,7 +416,7 @@ export default function ContentDetailPage() {
                   <select
                     value={item.visual_type ?? ''}
                     onChange={(e) => updateField('visual_type', e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   >
                     <option value="">— Selecteer —</option>
                     {VISUAL_TYPES.map((v) => (
@@ -439,7 +439,7 @@ export default function ContentDetailPage() {
                     type="date"
                     value={item.scheduled_date ?? ''}
                     onChange={(e) => updateField('scheduled_date', e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   />
                 </div>
                 <div>
@@ -449,7 +449,7 @@ export default function ContentDetailPage() {
                     value={item.published_date ?? ''}
                     onChange={(e) => updateField('published_date', e.target.value)}
                     disabled={item.status !== 'gepubliceerd'}
-                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -458,7 +458,7 @@ export default function ContentDetailPage() {
                     type="text"
                     value={tagsInput}
                     onChange={(e) => setTagsInput(e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-foundri-deep px-3 py-2 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                     placeholder="tuin, voor-na, zomer"
                   />
                 </div>
@@ -513,7 +513,7 @@ export default function ContentDetailPage() {
                           {dist.status !== 'gepubliceerd' && (
                             <button
                               onClick={() => handleMarkPublished(dist.id)}
-                              className="rounded bg-[#282A2E] px-1.5 py-0.5 text-xs text-zinc-300 hover:bg-white/15"
+                              className="rounded bg-foundri-card px-1.5 py-0.5 text-xs text-zinc-300 hover:bg-white/15"
                             >
                               Markeer gepubliceerd
                             </button>
@@ -559,7 +559,7 @@ export default function ContentDetailPage() {
       </div>
 
       {/* Sticky bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-[#1A1F29] px-4 py-3 lg:left-64">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-foundri-deep px-4 py-3 lg:left-64">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <button
             onClick={handleGenerateAll}
@@ -596,7 +596,7 @@ export default function ContentDetailPage() {
           onClick={() => setShowDeleteConfirm(false)}
         >
           <div
-            className="w-full max-w-sm rounded-xl bg-[#1A1F29] p-6 shadow-xl"
+            className="w-full max-w-sm rounded-xl bg-foundri-deep p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-base font-semibold text-white mb-2">Content verwijderen?</h2>

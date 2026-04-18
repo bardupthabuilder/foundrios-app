@@ -71,7 +71,7 @@ export default function ProcessenPage() {
     <div className="mx-auto max-w-5xl space-y-8 p-6 lg:p-10">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Processen</h1>
+        <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Processen</h1>
         <p className="mt-1 text-sm text-zinc-400">
           Zo draait een vakbedrijf — stap voor stap.
         </p>
@@ -82,7 +82,7 @@ export default function ProcessenPage() {
         {PROCESSES.map((process) => (
           <div
             key={process.title}
-            className={`rounded-xl border border-white/5 bg-[#1A1F29] p-6`}
+            className={`rounded-xl border border-white/5 bg-foundri-deep p-6`}
           >
             <div className="mb-5">
               <h2 className={`text-lg font-bold ${process.color}`}>{process.title}</h2>
@@ -101,7 +101,7 @@ export default function ProcessenPage() {
                   <div
                     className={`relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${process.dotColor} mt-0.5`}
                   >
-                    <span className="text-[9px] font-bold text-[#0F1115]">{i + 1}</span>
+                    <span className="text-[9px] font-bold text-foundri-graphite">{i + 1}</span>
                   </div>
 
                   {/* Content */}

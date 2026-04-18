@@ -27,11 +27,11 @@ type Client = {
 }
 
 const projectStatusConfig: Record<string, { label: string; color: string }> = {
-  gepland: { label: 'Gepland', color: 'bg-[#282A2E] text-zinc-200' },
+  gepland: { label: 'Gepland', color: 'bg-foundri-card text-zinc-200' },
   actief: { label: 'Actief', color: 'bg-blue-500/10 text-blue-400' },
   opgeleverd: { label: 'Opgeleverd', color: 'bg-green-500/10 text-green-400' },
   gefactureerd: { label: 'Gefactureerd', color: 'bg-emerald-500/10 text-emerald-400' },
-  planning: { label: 'Planning', color: 'bg-[#282A2E] text-zinc-200' },
+  planning: { label: 'Planning', color: 'bg-foundri-card text-zinc-200' },
   active: { label: 'Actief', color: 'bg-blue-500/10 text-blue-400' },
   completed: { label: 'Afgerond', color: 'bg-green-500/10 text-green-400' },
 }
@@ -106,7 +106,7 @@ export default function ClientDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-[#282A2E] flex items-center justify-center text-zinc-300 text-lg font-bold">
+          <div className="h-12 w-12 rounded-full bg-foundri-card flex items-center justify-center text-zinc-300 text-lg font-bold">
             {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
           </div>
           <div>
@@ -231,7 +231,7 @@ export default function ClientDetailPage() {
             ) : (
               <div className="space-y-2">
                 {projects.map((project: Project) => {
-                  const sc = projectStatusConfig[project.status] || { label: project.status, color: 'bg-[#282A2E] text-zinc-200' }
+                  const sc = projectStatusConfig[project.status] || { label: project.status, color: 'bg-foundri-card text-zinc-200' }
                   return (
                     <div
                       key={project.id}

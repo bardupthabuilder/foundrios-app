@@ -185,11 +185,11 @@ export default function PlanningPage() {
           <div className="hidden lg:block overflow-x-auto">
             <div className="grid gap-px bg-white/10 rounded-lg overflow-hidden" style={{ gridTemplateColumns: '160px repeat(5, 1fr)' }}>
               {/* Header row */}
-              <div className="bg-[#111317] p-2 text-sm font-medium text-zinc-400" />
+              <div className="bg-foundri-surface p-2 text-sm font-medium text-zinc-400" />
               {weekDates.map((d, i) => (
                 <div
                   key={i}
-                  className={`bg-[#111317] p-2 text-center text-sm ${toDateStr(d) === todayStr ? 'bg-blue-500/10 font-bold' : ''}`}
+                  className={`bg-foundri-surface p-2 text-center text-sm ${toDateStr(d) === todayStr ? 'bg-blue-500/10 font-bold' : ''}`}
                 >
                   <div className="font-medium">{DAY_LABELS_SHORT[i]}</div>
                   <div className="text-xs text-zinc-400">
@@ -201,7 +201,7 @@ export default function PlanningPage() {
               {/* Employee rows */}
               {employees.map((emp) => (
                 <>
-                  <div key={`name-${emp.id}`} className="bg-[#1A1F29] p-2 flex items-start gap-2">
+                  <div key={`name-${emp.id}`} className="bg-foundri-deep p-2 flex items-start gap-2">
                     <div
                       className="h-6 w-6 rounded-full shrink-0 flex items-center justify-center text-white text-[10px] font-bold mt-0.5"
                       style={{ backgroundColor: emp.color }}
@@ -216,7 +216,7 @@ export default function PlanningPage() {
                     return (
                       <div
                         key={`${emp.id}-${dateStr}`}
-                        className={`bg-[#1A1F29] p-1 min-h-[60px] cursor-pointer hover:bg-white/5 transition-colors ${
+                        className={`bg-foundri-deep p-1 min-h-[60px] cursor-pointer hover:bg-white/5 transition-colors ${
                           dateStr === todayStr ? 'bg-blue-500/5' : ''
                         }`}
                         onClick={() => openDialog(dateStr, emp.id)}
@@ -224,7 +224,7 @@ export default function PlanningPage() {
                         {cellEntries.map((entry) => (
                           <div
                             key={entry.id}
-                            className="text-xs p-1.5 rounded mb-1 bg-[#282A2E] hover:bg-white/15 group relative"
+                            className="text-xs p-1.5 rounded mb-1 bg-foundri-card hover:bg-white/15 group relative"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <div className="font-medium truncate">{entry.projects?.name ?? '—'}</div>
@@ -270,7 +270,7 @@ export default function PlanningPage() {
                       <span>{dayHours}u / {capacity}u</span>
                       <span className={pct >= 90 ? 'text-green-400 font-medium' : pct >= 50 ? 'text-orange-500' : 'text-zinc-400'}>{pct}%</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-[#282A2E] overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-foundri-card overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${pct >= 90 ? 'bg-green-500' : pct >= 50 ? 'bg-orange-400' : 'bg-zinc-300'}`}
                         style={{ width: `${pct}%` }}

@@ -69,21 +69,11 @@ const navGroups = [
     ],
   },
   {
-    label: 'Content',
+    label: 'Overig',
     items: [
       { href: '/dashboard/content', label: 'Content', icon: Newspaper },
-    ],
-  },
-  {
-    label: 'Team',
-    items: [
       { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
-    ],
-  },
-  {
-    label: 'Inzichten',
-    items: [
-      { href: '/dashboard/inzichten', label: 'Intelligence', icon: Brain },
+      { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain },
     ],
   },
   {
@@ -182,7 +172,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile header */}
-      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 border-b border-white/5 bg-[#111317] px-4 lg:hidden">
+      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 border-b border-white/5 bg-foundri-surface px-4 lg:hidden">
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-zinc-300">
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -201,7 +191,7 @@ export function Sidebar() {
           onClick={() => setMobileOpen(false)}
         >
           <div
-            className="h-full w-64 bg-[#111317] flex flex-col"
+            className="h-full w-64 bg-foundri-surface flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {navContent}
@@ -210,7 +200,7 @@ export function Sidebar() {
       )}
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex h-screen w-60 shrink-0 flex-col border-r border-white/5 bg-[#111317]">
+      <aside className="hidden lg:flex h-screen w-60 shrink-0 flex-col border-r border-white/5 bg-foundri-surface">
         {navContent}
       </aside>
     </>

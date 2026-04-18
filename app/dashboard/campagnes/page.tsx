@@ -20,7 +20,7 @@ type Campaign = {
 }
 
 const TYPE_LABELS: Record<string, string> = { burenactie: 'Burenactie', seizoensactie: 'Seizoensactie', upsell: 'Upsell', referral: 'Referral', custom: 'Overig' }
-const STATUS_COLORS: Record<string, string> = { draft: 'bg-[#282A2E] text-zinc-300', active: 'bg-green-500/10 text-green-400', completed: 'bg-blue-500/10 text-blue-400', cancelled: 'bg-[#282A2E] text-zinc-400' }
+const STATUS_COLORS: Record<string, string> = { draft: 'bg-foundri-card text-zinc-300', active: 'bg-green-500/10 text-green-400', completed: 'bg-blue-500/10 text-blue-400', cancelled: 'bg-foundri-card text-zinc-400' }
 
 const DEFAULT_TEMPLATES: Record<string, string> = {
   burenactie: `Beste buurman/buurvrouw,
@@ -185,7 +185,7 @@ export default function CampagnesPage() {
       {/* New Campaign Dialog */}
       {showNew && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNew(false)}>
-          <div className="w-full max-w-lg rounded-xl bg-[#1A1F29] p-6 shadow-xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-lg rounded-xl bg-foundri-deep p-6 shadow-xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Nieuwe campagne</h2>
             <form onSubmit={createCampaign} className="space-y-3">
               <div>

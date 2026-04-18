@@ -32,11 +32,11 @@ type Invoice = {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Concept', color: 'bg-[#282A2E] text-zinc-200' },
+  draft: { label: 'Concept', color: 'bg-foundri-card text-zinc-200' },
   sent: { label: 'Verstuurd', color: 'bg-blue-500/10 text-blue-400' },
   paid: { label: 'Betaald', color: 'bg-green-500/10 text-green-400' },
   overdue: { label: 'Verlopen', color: 'bg-red-500/10 text-red-400' },
-  cancelled: { label: 'Geannuleerd', color: 'bg-[#282A2E] text-zinc-400' },
+  cancelled: { label: 'Geannuleerd', color: 'bg-foundri-card text-zinc-400' },
 }
 
 const statusActions: Record<string, { label: string; next: string; icon: any; color: string }[]> = {
@@ -147,19 +147,19 @@ export default function InvoiceDetailPage() {
 
       {/* Timeline */}
       <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="rounded-lg bg-[#111317] p-3">
+        <div className="rounded-lg bg-foundri-surface p-3">
           <div className="text-xs text-zinc-400">Aangemaakt</div>
           <div className="text-sm">{new Date(invoice.created_at).toLocaleDateString('nl-NL')}</div>
         </div>
-        <div className="rounded-lg bg-[#111317] p-3">
+        <div className="rounded-lg bg-foundri-surface p-3">
           <div className="text-xs text-zinc-400">Factuurdatum</div>
           <div className="text-sm">{invoice.issue_date ? new Date(invoice.issue_date).toLocaleDateString('nl-NL') : '—'}</div>
         </div>
-        <div className="rounded-lg bg-[#111317] p-3">
+        <div className="rounded-lg bg-foundri-surface p-3">
           <div className="text-xs text-zinc-400">Vervaldatum</div>
           <div className="text-sm">{invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('nl-NL') : '—'}</div>
         </div>
-        <div className="rounded-lg bg-[#111317] p-3">
+        <div className="rounded-lg bg-foundri-surface p-3">
           <div className="text-xs text-zinc-400">Betaald op</div>
           <div className="text-sm">{invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString('nl-NL') : '—'}</div>
         </div>

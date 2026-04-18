@@ -23,8 +23,8 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
   actief: 'bg-green-500/10 text-green-400',
   pauze: 'bg-yellow-500/10 text-yellow-400',
   opgeleverd: 'bg-purple-500/10 text-purple-400',
-  gefactureerd: 'bg-[#282A2E] text-zinc-200',
-  gearchiveerd: 'bg-[#282A2E] text-zinc-400',
+  gefactureerd: 'bg-foundri-card text-zinc-200',
+  gearchiveerd: 'bg-foundri-card text-zinc-400',
 }
 
 type TabKey = 'overzicht' | 'uren' | 'materiaal' | 'planning' | 'nacalculatie'
@@ -295,7 +295,7 @@ export default function ProjectDetailPage() {
 
           {/* Retentie */}
           {(project.status === 'opgeleverd' || project.status === 'gefactureerd') && (
-            <div className="rounded-lg border border-white/5 bg-[#1A1F29] p-5 space-y-4 sm:col-span-2">
+            <div className="rounded-lg border border-white/5 bg-foundri-deep p-5 space-y-4 sm:col-span-2">
               <h3 className="text-sm font-semibold text-white">Na oplevering</h3>
               <div className="space-y-3">
                 {/* Opleverdatum */}
@@ -518,7 +518,7 @@ export default function ProjectDetailPage() {
                         <span className="text-zinc-400">Besteed</span>
                         <span className="font-medium">{formatCents(nacalculatie.summary.total_cost_cents)}</span>
                       </div>
-                      <div className="w-full bg-[#282A2E] rounded-full h-3">
+                      <div className="w-full bg-foundri-card rounded-full h-3">
                         <div
                           className={`h-3 rounded-full transition-all ${nacalculatie.summary.remaining_cents < 0 ? 'bg-red-500' : nacalculatie.summary.margin_pct < 20 ? 'bg-yellow-500' : 'bg-green-500'}`}
                           style={{ width: `${Math.min(100, Math.round((nacalculatie.summary.total_cost_cents / nacalculatie.summary.budget_cents) * 100))}%` }}

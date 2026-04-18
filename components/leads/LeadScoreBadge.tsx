@@ -9,7 +9,7 @@ interface LeadScoreBadgeProps {
 const labelConfig: Record<LeadLabel, { label: string; className: string }> = {
   hot: { label: 'Hot', className: 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/10' },
   warm: { label: 'Warm', className: 'bg-orange-500/10 text-orange-400 border-orange-500/30 hover:bg-orange-500/10' },
-  cold: { label: 'Cold', className: 'bg-[#282A2E] text-zinc-300 border-white/10 hover:bg-white/10' },
+  cold: { label: 'Cold', className: 'bg-foundri-card text-zinc-300 border-white/10 hover:bg-white/10' },
 }
 
 export function LeadScoreBadge({ label, score }: LeadScoreBadgeProps) {
