@@ -1,11 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Inbox, TrendingUp, Clock, Star, FolderOpen, CalendarDays, Users, Euro, Receipt, FileText, AlertTriangle } from 'lucide-react'
+import { Inbox, TrendingUp, Star, FolderOpen, CalendarDays, Euro, Receipt, FileText, AlertTriangle, ArrowRight, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { DemoSeedBanner } from '@/components/DemoSeedBanner'
-import { AlertsBanner } from '@/components/AlertsBanner'
 import { formatDistanceToNow } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -115,14 +114,18 @@ export default async function DashboardPage() {
 
   const fmtEur = (cents: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(cents / 100)
 
-  // Hot leads die actie nodig hebben
-  const hotLeadsList = recentLeads.filter((l) => l.ai_label === 'hot' && l.status !== 'won' && l.status !== 'lost')
+  // Action items
+  const newLeadsCount = leadsResult.data?.filter((l) => l.status === 'new').length ?? 0
+  const staleQuotesCount = (pipelineQuotesResult.data ?? []).filter((q) => q.status === 'verstuurd').length
+  const overdueInvoicesCount = overdueInvoices.length
+
+  const hasActions = newLeadsCount > 0 || staleQuotesCount > 0 || overdueInvoicesCount > 0
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-white font-[family-name:var(--font-display)]">Command Center</h1>
           <p className="text-sm text-zinc-400">Overzicht van je bedrijf</p>
         </div>
         <div className="flex gap-2">
@@ -133,7 +136,52 @@ export default async function DashboardPage() {
 
       {isEmpty && <DemoSeedBanner />}
 
-      {/* KPI Cards */}
+      {/* Section 1: Action Items */}
+      <section className="mb-8">
+        {hasActions ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {newLeadsCount > 0 && (
+              <Link href="/dashboard/leads?label=hot" className="flex items-center gap-3 rounded-lg border border-foundri-yellow/20 bg-foundri-yellow/5 p-4 transition-colors hover:bg-foundri-yellow/10">
+                <Inbox className="h-5 w-5 text-foundri-yellow" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">{newLeadsCount} nieuwe leads</p>
+                  <p className="text-xs text-zinc-400">Wachten op reactie</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-zinc-400" />
+              </Link>
+            )}
+            {staleQuotesCount > 0 && (
+              <Link href="/dashboard/offertes?status=verstuurd" className="flex items-center gap-3 rounded-lg border border-purple-500/20 bg-purple-500/5 p-4 transition-colors hover:bg-purple-500/10">
+                <FileText className="h-5 w-5 text-purple-400" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">{staleQuotesCount} offertes verstuurd</p>
+                  <p className="text-xs text-zinc-400">Wacht op reactie</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-zinc-400" />
+              </Link>
+            )}
+            {overdueInvoicesCount > 0 && (
+              <Link href="/dashboard/facturen?status=overdue" className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4 transition-colors hover:bg-red-500/10">
+                <AlertTriangle className="h-5 w-5 text-red-400" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">{overdueInvoicesCount} facturen verlopen</p>
+                  <p className="text-xs text-zinc-400">Directe actie vereist</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-zinc-400" />
+              </Link>
+            )}
+          </div>
+        ) : (
+          !isEmpty && (
+            <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/5 p-4">
+              <CheckCircle2 className="h-5 w-5 text-green-400" />
+              <p className="text-sm text-green-400">Alles bijgewerkt — geen openstaande acties</p>
+            </div>
+          )
+        )}
+      </section>
+
+      {/* Section 2: KPI Cards */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {kpis.map((kpi) => {
           const Icon = kpi.icon
@@ -153,7 +201,7 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      {/* Financieel overzicht */}
+      {/* Section 3: Financial KPIs */}
       {!isEmpty && (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 mt-4">
           <Card>
@@ -189,42 +237,14 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* Alerts */}
-      {!isEmpty && <AlertsBanner />}
-
-      {/* Actie-banner voor hot leads */}
-      {hotLeadsList.length > 0 && (
-        <div className="mt-4 rounded-xl border border-orange-500/30 bg-orange-500/10 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/10">
-                <Star className="h-4 w-4 text-orange-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-orange-300">
-                  {hotLeadsList.length} hot lead{hotLeadsList.length > 1 ? 's' : ''} wacht{hotLeadsList.length === 1 ? '' : 'en'} op actie
-                </p>
-                <p className="text-xs text-orange-400">
-                  {hotLeadsList.map(l => l.name).join(', ')}
-                </p>
-              </div>
-            </div>
-            <Link href="/dashboard/leads?label=hot">
-              <Button size="sm" variant="outline" className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10">
-                Bekijk
-              </Button>
-            </Link>
-          </div>
-        </div>
-      )}
-
+      {/* Section 4: Today — Planning + Recent Leads */}
       <div className="grid sm:grid-cols-2 gap-4 mt-6">
-        {/* Vandaag geplande projecten */}
+        {/* Planning vandaag */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-zinc-400" />
-              Vandaag ingepland ({todayEmployees} medewerkers)
+              Planning vandaag ({todayEmployees} medewerkers)
             </CardTitle>
           </CardHeader>
           <CardContent>

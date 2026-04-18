@@ -50,6 +50,8 @@ export async function PATCH(request: NextRequest) {
     'social_google_business', 'social_tiktok',
     'premium_tagline', 'premium_guarantees', 'premium_usp',
     'google_review_count', 'google_review_score',
+    'project_types', 'min_project_value', 'work_days', 'work_hours_start', 'work_hours_end',
+    'tone_of_voice', 'ideal_customer', 'seasonal_notes', 'maintenance_frequencies',
   ]
 
   const updates: Record<string, unknown> = {}

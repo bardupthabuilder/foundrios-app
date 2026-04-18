@@ -38,8 +38,9 @@ const navGroups = [
   {
     label: 'Acquisitie',
     items: [
-      { href: '/dashboard/leads', label: 'Leads', icon: Inbox },
+      { href: '/dashboard/leads', label: 'Lead Inbox', icon: Inbox },
       { href: '/dashboard/klanten', label: 'Klanten', icon: Users },
+      { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
     ],
   },
   {
@@ -49,19 +50,7 @@ const navGroups = [
       { href: '/dashboard/planning', label: 'Planning', icon: CalendarDays },
       { href: '/dashboard/uren', label: 'Uren', icon: Clock },
       { href: '/dashboard/werkbonnen', label: 'Werkbonnen', icon: ClipboardList },
-    ],
-  },
-  {
-    label: 'Groei',
-    items: [
       { href: '/dashboard/onderhoud', label: 'Onderhoud', icon: CalendarCheck },
-      { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
-    ],
-  },
-  {
-    label: 'Content',
-    items: [
-      { href: '/dashboard/content', label: 'Content', icon: Newspaper },
     ],
   },
   {
@@ -69,6 +58,12 @@ const navGroups = [
     items: [
       { href: '/dashboard/offertes', label: 'Offertes', icon: FileText },
       { href: '/dashboard/facturen', label: 'Facturen', icon: Receipt },
+    ],
+  },
+  {
+    label: 'Content',
+    items: [
+      { href: '/dashboard/content', label: 'Content', icon: Newspaper },
     ],
   },
   {

@@ -59,6 +59,11 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
     social_facebook: (tenant?.social_facebook as string) || '',
     social_google_business: (tenant?.social_google_business as string) || '',
     social_tiktok: (tenant?.social_tiktok as string) || '',
+    project_types: ((tenant?.project_types as string[]) || []).join(', '),
+    min_project_value: (tenant?.min_project_value as string) || '',
+    tone_of_voice: (tenant?.tone_of_voice as string) || '',
+    ideal_customer: (tenant?.ideal_customer as string) || '',
+    seasonal_notes: (tenant?.seasonal_notes as string) || '',
     premium_tagline: (tenant?.premium_tagline as string) || '',
     premium_guarantees: ((tenant?.premium_guarantees as string[]) || []).join('\n'),
     premium_usp: ((tenant?.premium_usp as string[]) || []).join('\n'),
@@ -81,6 +86,9 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
       ...form,
       services: form.services
         ? form.services.split(',').map((s) => s.trim()).filter(Boolean)
+        : [],
+      project_types: form.project_types
+        ? form.project_types.split(',').map((s) => s.trim()).filter(Boolean)
         : [],
       team_size: form.team_size ? parseInt(form.team_size) : null,
       premium_guarantees: form.premium_guarantees
@@ -255,6 +263,69 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
                 onChange={(e) => update('email', e.target.value)}
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Context Layer */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Bedrijfscontext</CardTitle>
+          <CardDescription>
+            Hoe beter het systeem je bedrijf kent, hoe slimmer de AI en aanbevelingen worden.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="project_types">Projecttypes</Label>
+              <Input
+                id="project_types"
+                placeholder="tuinaanleg, renovatie, onderhoud, bestrating"
+                value={form.project_types}
+                onChange={(e) => update('project_types', e.target.value)}
+              />
+              <p className="text-xs text-zinc-400">Kommagescheiden</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="min_project_value">Minimale projectwaarde</Label>
+              <Input
+                id="min_project_value"
+                placeholder="bijv. €2.500"
+                value={form.min_project_value}
+                onChange={(e) => update('min_project_value', e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="ideal_customer">Ideale klant</Label>
+            <Textarea
+              id="ideal_customer"
+              placeholder="Beschrijf je ideale klant — type woning, budget, regio, houding"
+              value={form.ideal_customer}
+              onChange={(e) => update('ideal_customer', e.target.value)}
+              rows={2}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="tone_of_voice">Tone of voice</Label>
+            <Input
+              id="tone_of_voice"
+              placeholder="bijv. nuchter, vakkundig, persoonlijk"
+              value={form.tone_of_voice}
+              onChange={(e) => update('tone_of_voice', e.target.value)}
+            />
+            <p className="text-xs text-zinc-400">Wordt gebruikt voor AI-gegenereerde content en berichten</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="seasonal_notes">Seizoenslogica</Label>
+            <Textarea
+              id="seasonal_notes"
+              placeholder="bijv. Druk mrt-okt, rustig nov-feb. Onderhoud hele jaar. Bestrating vooral voorjaar."
+              value={form.seasonal_notes}
+              onChange={(e) => update('seasonal_notes', e.target.value)}
+              rows={2}
+            />
           </div>
         </CardContent>
       </Card>

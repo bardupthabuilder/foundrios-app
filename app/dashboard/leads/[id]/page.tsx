@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Phone, MessageCircle, Mail, FileText } from 'lucide-react'
+import { ReplyBox } from '@/components/leads/ReplyBox'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -67,7 +68,28 @@ export default async function LeadDetailPage({ params }: PageProps) {
           <Separator orientation="vertical" className="h-5" />
           <h1 className="text-lg font-semibold text-white">{lead.name}</h1>
           <LeadSourceIcon source={lead.source as Parameters<typeof LeadSourceIcon>[0]['source']} showLabel />
-          <div className="ml-auto flex items-center gap-3">
+          {/* Quick actions */}
+          <div className="ml-auto flex items-center gap-2">
+            {lead.phone && (
+              <a href={`tel:${lead.phone}`} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-zinc-400 transition-colors hover:bg-white/5 hover:text-white" title="Bellen">
+                <Phone className="h-3.5 w-3.5" />
+              </a>
+            )}
+            {lead.phone && (
+              <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener" className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-zinc-400 transition-colors hover:bg-white/5 hover:text-white" title="WhatsApp">
+                <MessageCircle className="h-3.5 w-3.5" />
+              </a>
+            )}
+            {lead.email && (
+              <a href={`mailto:${lead.email}`} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-zinc-400 transition-colors hover:bg-white/5 hover:text-white" title="E-mail">
+                <Mail className="h-3.5 w-3.5" />
+              </a>
+            )}
+            <Link href={`/dashboard/offertes?lead=${lead.id}`} className="flex h-8 items-center gap-1.5 rounded-lg border border-white/10 px-2.5 text-xs text-zinc-400 transition-colors hover:bg-white/5 hover:text-white" title="Offerte maken">
+              <FileText className="h-3.5 w-3.5" />
+              Offerte
+            </Link>
+            <div className="mx-1 h-5 w-px bg-white/10" />
             <LeadScoreBadge label={lead.ai_label as Parameters<typeof LeadScoreBadge>[0]['label']} score={lead.ai_score} />
             <LeadStatusSelect leadId={lead.id} currentStatus={lead.status as Parameters<typeof LeadStatusSelect>[0]['currentStatus']} />
           </div>
@@ -101,6 +123,9 @@ export default async function LeadDetailPage({ params }: PageProps) {
             ))
           )}
         </div>
+
+        {/* Reply box */}
+        <ReplyBox leadId={lead.id} />
       </div>
 
       {/* Sidebar — Lead info */}
