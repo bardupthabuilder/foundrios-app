@@ -12,7 +12,13 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { tenantId } = await requireTenant()
+  let tenantId: string
+  try {
+    const t = await requireTenant()
+    tenantId = t.tenantId
+  } catch {
+    return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
+  }
   const { id: leadId } = await params
 
   const body = await request.json()
