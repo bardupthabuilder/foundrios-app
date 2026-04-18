@@ -29,6 +29,7 @@ import {
   Zap,
   ListChecks,
   Brain,
+  Plug,
 } from 'lucide-react'
 import { NotificationBell } from '@/components/NotificationBell'
 import { createClient } from '@/lib/supabase/client'
@@ -80,6 +81,7 @@ const navGroups = [
   {
     label: 'Systeem',
     items: [
+      { href: '/dashboard/integraties', label: 'Integraties', icon: Plug },
       { href: '/dashboard/automations', label: 'Automatisering', icon: Zap },
       { href: '/dashboard/processen', label: 'Processen', icon: ListChecks },
       { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
