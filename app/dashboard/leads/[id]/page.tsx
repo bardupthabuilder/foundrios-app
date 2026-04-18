@@ -56,16 +56,16 @@ export default async function LeadDetailPage({ params }: PageProps) {
       {/* Main — Thread */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
-        <div className="flex items-center gap-4 border-b bg-white px-6 py-4">
+        <div className="flex items-center gap-4 border-b bg-[#1A1F29] px-6 py-4">
           <Link
             href="/dashboard/leads"
-            className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700"
+            className="flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200"
           >
             <ChevronLeft className="h-4 w-4" />
             Terug
           </Link>
           <Separator orientation="vertical" className="h-5" />
-          <h1 className="text-lg font-semibold text-zinc-900">{lead.name}</h1>
+          <h1 className="text-lg font-semibold text-white">{lead.name}</h1>
           <LeadSourceIcon source={lead.source as Parameters<typeof LeadSourceIcon>[0]['source']} showLabel />
           <div className="ml-auto flex items-center gap-3">
             <LeadScoreBadge label={lead.ai_label as Parameters<typeof LeadScoreBadge>[0]['label']} score={lead.ai_score} />
@@ -86,9 +86,9 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 <div
                   className={`max-w-[80%] rounded-xl px-4 py-2.5 text-sm ${
                     msg.direction === 'inbound'
-                      ? 'bg-zinc-100 text-zinc-800'
+                      ? 'bg-[#282A2E] text-zinc-100'
                       : msg.channel === 'system'
-                      ? 'bg-blue-50 text-blue-700 text-xs italic'
+                      ? 'bg-blue-500/10 text-blue-400 text-xs italic'
                       : 'bg-zinc-900 text-white'
                   }`}
                 >
@@ -104,7 +104,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
       </div>
 
       {/* Sidebar — Lead info */}
-      <aside className="w-80 flex-shrink-0 overflow-y-auto border-l bg-white">
+      <aside className="w-80 flex-shrink-0 overflow-y-auto border-l bg-[#1A1F29]">
         <div className="p-5 space-y-5">
           {/* AI Samenvatting */}
           {lead.ai_summary && (
@@ -113,7 +113,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 <CardTitle className="text-sm">AI Samenvatting</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-zinc-600">{lead.ai_summary}</p>
+                <p className="text-sm text-zinc-300">{lead.ai_summary}</p>
               </CardContent>
             </Card>
           )}
@@ -126,11 +126,11 @@ export default async function LeadDetailPage({ params }: PageProps) {
             <div className="space-y-2">
               {lead.urgency && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-500">Urgentie</span>
+                  <span className="text-zinc-400">Urgentie</span>
                   <Badge variant="outline" className={
-                    lead.urgency === 'high' ? 'border-red-200 text-red-600' :
-                    lead.urgency === 'medium' ? 'border-orange-200 text-orange-600' :
-                    'border-zinc-200 text-zinc-500'
+                    lead.urgency === 'high' ? 'border-red-500/30 text-red-400' :
+                    lead.urgency === 'medium' ? 'border-orange-500/30 text-orange-400' :
+                    'border-white/10 text-zinc-400'
                   }>
                     {urgencyLabels[lead.urgency as keyof typeof urgencyLabels]}
                   </Badge>
@@ -138,14 +138,14 @@ export default async function LeadDetailPage({ params }: PageProps) {
               )}
               {lead.budget_estimate && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-500">Budget</span>
-                  <span className="font-medium text-zinc-700">{lead.budget_estimate}</span>
+                  <span className="text-zinc-400">Budget</span>
+                  <span className="font-medium text-zinc-200">{lead.budget_estimate}</span>
                 </div>
               )}
               {lead.intent && (
                 <div className="flex flex-col gap-1 text-sm">
-                  <span className="text-zinc-500">Intent</span>
-                  <span className="text-zinc-700">{lead.intent}</span>
+                  <span className="text-zinc-400">Intent</span>
+                  <span className="text-zinc-200">{lead.intent}</span>
                 </div>
               )}
             </div>
@@ -161,23 +161,23 @@ export default async function LeadDetailPage({ params }: PageProps) {
             <div className="space-y-2 text-sm">
               {lead.email && (
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-500">E-mail</span>
-                  <a href={`mailto:${lead.email}`} className="text-blue-600 hover:underline truncate ml-2">
+                  <span className="text-zinc-400">E-mail</span>
+                  <a href={`mailto:${lead.email}`} className="text-blue-400 hover:underline truncate ml-2">
                     {lead.email}
                   </a>
                 </div>
               )}
               {lead.phone && (
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-500">Telefoon</span>
-                  <a href={`tel:${lead.phone}`} className="text-zinc-700 hover:underline">
+                  <span className="text-zinc-400">Telefoon</span>
+                  <a href={`tel:${lead.phone}`} className="text-zinc-200 hover:underline">
                     {lead.phone}
                   </a>
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Binnengehaald</span>
-                <span className="text-zinc-700">
+                <span className="text-zinc-400">Binnengehaald</span>
+                <span className="text-zinc-200">
                   {format(new Date(lead.created_at), 'd MMM yyyy', { locale: nl })}
                 </span>
               </div>
@@ -204,8 +204,8 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 {events.slice(0, 5).map((event) => {
                   const payload = event.payload as { from?: string; to?: string; score?: number; label?: string } | null
                   return (
-                    <div key={event.id} className="text-xs text-zinc-500">
-                      <span className="font-medium text-zinc-700">
+                    <div key={event.id} className="text-xs text-zinc-400">
+                      <span className="font-medium text-zinc-200">
                         {event.event_type === 'status_changed' &&
                           `Status: ${payload?.from} → ${payload?.to}`}
                         {event.event_type === 'ai_scored' &&

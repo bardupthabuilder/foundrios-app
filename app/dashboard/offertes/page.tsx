@@ -19,11 +19,11 @@ type Quote = {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  concept: { label: 'Concept', color: 'bg-zinc-100 text-zinc-700' },
-  verstuurd: { label: 'Verstuurd', color: 'bg-blue-100 text-blue-700' },
-  akkoord: { label: 'Akkoord', color: 'bg-green-100 text-green-700' },
-  afgewezen: { label: 'Afgewezen', color: 'bg-red-100 text-red-700' },
-  verlopen: { label: 'Verlopen', color: 'bg-amber-100 text-amber-700' },
+  concept: { label: 'Concept', color: 'bg-[#282A2E] text-zinc-200' },
+  verstuurd: { label: 'Verstuurd', color: 'bg-blue-500/10 text-blue-400' },
+  akkoord: { label: 'Akkoord', color: 'bg-green-500/10 text-green-400' },
+  afgewezen: { label: 'Afgewezen', color: 'bg-red-500/10 text-red-400' },
+  verlopen: { label: 'Verlopen', color: 'bg-amber-100 text-amber-400' },
 }
 
 const tabs = [
@@ -99,8 +99,8 @@ export default function OffertesPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Offertes</h1>
-          <p className="text-sm text-zinc-500">{filtered.length} offertes · {fmt(totalExcl)} totaal · {fmt(totalAkkoord)} akkoord</p>
+          <h1 className="text-2xl font-bold text-white">Offertes</h1>
+          <p className="text-sm text-zinc-400">{filtered.length} offertes · {fmt(totalExcl)} totaal · {fmt(totalAkkoord)} akkoord</p>
         </div>
         <button
           onClick={() => setShowNew(true)}
@@ -126,7 +126,7 @@ export default function OffertesPage() {
             <button
               key={t.key}
               onClick={() => setFilter(t.key)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium ${filter === t.key ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium ${filter === t.key ? 'bg-zinc-900 text-white' : 'bg-[#282A2E] text-zinc-300 hover:bg-white/15'}`}
             >
               {t.label}
             </button>
@@ -140,7 +140,7 @@ export default function OffertesPage() {
       ) : filtered.length === 0 ? (
         <div className="py-12 text-center">
           <FileText className="mx-auto h-8 w-8 text-zinc-300" />
-          <p className="mt-2 text-sm text-zinc-500">Nog geen offertes</p>
+          <p className="mt-2 text-sm text-zinc-400">Nog geen offertes</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -150,14 +150,14 @@ export default function OffertesPage() {
               <div
                 key={q.id}
                 onClick={() => router.push(`/dashboard/offertes/${q.id}`)}
-                className="flex cursor-pointer items-center gap-4 rounded-lg border p-4 hover:bg-zinc-50 transition-colors"
+                className="flex cursor-pointer items-center gap-4 rounded-lg border p-4 hover:bg-white/5 transition-colors"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-zinc-900 truncate">{q.title}</span>
+                    <span className="font-medium text-white truncate">{q.title}</span>
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${sc.color}`}>{sc.label}</span>
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-400">
                     {q.quote_number && <span>{q.quote_number}</span>}
                     {q.clients && <span>{q.clients.company_name || q.clients.name}</span>}
                     {q.projects && <span>{q.projects.name}</span>}
@@ -165,7 +165,7 @@ export default function OffertesPage() {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-sm font-semibold text-zinc-900">{fmt(q.amount_excl_vat)}</div>
+                  <div className="text-sm font-semibold text-white">{fmt(q.amount_excl_vat)}</div>
                   <div className="text-xs text-zinc-400">excl. BTW</div>
                 </div>
               </div>
@@ -177,23 +177,23 @@ export default function OffertesPage() {
       {/* New Quote Dialog */}
       {showNew && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNew(false)}>
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Nieuwe offerte</h2>
             <form onSubmit={createQuote} className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-600">Titel *</label>
+                <label className="text-xs font-medium text-zinc-300">Titel *</label>
                 <input required value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Tuinaanleg fam. Janssen" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Klant</label>
+                  <label className="text-xs font-medium text-zinc-300">Klant</label>
                   <select value={form.client_id} onChange={e => setForm({ ...form, client_id: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
                     <option value="">Selecteer...</option>
                     {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Project</label>
+                  <label className="text-xs font-medium text-zinc-300">Project</label>
                   <select value={form.project_id} onChange={e => setForm({ ...form, project_id: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
                     <option value="">Selecteer...</option>
                     {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -202,16 +202,16 @@ export default function OffertesPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Bedrag excl. BTW (€)</label>
+                  <label className="text-xs font-medium text-zinc-300">Bedrag excl. BTW (€)</label>
                   <input type="number" step="0.01" min="0" value={form.amount_excl_vat} onChange={e => setForm({ ...form, amount_excl_vat: parseFloat(e.target.value) || 0 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Geldig tot</label>
+                  <label className="text-xs font-medium text-zinc-300">Geldig tot</label>
                   <input type="date" value={form.valid_until} onChange={e => setForm({ ...form, valid_until: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowNew(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100">Annuleren</button>
+                <button type="button" onClick={() => setShowNew(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
                 <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">Aanmaken</button>
               </div>
             </form>

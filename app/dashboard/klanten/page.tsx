@@ -62,7 +62,7 @@ export default function KlantenPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Klanten</h1>
-          <p className="text-sm text-zinc-500 mt-1">Je opdrachtgevers en contacten</p>
+          <p className="text-sm text-zinc-400 mt-1">Je opdrachtgevers en contacten</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -119,20 +119,20 @@ export default function KlantenPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <Users className="h-10 w-10 mx-auto text-zinc-300 mb-3" />
-            <p className="text-zinc-500">Nog geen klanten. Voeg je eerste klant toe of converteer een lead.</p>
+            <p className="text-zinc-400">Nog geen klanten. Voeg je eerste klant toe of converteer een lead.</p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-3">
           {clients.map((client) => (
-            <Card key={client.id} className="cursor-pointer hover:bg-zinc-50 transition-colors" onClick={() => router.push(`/dashboard/klanten/${client.id}`)}>
+            <Card key={client.id} className="cursor-pointer hover:bg-white/5 transition-colors" onClick={() => router.push(`/dashboard/klanten/${client.id}`)}>
               <CardContent className="flex items-center gap-4 py-4">
-                <div className="h-10 w-10 rounded-full bg-zinc-100 shrink-0 flex items-center justify-center text-zinc-600 text-sm font-bold">
+                <div className="h-10 w-10 rounded-full bg-[#282A2E] shrink-0 flex items-center justify-center text-zinc-300 text-sm font-bold">
                   {client.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium">{client.name}</div>
-                  {client.contact_name && <div className="text-sm text-zinc-500">{client.contact_name}</div>}
+                  {client.contact_name && <div className="text-sm text-zinc-400">{client.contact_name}</div>}
                   <div className="flex items-center gap-3 text-sm text-zinc-400 mt-0.5">
                     {client.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{client.phone}</span>}
                     {client.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{client.city}</span>}

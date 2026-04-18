@@ -115,7 +115,7 @@ export default function TeamPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Medewerkers</h1>
-          <p className="text-sm text-zinc-500 mt-1">Beheer je team en monteurs</p>
+          <p className="text-sm text-zinc-400 mt-1">Beheer je team en monteurs</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -178,7 +178,7 @@ export default function TeamPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <HardHat className="h-10 w-10 mx-auto text-zinc-300 mb-3" />
-            <p className="text-zinc-500">Nog geen medewerkers. Voeg je eerste teamlid toe.</p>
+            <p className="text-zinc-400">Nog geen medewerkers. Voeg je eerste teamlid toe.</p>
           </CardContent>
         </Card>
       ) : (
@@ -191,7 +191,7 @@ export default function TeamPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium">{emp.name}</div>
-                  <div className="flex items-center gap-3 text-sm text-zinc-500 mt-0.5">
+                  <div className="flex items-center gap-3 text-sm text-zinc-400 mt-0.5">
                     <Badge variant="secondary" className="text-xs">{ROLE_LABELS[emp.role] ?? emp.role}</Badge>
                     {emp.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{emp.phone}</span>}
                     {emp.email && <span className="hidden sm:flex items-center gap-1"><Mail className="h-3 w-3" />{emp.email}</span>}
@@ -201,7 +201,7 @@ export default function TeamPage() {
                   <Button variant="ghost" size="sm" onClick={() => openEdit(emp)}>
                     <Pencil className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-red-600" onClick={() => handleDeactivate(emp.id)}>
+                  <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-red-400" onClick={() => handleDeactivate(emp.id)}>
                     Deactiveren
                   </Button>
                 </div>

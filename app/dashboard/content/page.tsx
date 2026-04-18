@@ -47,12 +47,12 @@ type ContentItem = {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const STATUSES = [
-  { key: 'ideeen', label: 'Ideeën', color: 'bg-purple-100 text-purple-700' },
-  { key: 'te_maken', label: 'Te maken', color: 'bg-blue-100 text-blue-700' },
-  { key: 'in_productie', label: 'In productie', color: 'bg-yellow-100 text-yellow-700' },
-  { key: 'klaar', label: 'Klaar', color: 'bg-green-100 text-green-700' },
-  { key: 'gepubliceerd', label: 'Gepubliceerd', color: 'bg-zinc-100 text-zinc-700' },
-  { key: 'herbruikbaar', label: 'Herbruikbaar', color: 'bg-emerald-100 text-emerald-700' },
+  { key: 'ideeen', label: 'Ideeën', color: 'bg-purple-500/10 text-purple-400' },
+  { key: 'te_maken', label: 'Te maken', color: 'bg-blue-500/10 text-blue-400' },
+  { key: 'in_productie', label: 'In productie', color: 'bg-yellow-500/10 text-yellow-400' },
+  { key: 'klaar', label: 'Klaar', color: 'bg-green-500/10 text-green-400' },
+  { key: 'gepubliceerd', label: 'Gepubliceerd', color: 'bg-[#282A2E] text-zinc-200' },
+  { key: 'herbruikbaar', label: 'Herbruikbaar', color: 'bg-emerald-500/10 text-emerald-400' },
 ]
 
 const TEMPLATES = [
@@ -120,12 +120,12 @@ function KanbanCard({ item, onClick }: { item: ContentItem; onClick: () => void 
       style={style}
       {...listeners}
       {...attributes}
-      className={`group rounded-lg border bg-white p-3 shadow-sm cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md ${
+      className={`group rounded-lg border bg-[#1A1F29] p-3 shadow-sm cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md ${
         isDragging ? 'opacity-40 shadow-lg' : ''
       }`}
     >
       <p
-        className="text-sm font-medium text-zinc-900 leading-snug mb-2 cursor-pointer hover:underline"
+        className="text-sm font-medium text-white leading-snug mb-2 cursor-pointer hover:underline"
         onPointerDown={(e) => e.stopPropagation()}
         onClick={onClick}
       >
@@ -134,12 +134,12 @@ function KanbanCard({ item, onClick }: { item: ContentItem; onClick: () => void 
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 flex-wrap">
           {item.content_template && (
-            <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-600">
+            <span className="rounded-full bg-[#282A2E] px-2 py-0.5 text-[10px] font-medium text-zinc-300">
               {getTemplateLabel(item.content_template)}
             </span>
           )}
           {item.ai_generated && (
-            <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-medium text-violet-600">
+            <span className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-400">
               AI
             </span>
           )}
@@ -191,7 +191,7 @@ function KanbanColumn({
       <div
         ref={setNodeRef}
         className={`flex-1 rounded-xl p-2 space-y-2 min-h-[120px] transition-colors ${
-          isOver ? 'bg-zinc-50 ring-2 ring-zinc-200' : 'bg-zinc-50/50'
+          isOver ? 'bg-[#111317] ring-2 ring-zinc-200' : 'bg-[#111317]/50'
         }`}
       >
         {items.map((item) => (
@@ -205,7 +205,7 @@ function KanbanColumn({
         {/* Add button */}
         <button
           onClick={onAddNew}
-          className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-zinc-200 py-2 text-xs text-zinc-400 hover:border-zinc-300 hover:text-zinc-500 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-white/10 py-2 text-xs text-zinc-400 hover:border-white/15 hover:text-zinc-400 transition-colors"
         >
           <Plus className="h-3 w-3" />
           Toevoegen
@@ -258,16 +258,16 @@ function WeekView({
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setWeekOffset((o) => o - 1)}
-          className="rounded-lg p-1.5 hover:bg-zinc-100 transition-colors"
+          className="rounded-lg p-1.5 hover:bg-white/10 transition-colors"
         >
-          <ChevronLeft className="h-4 w-4 text-zinc-600" />
+          <ChevronLeft className="h-4 w-4 text-zinc-300" />
         </button>
-        <span className="text-sm font-medium text-zinc-700">{weekLabel}</span>
+        <span className="text-sm font-medium text-zinc-200">{weekLabel}</span>
         <button
           onClick={() => setWeekOffset((o) => o + 1)}
-          className="rounded-lg p-1.5 hover:bg-zinc-100 transition-colors"
+          className="rounded-lg p-1.5 hover:bg-white/10 transition-colors"
         >
-          <ChevronRight className="h-4 w-4 text-zinc-600" />
+          <ChevronRight className="h-4 w-4 text-zinc-300" />
         </button>
       </div>
 
@@ -283,14 +283,14 @@ function WeekView({
                 <p className={`text-[10px] font-medium ${isToday ? 'text-white' : 'text-zinc-400'}`}>
                   {DAY_LABELS[i]}
                 </p>
-                <p className={`text-sm font-bold ${isToday ? 'text-white' : 'text-zinc-900'}`}>
+                <p className={`text-sm font-bold ${isToday ? 'text-white' : 'text-white'}`}>
                   {date.getDate()}
                 </p>
               </div>
 
               {/* Day content area */}
               <div
-                className="rounded-lg bg-zinc-50 p-1.5 min-h-[120px] cursor-pointer hover:bg-zinc-100 transition-colors space-y-1"
+                className="rounded-lg bg-[#111317] p-1.5 min-h-[120px] cursor-pointer hover:bg-white/10 transition-colors space-y-1"
                 onClick={() => onDayClick(date)}
               >
                 {dayItems.map((item) => {
@@ -298,13 +298,13 @@ function WeekView({
                   return (
                     <div
                       key={item.id}
-                      className="rounded-md bg-white border p-1.5 cursor-pointer hover:shadow-sm transition-shadow"
+                      className="rounded-md bg-[#1A1F29] border p-1.5 cursor-pointer hover:shadow-sm transition-shadow"
                       onClick={(e) => {
                         e.stopPropagation()
                         onCardClick(item)
                       }}
                     >
-                      <p className="text-[10px] font-medium text-zinc-800 leading-tight line-clamp-2">
+                      <p className="text-[10px] font-medium text-zinc-100 leading-tight line-clamp-2">
                         {item.title}
                       </p>
                       <div className="mt-1 flex items-center gap-1">
@@ -364,7 +364,7 @@ function LijstView({
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border px-3 py-2 text-sm text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-300"
+          className="rounded-lg border px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-300"
         >
           <option value="">Alle statussen</option>
           {STATUSES.map((s) => (
@@ -376,7 +376,7 @@ function LijstView({
         <select
           value={templateFilter}
           onChange={(e) => setTemplateFilter(e.target.value)}
-          className="rounded-lg border px-3 py-2 text-sm text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-300"
+          className="rounded-lg border px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-300"
         >
           <option value="">Alle templates</option>
           {TEMPLATES.map((t) => (
@@ -398,11 +398,11 @@ function LijstView({
               <div
                 key={item.id}
                 onClick={() => onCardClick(item)}
-                className="flex items-center gap-3 rounded-lg border bg-white px-4 py-3 cursor-pointer hover:bg-zinc-50 transition-colors"
+                className="flex items-center gap-3 rounded-lg border bg-[#1A1F29] px-4 py-3 cursor-pointer hover:bg-white/5 transition-colors"
               >
                 {/* Title */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-zinc-900 truncate">{item.title}</p>
+                  <p className="text-sm font-medium text-white truncate">{item.title}</p>
                   {item.primary_topic && (
                     <p className="text-xs text-zinc-400 truncate">{item.primary_topic}</p>
                   )}
@@ -410,7 +410,7 @@ function LijstView({
 
                 {/* Template badge */}
                 {item.content_template && (
-                  <span className="hidden sm:inline-block shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
+                  <span className="hidden sm:inline-block shrink-0 rounded-full bg-[#282A2E] px-2 py-0.5 text-[11px] font-medium text-zinc-300">
                     {getTemplateLabel(item.content_template)}
                   </span>
                 )}
@@ -528,14 +528,14 @@ function NewContentDialog({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+        className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-4">Nieuw content item</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Title */}
           <div>
-            <label className="text-xs font-medium text-zinc-600">Titel *</label>
+            <label className="text-xs font-medium text-zinc-300">Titel *</label>
             <input
               required
               autoFocus
@@ -549,7 +549,7 @@ function NewContentDialog({
           {/* Template + Status */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-zinc-600">Template</label>
+              <label className="text-xs font-medium text-zinc-300">Template</label>
               <select
                 value={form.content_template}
                 onChange={(e) => setForm({ ...form, content_template: e.target.value })}
@@ -564,7 +564,7 @@ function NewContentDialog({
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-zinc-600">Status</label>
+              <label className="text-xs font-medium text-zinc-300">Status</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
@@ -581,7 +581,7 @@ function NewContentDialog({
 
           {/* Platforms */}
           <div>
-            <label className="text-xs font-medium text-zinc-600">Platforms</label>
+            <label className="text-xs font-medium text-zinc-300">Platforms</label>
             <div className="mt-2 flex flex-wrap gap-2">
               {PLATFORMS.map((p) => (
                 <label key={p.key} className="flex items-center gap-1.5 cursor-pointer">
@@ -595,7 +595,7 @@ function NewContentDialog({
                     className="h-2 w-2 rounded-full inline-block"
                     style={{ backgroundColor: p.color }}
                   />
-                  <span className="text-xs text-zinc-700">{p.label}</span>
+                  <span className="text-xs text-zinc-200">{p.label}</span>
                 </label>
               ))}
             </div>
@@ -603,7 +603,7 @@ function NewContentDialog({
 
           {/* Date */}
           <div>
-            <label className="text-xs font-medium text-zinc-600">Datum (optioneel)</label>
+            <label className="text-xs font-medium text-zinc-300">Datum (optioneel)</label>
             <input
               type="date"
               value={form.scheduled_date}
@@ -617,7 +617,7 @@ function NewContentDialog({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100 transition-colors"
+              className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10 transition-colors"
             >
               Annuleren
             </button>
@@ -704,7 +704,7 @@ function AIBatchDialog({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+        className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 mb-4">
@@ -715,7 +715,7 @@ function AIBatchDialog({
         <form onSubmit={handleGenerate} className="space-y-4">
           {/* Topics */}
           <div>
-            <label className="text-xs font-medium text-zinc-600">Topics (één per regel) *</label>
+            <label className="text-xs font-medium text-zinc-300">Topics (één per regel) *</label>
             <textarea
               required
               value={topics}
@@ -732,7 +732,7 @@ function AIBatchDialog({
           {/* Template + Context */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-zinc-600">Template</label>
+              <label className="text-xs font-medium text-zinc-300">Template</label>
               <select
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
@@ -747,7 +747,7 @@ function AIBatchDialog({
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-zinc-600">Context (optioneel)</label>
+              <label className="text-xs font-medium text-zinc-300">Context (optioneel)</label>
               <input
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
@@ -759,7 +759,7 @@ function AIBatchDialog({
 
           {/* Platforms */}
           <div>
-            <label className="text-xs font-medium text-zinc-600">Platforms</label>
+            <label className="text-xs font-medium text-zinc-300">Platforms</label>
             <div className="mt-2 flex flex-wrap gap-2">
               {PLATFORMS.slice(0, 4).map((p) => (
                 <label key={p.key} className="flex items-center gap-1.5 cursor-pointer">
@@ -773,7 +773,7 @@ function AIBatchDialog({
                     className="h-2 w-2 rounded-full inline-block"
                     style={{ backgroundColor: p.color }}
                   />
-                  <span className="text-xs text-zinc-700">{p.label}</span>
+                  <span className="text-xs text-zinc-200">{p.label}</span>
                 </label>
               ))}
             </div>
@@ -781,7 +781,7 @@ function AIBatchDialog({
 
           {/* Progress */}
           {progress && (
-            <div className="flex items-center gap-2 rounded-lg bg-violet-50 px-3 py-2 text-sm text-violet-700">
+            <div className="flex items-center gap-2 rounded-lg bg-violet-500/10 px-3 py-2 text-sm text-violet-400">
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               <span>{progress}</span>
             </div>
@@ -793,7 +793,7 @@ function AIBatchDialog({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100 transition-colors disabled:opacity-50"
+              className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10 transition-colors disabled:opacity-50"
             >
               Annuleren
             </button>
@@ -941,15 +941,15 @@ export default function ContentPage() {
       {/* Header */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Content</h1>
-          <p className="mt-0.5 text-sm text-zinc-500">
+          <h1 className="text-2xl font-bold text-white">Content</h1>
+          <p className="mt-0.5 text-sm text-zinc-400">
             {ideeenCount} ideeën · {teMakenCount} te maken · {thisWeekCount} gepland deze week
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* View toggle */}
-          <div className="flex items-center rounded-lg border bg-white p-0.5 gap-0.5">
+          <div className="flex items-center rounded-lg border bg-[#1A1F29] p-0.5 gap-0.5">
             {viewButtons.map((b) => (
               <button
                 key={b.key}
@@ -957,7 +957,7 @@ export default function ContentPage() {
                 className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
                   view === b.key
                     ? 'bg-zinc-900 text-white'
-                    : 'text-zinc-600 hover:bg-zinc-100'
+                    : 'text-zinc-300 hover:bg-white/10'
                 }`}
               >
                 {b.icon}
@@ -982,7 +982,7 @@ export default function ContentPage() {
           {/* AI Batch button */}
           <button
             onClick={() => setShowBatch(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium text-zinc-200 hover:bg-white/5 transition-colors"
           >
             <Sparkles className="h-4 w-4 text-violet-500" />
             AI Batch
@@ -1018,13 +1018,13 @@ export default function ContentPage() {
           {/* Drag overlay */}
           <DragOverlay>
             {activeItem ? (
-              <div className="rounded-lg border bg-white p-3 shadow-xl w-64 rotate-2 cursor-grabbing">
-                <p className="text-sm font-medium text-zinc-900 leading-snug mb-2">
+              <div className="rounded-lg border bg-[#1A1F29] p-3 shadow-xl w-64 rotate-2 cursor-grabbing">
+                <p className="text-sm font-medium text-white leading-snug mb-2">
                   {activeItem.title}
                 </p>
                 <div className="flex items-center gap-1.5">
                   {activeItem.content_template && (
-                    <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-600">
+                    <span className="rounded-full bg-[#282A2E] px-2 py-0.5 text-[10px] font-medium text-zinc-300">
                       {getTemplateLabel(activeItem.content_template)}
                     </span>
                   )}

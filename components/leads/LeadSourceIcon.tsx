@@ -16,7 +16,7 @@ interface LeadSourceIconProps {
 export function LeadSourceIcon({ source, showLabel = false }: LeadSourceIconProps) {
   const config = sourceConfig[source]
   return (
-    <span className="flex items-center gap-1 text-sm text-zinc-500">
+    <span className="flex items-center gap-1 text-sm text-zinc-400">
       <span>{config.icon}</span>
       {showLabel && <span>{config.label}</span>}
     </span>

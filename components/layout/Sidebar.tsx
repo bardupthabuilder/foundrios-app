@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -113,11 +114,9 @@ export function Sidebar() {
   const navContent = (
     <>
       {/* Logo */}
-      <div className="flex h-16 items-center gap-2.5 border-b px-5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white text-xs font-bold">
-          {tenantName[0]?.toUpperCase() || 'F'}
-        </div>
-        <span className="font-semibold tracking-tight truncate">{tenantName}</span>
+      <div className="flex h-16 items-center gap-2.5 border-b border-white/5 px-5">
+        <Image src="/logo.svg" alt="FoundriOS" width={24} height={24} />
+        <span className="font-semibold tracking-tight truncate text-white">{tenantName}</span>
       </div>
 
       {/* Nav Groups */}
@@ -125,7 +124,7 @@ export function Sidebar() {
         {navGroups.map((group, gi) => (
           <div key={gi}>
             {group.label && (
-              <div className="mt-4 mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+              <div className="mt-4 mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
                 {group.label}
               </div>
             )}
@@ -140,8 +139,8 @@ export function Sidebar() {
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     active
-                      ? 'bg-zinc-100 text-zinc-900'
-                      : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700'
+                      ? 'bg-white/10 text-white'
+                      : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -154,10 +153,10 @@ export function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="border-t px-3 py-4">
+      <div className="border-t border-white/5 px-3 py-4">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200"
         >
           <LogOut className="h-4 w-4" />
           Uitloggen
@@ -169,8 +168,8 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile header */}
-      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 border-b bg-white px-4 lg:hidden">
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-zinc-600">
+      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 border-b border-white/5 bg-[#111317] px-4 lg:hidden">
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-zinc-300">
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
         <div className="flex items-center gap-2">
@@ -188,7 +187,7 @@ export function Sidebar() {
           onClick={() => setMobileOpen(false)}
         >
           <div
-            className="h-full w-64 bg-white flex flex-col"
+            className="h-full w-64 bg-[#111317] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {navContent}
@@ -197,7 +196,7 @@ export function Sidebar() {
       )}
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex h-screen w-60 shrink-0 flex-col border-r bg-white">
+      <aside className="hidden lg:flex h-screen w-60 shrink-0 flex-col border-r border-white/5 bg-[#111317]">
         {navContent}
       </aside>
     </>

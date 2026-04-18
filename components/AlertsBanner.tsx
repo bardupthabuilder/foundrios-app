@@ -33,7 +33,7 @@ export function AlertsBanner() {
 
   return (
     <div className="space-y-2 mt-4">
-      <h3 className="text-sm font-semibold text-zinc-500 flex items-center gap-2">
+      <h3 className="text-sm font-semibold text-zinc-400 flex items-center gap-2">
         <AlertTriangle className="h-4 w-4" />
         Aandachtspunten ({alerts.length})
       </h3>
@@ -43,20 +43,20 @@ export function AlertsBanner() {
           <Link
             key={i}
             href={alert.link}
-            className={`flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-zinc-50 ${
-              alert.severity === 'urgent' ? 'border-red-200 bg-red-50/50' : 'border-orange-200 bg-orange-50/30'
+            className={`flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-white/5 ${
+              alert.severity === 'urgent' ? 'border-red-500/30 bg-red-500/5' : 'border-orange-500/30 bg-orange-500/5'
             }`}
           >
             <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-              alert.severity === 'urgent' ? 'bg-red-100' : 'bg-orange-100'
+              alert.severity === 'urgent' ? 'bg-red-500/10' : 'bg-orange-500/10'
             }`}>
-              <Icon className={`h-4 w-4 ${alert.severity === 'urgent' ? 'text-red-600' : 'text-orange-600'}`} />
+              <Icon className={`h-4 w-4 ${alert.severity === 'urgent' ? 'text-red-400' : 'text-orange-400'}`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className={`text-sm font-medium ${alert.severity === 'urgent' ? 'text-red-900' : 'text-orange-900'}`}>
+              <p className={`text-sm font-medium ${alert.severity === 'urgent' ? 'text-red-300' : 'text-orange-300'}`}>
                 {alert.title}
               </p>
-              <p className={`text-xs ${alert.severity === 'urgent' ? 'text-red-700' : 'text-orange-700'}`}>
+              <p className={`text-xs ${alert.severity === 'urgent' ? 'text-red-400' : 'text-orange-400'}`}>
                 {alert.description}
               </p>
             </div>

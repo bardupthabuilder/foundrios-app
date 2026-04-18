@@ -23,7 +23,7 @@ export default async function BillingPage() {
 
   return (
     <div className="p-6 max-w-2xl">
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900">Abonnement</h1>
+      <h1 className="mb-6 text-2xl font-bold text-white">Abonnement</h1>
 
       {/* Huidig abonnement */}
       <Card className="mb-6">
@@ -33,8 +33,8 @@ export default async function BillingPage() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-semibold text-zinc-900">FoundriOS Starter</p>
-              <p className="text-sm text-zinc-500">€297 per maand · Alle modules</p>
+              <p className="font-semibold text-white">FoundriOS Starter</p>
+              <p className="text-sm text-zinc-400">€297 per maand · Alle modules</p>
             </div>
             <Badge variant={isTrial ? 'outline' : 'default'}>
               {isTrial ? 'Trial' : 'Actief'}
@@ -42,7 +42,7 @@ export default async function BillingPage() {
           </div>
 
           {isTrial && trialEnd && (
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm text-amber-300">
               Je trial loopt af op <strong>{trialEnd}</strong>. Activeer je abonnement om
               door te gaan zonder onderbreking.
             </div>
@@ -64,11 +64,11 @@ export default async function BillingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold">Starter — Maandelijks</p>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-zinc-400">
                     Alle modules · Maandelijks opzegbaar · Inclusief BTW
                   </p>
                 </div>
-                <p className="text-2xl font-bold">€297<span className="text-sm font-normal text-zinc-500">/mnd</span></p>
+                <p className="text-2xl font-bold">€297<span className="text-sm font-normal text-zinc-400">/mnd</span></p>
               </div>
             </div>
             <Button className="w-full" disabled>

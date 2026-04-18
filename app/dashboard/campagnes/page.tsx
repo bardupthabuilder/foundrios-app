@@ -20,7 +20,7 @@ type Campaign = {
 }
 
 const TYPE_LABELS: Record<string, string> = { burenactie: 'Burenactie', seizoensactie: 'Seizoensactie', upsell: 'Upsell', referral: 'Referral', custom: 'Overig' }
-const STATUS_COLORS: Record<string, string> = { draft: 'bg-zinc-100 text-zinc-600', active: 'bg-green-100 text-green-700', completed: 'bg-blue-100 text-blue-700', cancelled: 'bg-zinc-100 text-zinc-400' }
+const STATUS_COLORS: Record<string, string> = { draft: 'bg-[#282A2E] text-zinc-300', active: 'bg-green-500/10 text-green-400', completed: 'bg-blue-500/10 text-blue-400', cancelled: 'bg-[#282A2E] text-zinc-400' }
 
 const DEFAULT_TEMPLATES: Record<string, string> = {
   burenactie: `Beste buurman/buurvrouw,
@@ -101,8 +101,8 @@ export default function CampagnesPage() {
     <div className="p-4 lg:p-6 pt-16 lg:pt-6 max-w-4xl">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Campagnes</h1>
-          <p className="text-sm text-zinc-500">{campaigns.length} campagnes · {totalLeads} leads · {totalConversions} conversies ({convRate}%)</p>
+          <h1 className="text-2xl font-bold text-white">Campagnes</h1>
+          <p className="text-sm text-zinc-400">{campaigns.length} campagnes · {totalLeads} leads · {totalConversions} conversies ({convRate}%)</p>
         </div>
         <button onClick={() => setShowNew(true)} className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800">
           <Plus className="h-4 w-4" /> Nieuwe campagne
@@ -112,9 +112,9 @@ export default function CampagnesPage() {
       {loading ? (
         <div className="py-12 text-center text-sm text-zinc-400">Laden...</div>
       ) : campaigns.length === 0 ? (
-        <div className="rounded-xl border-2 border-dashed border-zinc-200 p-12 text-center">
+        <div className="rounded-xl border-2 border-dashed border-white/10 p-12 text-center">
           <Megaphone className="mx-auto h-8 w-8 text-zinc-300" />
-          <p className="mt-2 text-sm text-zinc-500">Nog geen campagnes.</p>
+          <p className="mt-2 text-sm text-zinc-400">Nog geen campagnes.</p>
           <p className="text-xs text-zinc-400 mt-1">Start een burenactie na een afgerond project om meer klanten in dezelfde wijk te krijgen.</p>
         </div>
       ) : (
@@ -124,14 +124,14 @@ export default function CampagnesPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-zinc-900">{c.title}</span>
+                    <span className="font-medium text-white">{c.title}</span>
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_COLORS[c.status]}`}>
                       {c.status === 'active' ? 'Actief' : c.status === 'draft' ? 'Concept' : c.status === 'completed' ? 'Afgerond' : 'Gestopt'}
                     </span>
-                    <span className="rounded-full border px-2 py-0.5 text-[11px] text-zinc-500">{TYPE_LABELS[c.campaign_type]}</span>
-                    {c.discount_pct > 0 && <span className="text-xs text-green-600 font-medium">{c.discount_pct}% korting</span>}
+                    <span className="rounded-full border px-2 py-0.5 text-[11px] text-zinc-400">{TYPE_LABELS[c.campaign_type]}</span>
+                    {c.discount_pct > 0 && <span className="text-xs text-green-400 font-medium">{c.discount_pct}% korting</span>}
                   </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 mt-1">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-400 mt-1">
                     {c.area && <span className="flex items-center gap-0.5"><MapPin className="h-3 w-3" />{c.area}</span>}
                     {c.projects?.city && <span>{c.projects.name} — {c.projects.city}</span>}
                     {c.valid_until && <span>Geldig t/m {new Date(c.valid_until).toLocaleDateString('nl-NL')}</span>}
@@ -139,11 +139,11 @@ export default function CampagnesPage() {
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-zinc-900">{c.leads_generated}</div>
+                    <div className="text-lg font-bold text-white">{c.leads_generated}</div>
                     <div className="text-[10px] text-zinc-400">leads</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-green-600">{c.conversions}</div>
+                    <div className="text-lg font-bold text-green-400">{c.conversions}</div>
                     <div className="text-[10px] text-zinc-400">klanten</div>
                   </div>
                 </div>
@@ -152,16 +152,16 @@ export default function CampagnesPage() {
               {/* Quick actions */}
               <div className="flex items-center gap-2 mt-3 pt-3 border-t">
                 {c.message_template && (
-                  <button onClick={() => copyTemplate(c.message_template!)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-100">
+                  <button onClick={() => copyTemplate(c.message_template!)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-300 hover:bg-white/10">
                     <Copy className="h-3 w-3" /> Kopieer template
                   </button>
                 )}
                 {c.status === 'active' && (
                   <>
-                    <button onClick={() => updateCampaign(c.id, { leads_generated: c.leads_generated + 1 })} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-100">
+                    <button onClick={() => updateCampaign(c.id, { leads_generated: c.leads_generated + 1 })} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-300 hover:bg-white/10">
                       <Users className="h-3 w-3" /> +1 lead
                     </button>
-                    <button onClick={() => updateCampaign(c.id, { conversions: c.conversions + 1 })} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-green-600 hover:bg-green-50">
+                    <button onClick={() => updateCampaign(c.id, { conversions: c.conversions + 1 })} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-green-400 hover:bg-green-500/10">
                       <TrendingUp className="h-3 w-3" /> +1 conversie
                     </button>
                   </>
@@ -172,7 +172,7 @@ export default function CampagnesPage() {
                   </button>
                 )}
                 {c.status === 'active' && (
-                  <button onClick={() => updateCampaign(c.id, { status: 'completed' })} className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-400 hover:bg-zinc-100">
+                  <button onClick={() => updateCampaign(c.id, { status: 'completed' })} className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-400 hover:bg-white/10">
                     Afronden
                   </button>
                 )}
@@ -185,22 +185,22 @@ export default function CampagnesPage() {
       {/* New Campaign Dialog */}
       {showNew && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNew(false)}>
-          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-lg rounded-xl bg-[#1A1F29] p-6 shadow-xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Nieuwe campagne</h2>
             <form onSubmit={createCampaign} className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-600">Titel *</label>
+                <label className="text-xs font-medium text-zinc-300">Titel *</label>
                 <input required value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Burenactie Dorpsstraat Amstelveen" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Type</label>
+                  <label className="text-xs font-medium text-zinc-300">Type</label>
                   <select value={form.campaign_type} onChange={e => updateType(e.target.value)} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
                     {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Gekoppeld project</label>
+                  <label className="text-xs font-medium text-zinc-300">Gekoppeld project</label>
                   <select value={form.project_id} onChange={e => setForm({ ...form, project_id: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
                     <option value="">Selecteer...</option>
                     {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -209,24 +209,24 @@ export default function CampagnesPage() {
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Gebied</label>
+                  <label className="text-xs font-medium text-zinc-300">Gebied</label>
                   <input value={form.area} onChange={e => setForm({ ...form, area: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Dorpsstraat 1-30" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Korting %</label>
+                  <label className="text-xs font-medium text-zinc-300">Korting %</label>
                   <input type="number" min="0" max="50" value={form.discount_pct} onChange={e => setForm({ ...form, discount_pct: parseInt(e.target.value) || 0 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Geldig tot</label>
+                  <label className="text-xs font-medium text-zinc-300">Geldig tot</label>
                   <input type="date" value={form.valid_until} onChange={e => setForm({ ...form, valid_until: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-zinc-600">Berichttemplate (kopieerbaar voor WhatsApp/brief)</label>
+                <label className="text-xs font-medium text-zinc-300">Berichttemplate (kopieerbaar voor WhatsApp/brief)</label>
                 <textarea value={form.message_template} onChange={e => setForm({ ...form, message_template: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" rows={6} />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowNew(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100">Annuleren</button>
+                <button type="button" onClick={() => setShowNew(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
                 <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">Aanmaken</button>
               </div>
             </form>

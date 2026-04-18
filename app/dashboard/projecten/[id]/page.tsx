@@ -19,12 +19,12 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 }
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
-  gepland: 'bg-blue-100 text-blue-700',
-  actief: 'bg-green-100 text-green-700',
-  pauze: 'bg-yellow-100 text-yellow-700',
-  opgeleverd: 'bg-purple-100 text-purple-700',
-  gefactureerd: 'bg-zinc-100 text-zinc-700',
-  gearchiveerd: 'bg-zinc-100 text-zinc-400',
+  gepland: 'bg-blue-500/10 text-blue-400',
+  actief: 'bg-green-500/10 text-green-400',
+  pauze: 'bg-yellow-500/10 text-yellow-400',
+  opgeleverd: 'bg-purple-500/10 text-purple-400',
+  gefactureerd: 'bg-[#282A2E] text-zinc-200',
+  gearchiveerd: 'bg-[#282A2E] text-zinc-400',
 }
 
 type TabKey = 'overzicht' | 'uren' | 'materiaal' | 'planning' | 'nacalculatie'
@@ -127,7 +127,7 @@ export default function ProjectDetailPage() {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/projecten')} className="mb-3 -ml-2 text-zinc-500">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/projecten')} className="mb-3 -ml-2 text-zinc-400">
           <ArrowLeft className="h-4 w-4 mr-1" />Terug
         </Button>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -139,7 +139,7 @@ export default function ProjectDetailPage() {
               </Badge>
             </div>
             {project.clients && (
-              <p className="text-sm text-zinc-500 mt-1">{project.clients.name}</p>
+              <p className="text-sm text-zinc-400 mt-1">{project.clients.name}</p>
             )}
             {(project.address || project.city) && (
               <p className="text-sm text-zinc-400 flex items-center gap-1 mt-0.5">
@@ -167,28 +167,28 @@ export default function ProjectDetailPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card>
           <CardContent className="py-3">
-            <div className="text-xs text-zinc-500 flex items-center gap-1"><Clock className="h-3 w-3" />Uren</div>
+            <div className="text-xs text-zinc-400 flex items-center gap-1"><Clock className="h-3 w-3" />Uren</div>
             <div className="text-xl font-bold mt-1">{project.totals.hours}u</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="py-3">
-            <div className="text-xs text-zinc-500 flex items-center gap-1"><Euro className="h-3 w-3" />Arbeid</div>
+            <div className="text-xs text-zinc-400 flex items-center gap-1"><Euro className="h-3 w-3" />Arbeid</div>
             <div className="text-xl font-bold mt-1">{formatCents(project.totals.labor_cents)}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="py-3">
-            <div className="text-xs text-zinc-500 flex items-center gap-1"><Package className="h-3 w-3" />Materiaal</div>
+            <div className="text-xs text-zinc-400 flex items-center gap-1"><Package className="h-3 w-3" />Materiaal</div>
             <div className="text-xl font-bold mt-1">{formatCents(project.totals.material_cents)}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="py-3">
-            <div className="text-xs text-zinc-500">Budget</div>
+            <div className="text-xs text-zinc-400">Budget</div>
             <div className="text-xl font-bold mt-1">
               {project.budget_cents ? (
-                <span className={totalCents > project.budget_cents ? 'text-red-600' : ''}>
+                <span className={totalCents > project.budget_cents ? 'text-red-400' : ''}>
                   {formatCents(totalCents)} / {formatCents(project.budget_cents)}
                 </span>
               ) : (
@@ -206,7 +206,7 @@ export default function ProjectDetailPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.key ? 'border-zinc-900 text-zinc-900' : 'border-transparent text-zinc-500 hover:text-zinc-700'
+              tab === t.key ? 'border-zinc-900 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
             }`}
           >
             {t.label}
@@ -220,35 +220,35 @@ export default function ProjectDetailPage() {
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm">Projectinfo</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
-              {project.description && <p className="text-zinc-600">{project.description}</p>}
+              {project.description && <p className="text-zinc-300">{project.description}</p>}
               {project.project_type && (
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Type</span>
+                  <span className="text-zinc-400">Type</span>
                   <span className="capitalize">{project.project_type}</span>
                 </div>
               )}
               {project.start_date && (
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Start</span>
+                  <span className="text-zinc-400">Start</span>
                   <span>{formatDate(project.start_date)}</span>
                 </div>
               )}
               {project.end_date && (
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Eind</span>
+                  <span className="text-zinc-400">Eind</span>
                   <span>{formatDate(project.end_date)}</span>
                 </div>
               )}
               {project.hourly_rate_cents && (
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Uurtarief</span>
+                  <span className="text-zinc-400">Uurtarief</span>
                   <span>{formatCents(project.hourly_rate_cents)}/u</span>
                 </div>
               )}
               {project.notes && (
                 <div className="pt-2 border-t">
-                  <span className="text-zinc-500 block mb-1">Notities</span>
-                  <p className="text-zinc-600 whitespace-pre-wrap">{project.notes}</p>
+                  <span className="text-zinc-400 block mb-1">Notities</span>
+                  <p className="text-zinc-300 whitespace-pre-wrap">{project.notes}</p>
                 </div>
               )}
             </CardContent>
@@ -258,11 +258,11 @@ export default function ProjectDetailPage() {
               <CardHeader className="pb-2"><CardTitle className="text-sm">Klant</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="font-medium">{project.clients.name}</div>
-                {project.clients.contact_name && <div className="text-zinc-500">{project.clients.contact_name}</div>}
-                {project.clients.phone && <div className="text-zinc-500">{project.clients.phone}</div>}
-                {project.clients.email && <div className="text-zinc-500">{project.clients.email}</div>}
+                {project.clients.contact_name && <div className="text-zinc-400">{project.clients.contact_name}</div>}
+                {project.clients.phone && <div className="text-zinc-400">{project.clients.phone}</div>}
+                {project.clients.email && <div className="text-zinc-400">{project.clients.email}</div>}
                 {(project.clients.address || project.clients.city) && (
-                  <div className="text-zinc-500 flex items-center gap-1">
+                  <div className="text-zinc-400 flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
                     {[project.clients.address, project.clients.city].filter(Boolean).join(', ')}
                   </div>
@@ -277,7 +277,7 @@ export default function ProjectDetailPage() {
         <div>
           {project.time_entries.length === 0 ? (
             <Card>
-              <CardContent className="py-8 text-center text-zinc-500">
+              <CardContent className="py-8 text-center text-zinc-400">
                 Nog geen uren geboekt op dit project.
               </CardContent>
             </Card>
@@ -294,7 +294,7 @@ export default function ProjectDetailPage() {
                           {entry.status}
                         </Badge>
                       </div>
-                      {entry.description && <p className="text-sm text-zinc-500 mt-0.5">{entry.description}</p>}
+                      {entry.description && <p className="text-sm text-zinc-400 mt-0.5">{entry.description}</p>}
                     </div>
                     <div className="text-right shrink-0">
                       <div className="font-medium">{entry.hours}u</div>
@@ -314,7 +314,7 @@ export default function ProjectDetailPage() {
         <div>
           {project.material_entries.length === 0 ? (
             <Card>
-              <CardContent className="py-8 text-center text-zinc-500">
+              <CardContent className="py-8 text-center text-zinc-400">
                 Nog geen materiaal geboekt op dit project.
               </CardContent>
             </Card>
@@ -325,7 +325,7 @@ export default function ProjectDetailPage() {
                   <CardContent className="flex items-center gap-4 py-3">
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm">{entry.description}</div>
-                      <div className="text-sm text-zinc-500">
+                      <div className="text-sm text-zinc-400">
                         {entry.quantity} {entry.unit ?? 'stuk'} · {formatDateShort(entry.entry_date)}
                       </div>
                     </div>
@@ -344,7 +344,7 @@ export default function ProjectDetailPage() {
         <div>
           {project.planning_entries.length === 0 ? (
             <Card>
-              <CardContent className="py-8 text-center text-zinc-500">
+              <CardContent className="py-8 text-center text-zinc-400">
                 Nog geen planning voor dit project.
               </CardContent>
             </Card>
@@ -366,7 +366,7 @@ export default function ProjectDetailPage() {
                         <span className="font-medium">{entry.employees?.name ?? '—'}</span>
                         <span className="text-zinc-400">{formatDateShort(entry.planned_date)}</span>
                       </div>
-                      {entry.notes && <p className="text-sm text-zinc-500 mt-0.5">{entry.notes}</p>}
+                      {entry.notes && <p className="text-sm text-zinc-400 mt-0.5">{entry.notes}</p>}
                     </div>
                     <div className="text-sm font-medium shrink-0">
                       {entry.planned_hours ?? 8}u
@@ -385,7 +385,7 @@ export default function ProjectDetailPage() {
             <div className="py-8 text-center text-zinc-400">Laden...</div>
           ) : !nacalculatie ? (
             <Card>
-              <CardContent className="py-8 text-center text-zinc-500">
+              <CardContent className="py-8 text-center text-zinc-400">
                 Kon nacalculatie niet laden.
               </CardContent>
             </Card>
@@ -397,21 +397,21 @@ export default function ProjectDetailPage() {
                 <CardContent>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-zinc-500">Uren (urenregistratie)</span>
+                      <span className="text-zinc-400">Uren (urenregistratie)</span>
                       <span>{nacalculatie.summary.total_hours}u · {formatCents(nacalculatie.summary.total_labor_cents)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-zinc-500">Materiaal (urenregistratie)</span>
+                      <span className="text-zinc-400">Materiaal (urenregistratie)</span>
                       <span>{formatCents(nacalculatie.summary.total_material_cents)}</span>
                     </div>
                     {(nacalculatie.summary.wo_hours_cents > 0 || nacalculatie.summary.wo_materials_cents > 0) && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-zinc-500">Uren (werkbonnen)</span>
+                          <span className="text-zinc-400">Uren (werkbonnen)</span>
                           <span>{formatCents(nacalculatie.summary.wo_hours_cents)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-zinc-500">Materiaal (werkbonnen)</span>
+                          <span className="text-zinc-400">Materiaal (werkbonnen)</span>
                           <span>{formatCents(nacalculatie.summary.wo_materials_cents)}</span>
                         </div>
                       </>
@@ -431,22 +431,22 @@ export default function ProjectDetailPage() {
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-zinc-500">Budget</span>
+                        <span className="text-zinc-400">Budget</span>
                         <span className="font-medium">{formatCents(nacalculatie.summary.budget_cents)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-zinc-500">Besteed</span>
+                        <span className="text-zinc-400">Besteed</span>
                         <span className="font-medium">{formatCents(nacalculatie.summary.total_cost_cents)}</span>
                       </div>
-                      <div className="w-full bg-zinc-100 rounded-full h-3">
+                      <div className="w-full bg-[#282A2E] rounded-full h-3">
                         <div
                           className={`h-3 rounded-full transition-all ${nacalculatie.summary.remaining_cents < 0 ? 'bg-red-500' : nacalculatie.summary.margin_pct < 20 ? 'bg-yellow-500' : 'bg-green-500'}`}
                           style={{ width: `${Math.min(100, Math.round((nacalculatie.summary.total_cost_cents / nacalculatie.summary.budget_cents) * 100))}%` }}
                         />
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-zinc-500">Resterend</span>
-                        <span className={`font-semibold ${nacalculatie.summary.remaining_cents < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                        <span className="text-zinc-400">Resterend</span>
+                        <span className={`font-semibold ${nacalculatie.summary.remaining_cents < 0 ? 'text-red-400' : 'text-green-400'}`}>
                           {formatCents(nacalculatie.summary.remaining_cents)} ({nacalculatie.summary.margin_pct}%)
                         </span>
                       </div>
@@ -459,20 +459,20 @@ export default function ProjectDetailPage() {
               <div className="grid sm:grid-cols-3 gap-3">
                 <Card>
                   <CardContent className="py-3">
-                    <div className="text-xs text-zinc-500">Geoffreerd (akkoord)</div>
+                    <div className="text-xs text-zinc-400">Geoffreerd (akkoord)</div>
                     <div className="text-xl font-bold mt-1">{formatCents(nacalculatie.summary.total_quoted_cents)}</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="py-3">
-                    <div className="text-xs text-zinc-500">Gefactureerd</div>
+                    <div className="text-xs text-zinc-400">Gefactureerd</div>
                     <div className="text-xl font-bold mt-1">{formatCents(nacalculatie.summary.total_invoiced_cents)}</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="py-3">
-                    <div className="text-xs text-zinc-500">Betaald</div>
-                    <div className="text-xl font-bold mt-1 text-green-600">{formatCents(nacalculatie.summary.total_paid_cents)}</div>
+                    <div className="text-xs text-zinc-400">Betaald</div>
+                    <div className="text-xl font-bold mt-1 text-green-400">{formatCents(nacalculatie.summary.total_paid_cents)}</div>
                   </CardContent>
                 </Card>
               </div>

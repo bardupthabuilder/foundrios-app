@@ -23,12 +23,12 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 }
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
-  gepland: 'bg-blue-100 text-blue-700',
-  actief: 'bg-green-100 text-green-700',
-  pauze: 'bg-yellow-100 text-yellow-700',
-  opgeleverd: 'bg-purple-100 text-purple-700',
-  gefactureerd: 'bg-zinc-100 text-zinc-700',
-  gearchiveerd: 'bg-zinc-100 text-zinc-400',
+  gepland: 'bg-blue-500/10 text-blue-400',
+  actief: 'bg-green-500/10 text-green-400',
+  pauze: 'bg-yellow-500/10 text-yellow-400',
+  opgeleverd: 'bg-purple-500/10 text-purple-400',
+  gefactureerd: 'bg-[#282A2E] text-zinc-200',
+  gearchiveerd: 'bg-[#282A2E] text-zinc-400',
 }
 
 const TYPE_LABELS: Record<ProjectType, string> = {
@@ -121,7 +121,7 @@ export default function ProjectenPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Projecten</h1>
-          <p className="text-sm text-zinc-500 mt-1">Je opdrachten en werkzaamheden</p>
+          <p className="text-sm text-zinc-400 mt-1">Je opdrachten en werkzaamheden</p>
         </div>
         <div className="flex items-center gap-2">
           <Select value={filter} onValueChange={(v) => { setLoading(true); setFilter(v) }}>
@@ -216,7 +216,7 @@ export default function ProjectenPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <FolderOpen className="h-10 w-10 mx-auto text-zinc-300 mb-3" />
-            <p className="text-zinc-500">Geen projecten gevonden. Maak je eerste project aan.</p>
+            <p className="text-zinc-400">Geen projecten gevonden. Maak je eerste project aan.</p>
           </CardContent>
         </Card>
       ) : (
@@ -224,7 +224,7 @@ export default function ProjectenPage() {
           {projects.map((project) => (
             <Card
               key={project.id}
-              className="cursor-pointer hover:bg-zinc-50 transition-colors"
+              className="cursor-pointer hover:bg-white/5 transition-colors"
               onClick={() => router.push(`/dashboard/projecten/${project.id}`)}
             >
               <CardContent className="flex items-start gap-4 py-4">
@@ -239,7 +239,7 @@ export default function ProjectenPage() {
                     )}
                   </div>
                   {project.clients && (
-                    <div className="text-sm text-zinc-500 mt-0.5">{project.clients.name}</div>
+                    <div className="text-sm text-zinc-400 mt-0.5">{project.clients.name}</div>
                   )}
                   <div className="flex items-center gap-3 text-sm text-zinc-400 mt-1 flex-wrap">
                     {(project.address || project.city) && (
@@ -273,7 +273,7 @@ export default function ProjectenPage() {
                             {totalHours}u geregistreerd
                           </span>
                           {marginPct !== null && (
-                            <span className={`font-medium ${marginPct >= 30 ? 'text-green-600' : marginPct >= 10 ? 'text-orange-500' : 'text-red-500'}`}>
+                            <span className={`font-medium ${marginPct >= 30 ? 'text-green-400' : marginPct >= 10 ? 'text-orange-500' : 'text-red-500'}`}>
                               {marginPct}% marge
                             </span>
                           )}

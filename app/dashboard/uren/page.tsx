@@ -188,7 +188,7 @@ export default function UrenPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Uren</h1>
-          <p className="text-sm text-zinc-500 mt-1">Registreer en beheer werkuren</p>
+          <p className="text-sm text-zinc-400 mt-1">Registreer en beheer werkuren</p>
         </div>
         <div className="flex items-center gap-2">
           <Dialog open={materialOpen} onOpenChange={setMaterialOpen}>
@@ -326,7 +326,7 @@ export default function UrenPage() {
         </Button>
         <div className="text-center">
           <div className="font-medium">Week {weekNum} — {year}</div>
-          <div className="text-xs text-zinc-500">
+          <div className="text-xs text-zinc-400">
             {weekDates[0].toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} t/m{' '}
             {weekDates[4].toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
           </div>
@@ -342,7 +342,7 @@ export default function UrenPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <Clock className="h-10 w-10 mx-auto text-zinc-300 mb-3" />
-            <p className="text-zinc-500">Geen uren deze week. Begin met invoeren.</p>
+            <p className="text-zinc-400">Geen uren deze week. Begin met invoeren.</p>
           </CardContent>
         </Card>
       ) : (
@@ -368,7 +368,7 @@ export default function UrenPage() {
                 {Array.from(gridData.entries()).map(([empId, emp]) => {
                   const empTotal = Object.values(emp.days).reduce((s, d) => s + d.hours, 0)
                   return (
-                    <tr key={empId} className="border-b hover:bg-zinc-50">
+                    <tr key={empId} className="border-b hover:bg-white/5">
                       <td className="py-2 pr-4 font-medium">{emp.name}</td>
                       {weekDates.map((d) => {
                         const dateStr = toDateStr(d)
@@ -408,7 +408,7 @@ export default function UrenPage() {
 
           {/* Mobile: Entry list */}
           <div className="md:hidden space-y-2">
-            <div className="text-sm font-medium text-zinc-500 mb-2">Totaal: {weekTotal} uur</div>
+            <div className="text-sm font-medium text-zinc-400 mb-2">Totaal: {weekTotal} uur</div>
             {entries.map((entry) => (
               <Card key={entry.id}>
                 <CardContent className="flex items-center gap-3 py-3">
@@ -419,7 +419,7 @@ export default function UrenPage() {
                         {entry.status}
                       </Badge>
                     </div>
-                    <div className="text-sm text-zinc-500">{entry.projects?.name ?? '—'}</div>
+                    <div className="text-sm text-zinc-400">{entry.projects?.name ?? '—'}</div>
                     <div className="text-xs text-zinc-400">
                       {new Date(entry.entry_date).toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' })}
                     </div>
@@ -430,13 +430,13 @@ export default function UrenPage() {
                       <div className="flex gap-1 mt-1">
                         <button
                           onClick={() => handleApprove(entry.id, 'goedgekeurd')}
-                          className="h-6 w-6 rounded bg-green-100 text-green-700 flex items-center justify-center hover:bg-green-200"
+                          className="h-6 w-6 rounded bg-green-500/10 text-green-400 flex items-center justify-center hover:bg-green-500/15"
                         >
                           <Check className="h-3 w-3" />
                         </button>
                         <button
                           onClick={() => handleApprove(entry.id, 'afgekeurd')}
-                          className="h-6 w-6 rounded bg-red-100 text-red-700 flex items-center justify-center hover:bg-red-200"
+                          className="h-6 w-6 rounded bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/15"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -450,7 +450,7 @@ export default function UrenPage() {
 
           {/* Desktop: Entries met goedkeuring */}
           <div className="hidden md:block space-y-2">
-            <h2 className="text-sm font-medium text-zinc-500">Detail — per invoer</h2>
+            <h2 className="text-sm font-medium text-zinc-400">Detail — per invoer</h2>
             {entries.filter((e) => e.status === 'ingevoerd').length > 0 && (
               <div className="space-y-2">
                 {entries.filter((e) => e.status === 'ingevoerd').map((entry) => (
@@ -465,14 +465,14 @@ export default function UrenPage() {
                             {new Date(entry.entry_date).toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' })}
                           </span>
                         </div>
-                        {entry.description && <p className="text-sm text-zinc-500 mt-0.5">{entry.description}</p>}
+                        {entry.description && <p className="text-sm text-zinc-400 mt-0.5">{entry.description}</p>}
                       </div>
                       <div className="font-medium shrink-0">{entry.hours}u</div>
                       <div className="flex gap-1 shrink-0">
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-8 text-green-700 hover:bg-green-50"
+                          className="h-8 text-green-400 hover:bg-green-500/10"
                           onClick={() => handleApprove(entry.id, 'goedgekeurd')}
                         >
                           <Check className="h-3 w-3 mr-1" />Goed
@@ -480,7 +480,7 @@ export default function UrenPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-8 text-red-600 hover:bg-red-50"
+                          className="h-8 text-red-400 hover:bg-red-500/10"
                           onClick={() => handleApprove(entry.id, 'afgekeurd')}
                         >
                           <X className="h-3 w-3" />

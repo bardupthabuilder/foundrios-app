@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FoundriOS Brand Identity Showcase</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #111317;
+            color: #e2e2e8;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(40, 42, 46, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .grid-pattern {
+            background-image: radial-gradient(circle, #333539 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#002e6a",
+                    "on-secondary-container": "#e6ecff",
+                    "on-surface": "#e2e2e8",
+                    "primary-fixed": "#ffdf90",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface-container": "#1e2024",
+                    "inverse-primary": "#755b00",
+                    "error": "#ffb4ab",
+                    "background": "#111317",
+                    "surface-container-highest": "#333539",
+                    "primary-container": "#f6c945",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "tertiary-fixed": "#b3ebff",
+                    "tertiary-container": "#69ddff",
+                    "surface-container-lowest": "#0c0e12",
+                    "inverse-surface": "#e2e2e8",
+                    "inverse-on-surface": "#2f3035",
+                    "surface-container-high": "#282a2e",
+                    "surface-dim": "#111317",
+                    "on-primary-fixed": "#241a00",
+                    "outline": "#9a907b",
+                    "on-tertiary-fixed": "#001f27",
+                    "tertiary": "#cbf1ff",
+                    "on-tertiary": "#003642",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-tertiary-container": "#006074",
+                    "on-error-container": "#ffdad6",
+                    "surface-tint": "#eec13e",
+                    "secondary-container": "#0566d9",
+                    "on-tertiary-fixed-variant": "#004e5f",
+                    "on-secondary-fixed": "#001a42",
+                    "on-error": "#690005",
+                    "primary-fixed-dim": "#eec13e",
+                    "surface-container-low": "#1a1c20",
+                    "surface-variant": "#333539",
+                    "on-primary-container": "#6d5400",
+                    "on-surface-variant": "#d1c5ae",
+                    "tertiary-fixed-dim": "#60d5f7",
+                    "secondary": "#adc6ff",
+                    "primary": "#ffe8b4",
+                    "on-background": "#e2e2e8",
+                    "on-primary-fixed-variant": "#584400",
+                    "surface": "#111317",
+                    "error-container": "#93000a",
+                    "surface-bright": "#37393e",
+                    "outline-variant": "#4e4634",
+                    "on-primary": "#3d2e00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 z-50 bg-[#111317] flex justify-between items-center w-full px-8 h-16 font-['Space_Grotesk'] tracking-tight">
+<div class="text-2xl font-bold tracking-tighter text-[#F6C945]">FoundriOS</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#F6C945] border-b-2 border-[#F6C945] pb-1 hover:text-white transition-colors" href="#">Ecosystem</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Guidelines</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Assets</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Terminal</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-gray-400 hover:text-white transition-colors scale-95 duration-100">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-gray-400 hover:text-white transition-colors scale-95 duration-100">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#0C0E12] flex flex-col z-40 pt-16 font-['Inter'] text-xs uppercase tracking-widest transition-all duration-200 ease-in-out">
+<div class="p-6 border-b border-surface-container-high/20">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-[#F6C945]" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div>
+<div class="text-[#F6C945] font-black">System Design</div>
+<div class="text-[10px] text-gray-500 lowercase tracking-normal">V2.04 Kinetic</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 py-4 overflow-y-auto">
+<div class="space-y-1">
+<a class="flex items-center gap-4 px-6 py-3 text-[#F6C945] font-bold border-l-2 border-[#3B82F6] bg-[#1A1C20] transition-all" href="#">
+<span class="material-symbols-outlined text-sm">fingerprint</span>
+<span>Brand Identity</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-gray-500 hover:bg-[#1A1C20] hover:text-gray-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">palette</span>
+<span>Visual Language</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-gray-500 hover:bg-[#1A1C20] hover:text-gray-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">extension</span>
+<span>Component Library</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-gray-500 hover:bg-[#1A1C20] hover:text-gray-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">monitoring</span>
+<span>Data Viz</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-gray-500 hover:bg-[#1A1C20] hover:text-gray-200 transition-all" href="#">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+<span>Intelligence Rail</span>
+</a>
+</div>
+</nav>
+<div class="p-6 mt-auto border-t border-surface-container-high/20">
+<button class="w-full bg-[#F6C945] text-[#0F1115] py-3 font-bold rounded-sm mb-4 hover:shadow-[0_0_15px_rgba(246,201,69,0.3)] transition-all">DEPLOY OS</button>
+<div class="space-y-3">
+<a class="flex items-center gap-3 text-gray-500 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">menu_book</span>
+<span>Documentation</span>
+</a>
+<a class="flex items-center gap-3 text-gray-500 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-12">
+<div class="max-w-7xl mx-auto space-y-16">
+<!-- Hero Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+<div class="md:col-span-8 space-y-4">
+<div class="text-[#F6C945] font-label text-xs uppercase tracking-[0.2em]">Foundation System // 001</div>
+<h1 class="font-headline text-7xl md:text-8xl font-bold tracking-tighter leading-none">FoundriOS <br/> Brand Kit</h1>
+<p class="font-body text-xl text-on-surface-variant max-w-2xl leading-relaxed">
+                        A definitive guide to Industrial Intelligence. We merge mathematical precision with high-performance digital aesthetics to create interfaces that feel like specialized machinery.
+                    </p>
+</div>
+<div class="md:col-span-4 flex justify-end">
+<div class="intelligence-rail border-l border-[#F6C945] pl-6 py-2">
+<div class="font-headline text-3xl text-[#F6C945]">98.4%</div>
+<div class="font-label text-[10px] uppercase text-gray-500 tracking-widest">Cohesion Index</div>
+</div>
+</div>
+</section>
+<!-- Color System Section -->
+<section class="space-y-8">
+<div class="flex justify-between items-baseline border-b border-surface-container-high pb-4">
+<h2 class="font-headline text-3xl font-bold">01. Color System</h2>
+<span class="font-label text-xs text-gray-500">REF_COLOR_SPEC_04</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Graphite Black -->
+<div class="group bg-[#0C0E12] border-l-4 border-surface-container-highest p-8 space-y-12 hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex justify-between items-start">
+<div class="text-4xl font-headline font-bold">Graphite <br/> Black</div>
+<span class="font-label text-xs opacity-50">BASE_01</span>
+</div>
+<div class="space-y-2">
+<div class="text-[#F6C945] font-mono text-sm">#0F1115</div>
+<p class="text-sm text-on-surface-variant leading-snug">The core foundation. Used for deep background wells and inset structural elements.</p>
+</div>
+</div>
+<!-- Deep Steel -->
+<div class="group bg-[#1A1F29] border-l-4 border-secondary p-8 space-y-12 hover:bg-[#1f2531] transition-colors duration-300">
+<div class="flex justify-between items-start">
+<div class="text-4xl font-headline font-bold">Deep <br/> Steel</div>
+<span class="font-label text-xs opacity-50">SURFACE_02</span>
+</div>
+<div class="space-y-2">
+<div class="text-secondary font-mono text-sm">#1A1F29</div>
+<p class="text-sm text-on-surface-variant leading-snug">Primary workspace surface. Provides enough contrast for content modules and data grids.</p>
+</div>
+</div>
+<!-- Foundri Yellow -->
+<div class="group bg-[#F6C945] border-l-4 border-white p-8 space-y-12 hover:brightness-110 transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="text-4xl font-headline font-bold text-[#0F1115]">Foundri <br/> Yellow</div>
+<span class="font-label text-xs text-[#0F1115] opacity-50">SIGNAL_03</span>
+</div>
+<div class="space-y-2">
+<div class="text-[#0F1115] font-mono text-sm font-bold">#F6C945</div>
+<p class="text-sm text-[#0F1115] font-medium leading-snug">Signal Intelligence. Reserved strictly for AI insights, critical status, and high-tier CTAs.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Typography & Vibe -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Typography Section -->
+<section class="lg:col-span-8 space-y-8">
+<div class="flex justify-between items-baseline border-b border-surface-container-high pb-4">
+<h2 class="font-headline text-3xl font-bold">02. Typography Hierarchy</h2>
+<span class="font-label text-xs text-gray-500">REF_TYPE_MAP_02</span>
+</div>
+<div class="bg-surface-container-low p-10 space-y-12">
+<div class="flex items-start gap-12">
+<div class="text-8xl font-headline font-bold leading-none text-[#F6C945]">Aa</div>
+<div class="space-y-4">
+<div class="font-headline text-4xl font-bold">Space Grotesk</div>
+<p class="font-body text-on-surface-variant max-w-md">Headlines &amp; Hero Points. Designed for industrial legibility with a mechanical skeleton and wide stance.</p>
+<div class="flex gap-4">
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">H1: 3.5REM / 700</span>
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">H2: 2.25REM / 600</span>
+</div>
+</div>
+</div>
+<div class="h-px bg-surface-container-highest"></div>
+<div class="flex items-start gap-12">
+<div class="text-8xl font-body font-black leading-none text-white">Bb</div>
+<div class="space-y-4">
+<div class="font-body text-4xl font-black">Inter / Operator</div>
+<p class="font-body text-on-surface-variant max-w-md">Body, Labels &amp; Metadata. High-clarity utilitarian sans-serif for heavy data density environments.</p>
+<div class="flex gap-4">
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">BODY: 1REM / 400</span>
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold uppercase tracking-widest">LABEL: 0.68REM / 700</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Brand Personality & Mood -->
+<section class="lg:col-span-4 space-y-8">
+<div class="flex justify-between items-baseline border-b border-surface-container-high pb-4">
+<h2 class="font-headline text-3xl font-bold">Mood</h2>
+<span class="font-label text-xs text-gray-500">DNA_77</span>
+</div>
+<div class="grid-pattern bg-[#0C0E12] h-[340px] flex flex-col justify-end p-8 border border-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-[#0C0E12] to-transparent z-10"></div>
+<div class="z-20 space-y-6">
+<div class="space-y-1">
+<div class="text-[#F6C945] text-[10px] font-bold tracking-[0.3em] uppercase">Ethos</div>
+<h3 class="font-headline text-2xl font-bold">Architectural Depth</h3>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-container-high/40 backdrop-blur-md p-3 text-[10px] font-bold uppercase tracking-widest text-center border border-white/5">Controlled</div>
+<div class="bg-surface-container-high/40 backdrop-blur-md p-3 text-[10px] font-bold uppercase tracking-widest text-center border border-white/5">Technical</div>
+<div class="bg-surface-container-high/40 backdrop-blur-md p-3 text-[10px] font-bold uppercase tracking-widest text-center border border-white/5">Modern</div>
+<div class="bg-surface-container-high/40 backdrop-blur-md p-3 text-[10px] font-bold uppercase tracking-widest text-center border border-white/5">Minimalist</div>
+</div>
+</div>
+<img alt="Technical" class="absolute inset-0 object-cover opacity-20" data-alt="Close up of high-tech motherboard circuits with glowing yellow lights and metallic textures in a dark setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI77SXIjB0oJ6L2qREmPbZBZV8aWvFtGOZ4V-zNpfJI5IjjzSbR2CAioL_xmXE3lrwfLwlX0uXGfl_JqFvUzB9U_n00Yx4cZSuQ-UxMxHkWbnWTd5GZc6_7cjM9V2TX5UXbZGP8H6h-NEjuh8JxIJxyDPlYIUKP76hOk34Amfl_AdNItsYhYzkqowP41w98BMIA-QatjAcGV67myjE3OG8dD5_AeLQUWViQhmFO-bmMYiX686F9AWrmI7Z890fBmlHH7mkKfLaJOk"/>
+</div>
+</section>
+</div>
+<!-- Component Showcase Section -->
+<section class="space-y-8">
+<div class="flex justify-between items-baseline border-b border-surface-container-high pb-4">
+<h2 class="font-headline text-3xl font-bold">03. UI Foundations</h2>
+<span class="font-label text-xs text-gray-500">REF_COMP_V2</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Buttons -->
+<div class="bg-surface-container-low p-6 space-y-6">
+<div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Action Controls</div>
+<div class="space-y-3">
+<button class="w-full bg-[#F6C945] text-[#0F1115] py-2 px-4 font-bold text-sm rounded-sm hover:shadow-[0_0_20px_rgba(246,201,69,0.3)] transition-all flex items-center justify-between">
+                                PRIMARY_ACTION
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<button class="w-full border border-outline-variant/30 text-on-surface py-2 px-4 font-bold text-sm rounded-sm hover:bg-surface-container-highest transition-all flex items-center justify-between">
+                                SECONDARY_GHOST
+                                <span class="material-symbols-outlined text-sm">layers</span>
+</button>
+</div>
+</div>
+<!-- Status -->
+<div class="bg-surface-container-low p-6 space-y-6">
+<div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Status Signals</div>
+<div class="flex flex-wrap gap-2">
+<div class="px-3 py-1 bg-green-500/10 text-green-400 text-[10px] font-black uppercase tracking-tighter border border-green-500/20 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> ONLINE
+                            </div>
+<div class="px-3 py-1 bg-red-500/10 text-red-400 text-[10px] font-black uppercase tracking-tighter border border-red-500/20 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> ERROR
+                            </div>
+<div class="px-3 py-1 bg-[#F6C945]/10 text-[#F6C945] text-[10px] font-black uppercase tracking-tighter border border-[#F6C945]/20 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#F6C945]"></span> WARNING
+                            </div>
+</div>
+</div>
+<!-- Progress -->
+<div class="bg-surface-container-low p-6 space-y-6">
+<div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">System Load</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-mono">
+<span>CORE_X01</span>
+<span>74%</span>
+</div>
+<div class="h-1 bg-surface-container-highest w-full rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[74%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-mono">
+<span>AI_NEURAL</span>
+<span>42%</span>
+</div>
+<div class="h-1 bg-surface-container-highest w-full rounded-full overflow-hidden">
+<div class="h-full bg-[#F6C945] w-[42%] shadow-[0_0_8px_rgba(246,201,69,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tooltip/Pop -->
+<div class="bg-surface-container-low p-6 space-y-6 flex flex-col justify-center">
+<div class="bg-surface-container-highest p-4 rounded-sm border-l-2 border-[#F6C945] relative">
+<div class="text-[10px] font-bold text-[#F6C945] mb-1">SYSTEM_ALERT</div>
+<p class="text-[11px] leading-tight text-on-surface-variant">Authentication required for kernel deployment protocol 09.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Identity Bar -->
+<footer class="ml-64 bg-[#0C0E12] border-t border-surface-container-high/20 px-12 py-6 flex justify-between items-center text-[10px] font-mono text-gray-600 uppercase tracking-widest">
+<div>Copyright Foundri Intelligence Systems © 2024</div>
+<div class="flex gap-8">
+<span class="text-secondary">#SECURE_PROTOCOL_ACTIVE</span>
+<span>BUILD: KINETIC_V2.04_LATEST</span>
+</div>
+</footer>
+</body></html>

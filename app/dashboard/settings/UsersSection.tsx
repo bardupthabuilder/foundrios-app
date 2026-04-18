@@ -111,7 +111,7 @@ export function UsersSection() {
       <CardContent className="space-y-6">
         {/* Actieve gebruikers */}
         <div>
-          <h3 className="text-sm font-medium text-zinc-700 mb-2">Actieve gebruikers ({users.length})</h3>
+          <h3 className="text-sm font-medium text-zinc-200 mb-2">Actieve gebruikers ({users.length})</h3>
           <div className="space-y-2">
             {users.map((u) => (
               <div key={u.id} className="flex items-center justify-between rounded-lg border p-3">
@@ -129,7 +129,7 @@ export function UsersSection() {
         {/* Openstaande uitnodigingen */}
         {pendingInvites.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium text-zinc-700 mb-2">Openstaande uitnodigingen</h3>
+            <h3 className="text-sm font-medium text-zinc-200 mb-2">Openstaande uitnodigingen</h3>
             <div className="space-y-2">
               {pendingInvites.map((inv) => (
                 <div key={inv.id} className="flex items-center justify-between rounded-lg border border-dashed p-3">
@@ -160,16 +160,16 @@ export function UsersSection() {
 
         {/* Nieuw uitnodigen */}
         <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-zinc-700 flex items-center gap-2">
+          <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
             <UserPlus className="h-4 w-4" /> Iemand uitnodigen
           </h3>
           {error && (
-            <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-md bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm text-red-400">
               {error}
             </div>
           )}
           {sent && (
-            <div className="rounded-md bg-green-50 border border-green-200 px-3 py-2 text-sm text-green-700">
+            <div className="rounded-md bg-green-500/10 border border-green-500/30 px-3 py-2 text-sm text-green-400">
               Uitnodiging aangemaakt. Kopieer de link en stuur deze naar de gebruiker.
             </div>
           )}

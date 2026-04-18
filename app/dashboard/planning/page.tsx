@@ -144,7 +144,7 @@ export default function PlanningPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Werkplanning</h1>
-          <p className="text-sm text-zinc-500 mt-1">Wie werkt waar en wanneer</p>
+          <p className="text-sm text-zinc-400 mt-1">Wie werkt waar en wanneer</p>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ export default function PlanningPage() {
         </Button>
         <div className="text-center">
           <div className="font-medium">Week {weekNum} — {year}</div>
-          <div className="text-xs text-zinc-500">
+          <div className="text-xs text-zinc-400">
             {weekDates[0].toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} t/m{' '}
             {weekDates[4].toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
           </div>
@@ -176,20 +176,20 @@ export default function PlanningPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <CalendarDays className="h-10 w-10 mx-auto text-zinc-300 mb-3" />
-            <p className="text-zinc-500">Voeg eerst medewerkers toe om de planning te gebruiken.</p>
+            <p className="text-zinc-400">Voeg eerst medewerkers toe om de planning te gebruiken.</p>
           </CardContent>
         </Card>
       ) : (
         <>
           {/* Desktop: Week grid */}
           <div className="hidden lg:block overflow-x-auto">
-            <div className="grid gap-px bg-zinc-200 rounded-lg overflow-hidden" style={{ gridTemplateColumns: '160px repeat(5, 1fr)' }}>
+            <div className="grid gap-px bg-white/10 rounded-lg overflow-hidden" style={{ gridTemplateColumns: '160px repeat(5, 1fr)' }}>
               {/* Header row */}
-              <div className="bg-zinc-50 p-2 text-sm font-medium text-zinc-500" />
+              <div className="bg-[#111317] p-2 text-sm font-medium text-zinc-400" />
               {weekDates.map((d, i) => (
                 <div
                   key={i}
-                  className={`bg-zinc-50 p-2 text-center text-sm ${toDateStr(d) === todayStr ? 'bg-blue-50 font-bold' : ''}`}
+                  className={`bg-[#111317] p-2 text-center text-sm ${toDateStr(d) === todayStr ? 'bg-blue-500/10 font-bold' : ''}`}
                 >
                   <div className="font-medium">{DAY_LABELS_SHORT[i]}</div>
                   <div className="text-xs text-zinc-400">
@@ -201,7 +201,7 @@ export default function PlanningPage() {
               {/* Employee rows */}
               {employees.map((emp) => (
                 <>
-                  <div key={`name-${emp.id}`} className="bg-white p-2 flex items-start gap-2">
+                  <div key={`name-${emp.id}`} className="bg-[#1A1F29] p-2 flex items-start gap-2">
                     <div
                       className="h-6 w-6 rounded-full shrink-0 flex items-center justify-center text-white text-[10px] font-bold mt-0.5"
                       style={{ backgroundColor: emp.color }}
@@ -216,15 +216,15 @@ export default function PlanningPage() {
                     return (
                       <div
                         key={`${emp.id}-${dateStr}`}
-                        className={`bg-white p-1 min-h-[60px] cursor-pointer hover:bg-zinc-50 transition-colors ${
-                          dateStr === todayStr ? 'bg-blue-50/50' : ''
+                        className={`bg-[#1A1F29] p-1 min-h-[60px] cursor-pointer hover:bg-white/5 transition-colors ${
+                          dateStr === todayStr ? 'bg-blue-500/5' : ''
                         }`}
                         onClick={() => openDialog(dateStr, emp.id)}
                       >
                         {cellEntries.map((entry) => (
                           <div
                             key={entry.id}
-                            className="text-xs p-1.5 rounded mb-1 bg-zinc-100 hover:bg-zinc-200 group relative"
+                            className="text-xs p-1.5 rounded mb-1 bg-[#282A2E] hover:bg-white/15 group relative"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <div className="font-medium truncate">{entry.projects?.name ?? '—'}</div>
@@ -235,7 +235,7 @@ export default function PlanningPage() {
                               </div>
                             )}
                             <button
-                              className="absolute top-1 right-1 h-4 w-4 rounded bg-red-100 text-red-600 items-center justify-center hidden group-hover:flex"
+                              className="absolute top-1 right-1 h-4 w-4 rounded bg-red-500/10 text-red-400 items-center justify-center hidden group-hover:flex"
                               onClick={() => handleDelete(entry.id)}
                             >
                               <Trash2 className="h-2.5 w-2.5" />
@@ -266,11 +266,11 @@ export default function PlanningPage() {
                 const pct = capacity > 0 ? Math.min(Math.round((dayHours / capacity) * 100), 100) : 0
                 return (
                   <div key={dateStr} className="px-2">
-                    <div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
+                    <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
                       <span>{dayHours}u / {capacity}u</span>
-                      <span className={pct >= 90 ? 'text-green-600 font-medium' : pct >= 50 ? 'text-orange-500' : 'text-zinc-400'}>{pct}%</span>
+                      <span className={pct >= 90 ? 'text-green-400 font-medium' : pct >= 50 ? 'text-orange-500' : 'text-zinc-400'}>{pct}%</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-[#282A2E] overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${pct >= 90 ? 'bg-green-500' : pct >= 50 ? 'bg-orange-400' : 'bg-zinc-300'}`}
                         style={{ width: `${pct}%` }}
@@ -291,7 +291,7 @@ export default function PlanningPage() {
 
               return (
                 <div key={dateStr}>
-                  <div className={`text-sm font-medium mb-2 ${isToday ? 'text-blue-600' : 'text-zinc-500'}`}>
+                  <div className={`text-sm font-medium mb-2 ${isToday ? 'text-blue-400' : 'text-zinc-400'}`}>
                     {isToday ? 'Vandaag — ' : ''}{DAY_LABELS_FULL[i]}{' '}
                     {d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}
                   </div>
@@ -316,7 +316,7 @@ export default function PlanningPage() {
                             )}
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium">{entry.employees?.name ?? '—'}</div>
-                              <div className="text-sm text-zinc-500">{entry.projects?.name ?? '—'} — {entry.planned_hours ?? 8}u</div>
+                              <div className="text-sm text-zinc-400">{entry.projects?.name ?? '—'} — {entry.planned_hours ?? 8}u</div>
                               {entry.projects?.city && (
                                 <div className="text-xs text-zinc-400 flex items-center gap-1">
                                   <MapPin className="h-3 w-3" />{[entry.projects.address, entry.projects.city].filter(Boolean).join(', ')}
@@ -326,7 +326,7 @@ export default function PlanningPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-zinc-400 hover:text-red-600 shrink-0"
+                              className="text-zinc-400 hover:text-red-400 shrink-0"
                               onClick={() => handleDelete(entry.id)}
                             >
                               <Trash2 className="h-4 w-4" />

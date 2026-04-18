@@ -48,11 +48,11 @@ const statusActions: Record<string, { label: string; next: string; icon: any; co
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  concept: { label: 'Concept', color: 'bg-zinc-100 text-zinc-700' },
-  verstuurd: { label: 'Verstuurd', color: 'bg-blue-100 text-blue-700' },
-  akkoord: { label: 'Akkoord', color: 'bg-green-100 text-green-700' },
-  afgewezen: { label: 'Afgewezen', color: 'bg-red-100 text-red-700' },
-  verlopen: { label: 'Verlopen', color: 'bg-amber-100 text-amber-700' },
+  concept: { label: 'Concept', color: 'bg-[#282A2E] text-zinc-200' },
+  verstuurd: { label: 'Verstuurd', color: 'bg-blue-500/10 text-blue-400' },
+  akkoord: { label: 'Akkoord', color: 'bg-green-500/10 text-green-400' },
+  afgewezen: { label: 'Afgewezen', color: 'bg-red-500/10 text-red-400' },
+  verlopen: { label: 'Verlopen', color: 'bg-amber-100 text-amber-400' },
 }
 
 export default function QuoteDetailPage() {
@@ -128,22 +128,22 @@ export default function QuoteDetailPage() {
   return (
     <div className="p-4 lg:p-6 pt-16 lg:pt-6 max-w-4xl">
       {/* Back + Title */}
-      <button onClick={() => router.push('/dashboard/offertes')} className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-700">
+      <button onClick={() => router.push('/dashboard/offertes')} className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200">
         <ArrowLeft className="h-4 w-4" /> Terug naar offertes
       </button>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-zinc-900">{quote.title}</h1>
+            <h1 className="text-2xl font-bold text-white">{quote.title}</h1>
             <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${sc.color}`}>{sc.label}</span>
           </div>
-          <p className="text-sm text-zinc-500 mt-1">{quote.quote_number} · Aangemaakt {new Date(quote.created_at).toLocaleDateString('nl-NL')}</p>
+          <p className="text-sm text-zinc-400 mt-1">{quote.quote_number} · Aangemaakt {new Date(quote.created_at).toLocaleDateString('nl-NL')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => window.open(`/dashboard/offertes/${id}/print`, '_blank')}
-            className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium text-zinc-200 hover:bg-white/5"
           >
             <Download className="h-4 w-4" /> PDF
           </button>
@@ -166,19 +166,19 @@ export default function QuoteDetailPage() {
       {/* Info Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Excl. BTW</div>
+          <div className="text-xs text-zinc-400">Excl. BTW</div>
           <div className="text-lg font-semibold">{fmt(quote.amount_excl_vat)}</div>
         </div>
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Incl. BTW ({quote.vat_pct}%)</div>
+          <div className="text-xs text-zinc-400">Incl. BTW ({quote.vat_pct}%)</div>
           <div className="text-lg font-semibold">{fmt(quote.amount_incl_vat)}</div>
         </div>
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Klant</div>
+          <div className="text-xs text-zinc-400">Klant</div>
           <div className="text-sm font-medium truncate">{quote.clients?.company_name || quote.clients?.name || '—'}</div>
         </div>
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Geldig tot</div>
+          <div className="text-xs text-zinc-400">Geldig tot</div>
           <div className="text-sm font-medium">{quote.valid_until ? new Date(quote.valid_until).toLocaleDateString('nl-NL') : '—'}</div>
         </div>
       </div>
@@ -186,17 +186,17 @@ export default function QuoteDetailPage() {
       {/* Description */}
       {quote.description && (
         <div className="mb-6 rounded-lg border p-4">
-          <h3 className="text-xs font-medium text-zinc-500 mb-1">Omschrijving</h3>
-          <p className="text-sm text-zinc-700 whitespace-pre-wrap">{quote.description}</p>
+          <h3 className="text-xs font-medium text-zinc-400 mb-1">Omschrijving</h3>
+          <p className="text-sm text-zinc-200 whitespace-pre-wrap">{quote.description}</p>
         </div>
       )}
 
       {/* Line Items */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-zinc-900">Regels</h2>
+          <h2 className="text-sm font-semibold text-white">Regels</h2>
           {(quote.status === 'concept') && (
-            <button onClick={() => setShowAddItem(true)} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-900">
+            <button onClick={() => setShowAddItem(true)} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-300 hover:text-white">
               <Plus className="h-3.5 w-3.5" /> Regel toevoegen
             </button>
           )}
@@ -210,7 +210,7 @@ export default function QuoteDetailPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-xs text-zinc-500">
+                <tr className="border-b text-left text-xs text-zinc-400">
                   <th className="pb-2 font-medium">Omschrijving</th>
                   <th className="pb-2 font-medium text-right w-20">Aantal</th>
                   <th className="pb-2 font-medium w-16">Eenheid</th>
@@ -239,12 +239,12 @@ export default function QuoteDetailPage() {
               </tbody>
               <tfoot>
                 <tr className="border-t">
-                  <td colSpan={4} className="pt-2.5 text-right text-xs text-zinc-500">Subtotaal excl. BTW</td>
+                  <td colSpan={4} className="pt-2.5 text-right text-xs text-zinc-400">Subtotaal excl. BTW</td>
                   <td className="pt-2.5 text-right font-semibold">{fmt(quote.amount_excl_vat)}</td>
                   {quote.status === 'concept' && <td></td>}
                 </tr>
                 <tr>
-                  <td colSpan={4} className="py-1 text-right text-xs text-zinc-500">BTW ({quote.vat_pct}%)</td>
+                  <td colSpan={4} className="py-1 text-right text-xs text-zinc-400">BTW ({quote.vat_pct}%)</td>
                   <td className="py-1 text-right text-sm">{fmt(quote.amount_incl_vat - quote.amount_excl_vat)}</td>
                   {quote.status === 'concept' && <td></td>}
                 </tr>
@@ -262,28 +262,28 @@ export default function QuoteDetailPage() {
       {/* Notes */}
       {quote.notes && (
         <div className="rounded-lg border p-4">
-          <h3 className="text-xs font-medium text-zinc-500 mb-1">Notities</h3>
-          <p className="text-sm text-zinc-700 whitespace-pre-wrap">{quote.notes}</p>
+          <h3 className="text-xs font-medium text-zinc-400 mb-1">Notities</h3>
+          <p className="text-sm text-zinc-200 whitespace-pre-wrap">{quote.notes}</p>
         </div>
       )}
 
       {/* Add Item Dialog */}
       {showAddItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddItem(false)}>
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Regel toevoegen</h2>
             <form onSubmit={addItem} className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-600">Omschrijving *</label>
+                <label className="text-xs font-medium text-zinc-300">Omschrijving *</label>
                 <input required value={itemForm.description} onChange={e => setItemForm({ ...itemForm, description: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Bestrating terras 40m²" />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Aantal</label>
+                  <label className="text-xs font-medium text-zinc-300">Aantal</label>
                   <input type="number" step="0.01" min="0.01" value={itemForm.quantity} onChange={e => setItemForm({ ...itemForm, quantity: parseFloat(e.target.value) || 1 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Eenheid</label>
+                  <label className="text-xs font-medium text-zinc-300">Eenheid</label>
                   <select value={itemForm.unit} onChange={e => setItemForm({ ...itemForm, unit: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
                     <option value="stuk">Stuk</option>
                     <option value="uur">Uur</option>
@@ -295,15 +295,15 @@ export default function QuoteDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Prijs (€)</label>
+                  <label className="text-xs font-medium text-zinc-300">Prijs (€)</label>
                   <input type="number" step="0.01" min="0" value={itemForm.unit_price} onChange={e => setItemForm({ ...itemForm, unit_price: parseFloat(e.target.value) || 0 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
               </div>
-              <div className="text-right text-sm text-zinc-500">
+              <div className="text-right text-sm text-zinc-400">
                 Totaal: {new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(itemForm.quantity * itemForm.unit_price)}
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowAddItem(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100">Annuleren</button>
+                <button type="button" onClick={() => setShowAddItem(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
                 <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">Toevoegen</button>
               </div>
             </form>

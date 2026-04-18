@@ -53,8 +53,8 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Lead Inbox</h1>
-          <p className="text-sm text-zinc-500">
+          <h1 className="text-2xl font-bold text-white">Lead Inbox</h1>
+          <p className="text-sm text-zinc-400">
             {leads?.length ?? 0} leads
             {labelFilter ? ` · ${labelFilter}` : ''}
           </p>
@@ -89,7 +89,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       {/* Lead lijst */}
       <div className="space-y-2">
         {!leads || leads.length === 0 ? (
-          <div className="rounded-xl border-2 border-dashed border-zinc-200 p-12 text-center">
+          <div className="rounded-xl border-2 border-dashed border-white/10 p-12 text-center">
             <p className="text-zinc-400">
               {searchQuery ? `Geen leads gevonden voor "${searchQuery}"` : 'Nog geen leads.'}
             </p>
@@ -103,7 +103,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
           leads.map((lead) => (
             <div
               key={lead.id}
-              className="rounded-xl border bg-white hover:border-zinc-300 hover:shadow-sm transition-all"
+              className="rounded-xl border bg-[#1A1F29] hover:border-white/15 hover:shadow-sm transition-all"
             >
               <Link
                 href={`/dashboard/leads/${lead.id}`}
@@ -120,11 +120,11 @@ export default async function LeadsPage({ searchParams }: PageProps) {
                     }`}
                   />
                   <div className="min-w-0">
-                    <p className="font-medium text-zinc-900 truncate">{lead.name}</p>
+                    <p className="font-medium text-white truncate">{lead.name}</p>
                     {lead.ai_summary ? (
-                      <p className="text-sm text-zinc-500 truncate max-w-md">{lead.ai_summary}</p>
+                      <p className="text-sm text-zinc-400 truncate max-w-md">{lead.ai_summary}</p>
                     ) : lead.intent ? (
-                      <p className="text-sm text-zinc-500 truncate">{lead.intent}</p>
+                      <p className="text-sm text-zinc-400 truncate">{lead.intent}</p>
                     ) : null}
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
                 {lead.phone && (
                   <a
                     href={`tel:${lead.phone}`}
-                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-300 hover:bg-white/10 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Phone className="h-3 w-3" />
@@ -159,7 +159,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
                 {lead.email && (
                   <a
                     href={`mailto:${lead.email}`}
-                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-300 hover:bg-white/10 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Mail className="h-3 w-3" />
@@ -171,7 +171,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
                     href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-300 hover:bg-white/10 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     💬 WhatsApp
@@ -179,7 +179,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
                 )}
                 <Link
                   href={`/dashboard/offertes?lead=${lead.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-zinc-300 hover:bg-white/10 transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <FileText className="h-3 w-3" />

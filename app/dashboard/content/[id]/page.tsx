@@ -248,7 +248,7 @@ export default function ContentDetailPage() {
         {/* Back button */}
         <button
           onClick={() => router.push('/dashboard/content')}
-          className="mb-5 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-700"
+          className="mb-5 inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Terug naar content
@@ -262,18 +262,18 @@ export default function ContentDetailPage() {
             <input
               value={item.title ?? ''}
               onChange={(e) => updateField('title', e.target.value)}
-              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-2xl font-bold text-zinc-900 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+              className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-4 py-3 text-2xl font-bold text-white placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
               placeholder="Titel van dit content item..."
             />
 
             {/* Hook */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-medium text-zinc-700">Hook</label>
+                <label className="text-sm font-medium text-zinc-200">Hook</label>
                 <button
                   onClick={() => handleGenerateField('hook')}
                   disabled={generatingField === 'hook'}
-                  className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'hook' ? 'Bezig...' : 'AI'}
@@ -282,7 +282,7 @@ export default function ContentDetailPage() {
               <input
                 value={item.hook ?? ''}
                 onChange={(e) => updateField('hook', e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                 placeholder="Pakkende eerste zin die direct aandacht trekt..."
               />
             </div>
@@ -290,11 +290,11 @@ export default function ContentDetailPage() {
             {/* Caption / Body */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-medium text-zinc-700">Caption</label>
+                <label className="text-sm font-medium text-zinc-200">Caption</label>
                 <button
                   onClick={() => handleGenerateField('body')}
                   disabled={generatingField === 'body'}
-                  className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'body' ? 'Bezig...' : 'AI'}
@@ -304,7 +304,7 @@ export default function ContentDetailPage() {
                 rows={6}
                 value={item.body ?? ''}
                 onChange={(e) => updateField('body', e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
+                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
                 placeholder="De volledige tekst / caption voor dit content item..."
               />
             </div>
@@ -312,11 +312,11 @@ export default function ContentDetailPage() {
             {/* CTA */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-medium text-zinc-700">CTA</label>
+                <label className="text-sm font-medium text-zinc-200">CTA</label>
                 <button
                   onClick={() => handleGenerateField('cta')}
                   disabled={generatingField === 'cta'}
-                  className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'cta' ? 'Bezig...' : 'AI'}
@@ -325,7 +325,7 @@ export default function ContentDetailPage() {
               <input
                 value={item.cta ?? ''}
                 onChange={(e) => updateField('cta', e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                 placeholder="Reacteer, stuur een DM, klik de link in de bio..."
               />
             </div>
@@ -334,11 +334,11 @@ export default function ContentDetailPage() {
             {isVideo && (
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
-                  <label className="text-sm font-medium text-zinc-700">Script</label>
+                  <label className="text-sm font-medium text-zinc-200">Script</label>
                   <button
                     onClick={() => handleGenerateField('script')}
                     disabled={generatingField === 'script'}
-                    className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                   >
                     <Bot className="h-3.5 w-3.5" />
                     {generatingField === 'script' ? 'Bezig...' : 'AI'}
@@ -348,7 +348,7 @@ export default function ContentDetailPage() {
                   rows={4}
                   value={item.script ?? ''}
                   onChange={(e) => updateField('script', e.target.value)}
-                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
+                  className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
                   placeholder="Script voor de video of reel..."
                 />
               </div>
@@ -357,11 +357,11 @@ export default function ContentDetailPage() {
             {/* Visual Prompt */}
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-medium text-zinc-700">Visual Prompt</label>
+                <label className="text-sm font-medium text-zinc-200">Visual Prompt</label>
                 <button
                   onClick={() => handleGenerateField('visual_prompt')}
                   disabled={generatingField === 'visual_prompt'}
-                  className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-md bg-[#282A2E] px-2.5 py-1 text-xs font-medium text-zinc-300 hover:bg-white/15 disabled:opacity-50"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   {generatingField === 'visual_prompt' ? 'Bezig...' : 'AI'}
@@ -371,7 +371,7 @@ export default function ContentDetailPage() {
                 rows={3}
                 value={item.visual_prompt ?? ''}
                 onChange={(e) => updateField('visual_prompt', e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
+                className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300 resize-y"
                 placeholder="Beschrijf het beeld: hoek, licht, compositie, sfeer..."
               />
             </div>
@@ -382,15 +382,15 @@ export default function ContentDetailPage() {
             {/* Status & Type */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-zinc-700">Status & Type</CardTitle>
+                <CardTitle className="text-sm font-semibold text-zinc-200">Status & Type</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="mb-1 block text-xs text-zinc-500">Status</label>
+                  <label className="mb-1 block text-xs text-zinc-400">Status</label>
                   <select
                     value={item.status ?? ''}
                     onChange={(e) => updateField('status', e.target.value)}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   >
                     <option value="">— Selecteer —</option>
                     {STATUSES.map((s) => (
@@ -399,11 +399,11 @@ export default function ContentDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs text-zinc-500">Template</label>
+                  <label className="mb-1 block text-xs text-zinc-400">Template</label>
                   <select
                     value={item.content_template ?? ''}
                     onChange={(e) => updateField('content_template', e.target.value)}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   >
                     <option value="">— Selecteer —</option>
                     {TEMPLATES.map((t) => (
@@ -412,11 +412,11 @@ export default function ContentDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs text-zinc-500">Visueel type</label>
+                  <label className="mb-1 block text-xs text-zinc-400">Visueel type</label>
                   <select
                     value={item.visual_type ?? ''}
                     onChange={(e) => updateField('visual_type', e.target.value)}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   >
                     <option value="">— Selecteer —</option>
                     {VISUAL_TYPES.map((v) => (
@@ -430,35 +430,35 @@ export default function ContentDetailPage() {
             {/* Planning */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-zinc-700">Planning</CardTitle>
+                <CardTitle className="text-sm font-semibold text-zinc-200">Planning</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="mb-1 block text-xs text-zinc-500">Geplande datum</label>
+                  <label className="mb-1 block text-xs text-zinc-400">Geplande datum</label>
                   <input
                     type="date"
                     value={item.scheduled_date ?? ''}
                     onChange={(e) => updateField('scheduled_date', e.target.value)}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs text-zinc-500">Publicatiedatum</label>
+                  <label className="mb-1 block text-xs text-zinc-400">Publicatiedatum</label>
                   <input
                     type="date"
                     value={item.published_date ?? ''}
                     onChange={(e) => updateField('published_date', e.target.value)}
                     disabled={item.status !== 'gepubliceerd'}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs text-zinc-500">Tags (komma-gescheiden)</label>
+                  <label className="mb-1 block text-xs text-zinc-400">Tags (komma-gescheiden)</label>
                   <input
                     type="text"
                     value={tagsInput}
                     onChange={(e) => setTagsInput(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                    className="w-full rounded-lg border border-white/10 bg-[#1A1F29] px-3 py-2 text-sm text-zinc-100 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-300"
                     placeholder="tuin, voor-na, zomer"
                   />
                 </div>
@@ -468,7 +468,7 @@ export default function ContentDetailPage() {
             {/* Platforms */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-zinc-700">Platforms</CardTitle>
+                <CardTitle className="text-sm font-semibold text-zinc-200">Platforms</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {PLATFORMS.map((platform) => {
@@ -481,11 +481,11 @@ export default function ContentDetailPage() {
                         id={`platform-${platform.key}`}
                         checked={isEnabled}
                         onChange={(e) => handlePlatformToggle(platform.key, e.target.checked)}
-                        className="h-4 w-4 rounded border-zinc-300 accent-zinc-800"
+                        className="h-4 w-4 rounded border-white/15 accent-zinc-800"
                       />
                       <label
                         htmlFor={`platform-${platform.key}`}
-                        className="flex-1 text-sm text-zinc-700 cursor-pointer"
+                        className="flex-1 text-sm text-zinc-200 cursor-pointer"
                       >
                         {platform.label}
                       </label>
@@ -494,7 +494,7 @@ export default function ContentDetailPage() {
                           <span
                             className={`text-xs font-medium ${
                               dist.status === 'gepubliceerd'
-                                ? 'text-emerald-600'
+                                ? 'text-emerald-400'
                                 : 'text-zinc-400'
                             }`}
                           >
@@ -505,7 +505,7 @@ export default function ContentDetailPage() {
                               href={dist.post_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-zinc-400 hover:text-zinc-700"
+                              className="text-zinc-400 hover:text-zinc-200"
                             >
                               <ExternalLink className="h-3.5 w-3.5" />
                             </a>
@@ -513,7 +513,7 @@ export default function ContentDetailPage() {
                           {dist.status !== 'gepubliceerd' && (
                             <button
                               onClick={() => handleMarkPublished(dist.id)}
-                              className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600 hover:bg-zinc-200"
+                              className="rounded bg-[#282A2E] px-1.5 py-0.5 text-xs text-zinc-300 hover:bg-white/15"
                             >
                               Markeer gepubliceerd
                             </button>
@@ -530,25 +530,25 @@ export default function ContentDetailPage() {
             {hasAiScores && (
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-semibold text-zinc-700">AI Scores</CardTitle>
+                  <CardTitle className="text-sm font-semibold text-zinc-200">AI Scores</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {item.hook_score !== null && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-500">Hook score</span>
-                      <span className="font-medium text-zinc-800">{item.hook_score}/10</span>
+                      <span className="text-zinc-400">Hook score</span>
+                      <span className="font-medium text-zinc-100">{item.hook_score}/10</span>
                     </div>
                   )}
                   {item.clarity_score !== null && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-500">Clarity score</span>
-                      <span className="font-medium text-zinc-800">{item.clarity_score}/10</span>
+                      <span className="text-zinc-400">Clarity score</span>
+                      <span className="font-medium text-zinc-100">{item.clarity_score}/10</span>
                     </div>
                   )}
                   {item.cta_strength !== null && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-500">CTA strength</span>
-                      <span className="font-medium text-zinc-800">{item.cta_strength}/10</span>
+                      <span className="text-zinc-400">CTA strength</span>
+                      <span className="font-medium text-zinc-100">{item.cta_strength}/10</span>
                     </div>
                   )}
                 </CardContent>
@@ -559,7 +559,7 @@ export default function ContentDetailPage() {
       </div>
 
       {/* Sticky bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200 bg-white px-4 py-3 lg:left-64">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-[#1A1F29] px-4 py-3 lg:left-64">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <button
             onClick={handleGenerateAll}
@@ -580,7 +580,7 @@ export default function ContentDetailPage() {
             </button>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-red-500/30 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10"
             >
               <Trash2 className="h-4 w-4" />
               Verwijderen
@@ -596,17 +596,17 @@ export default function ContentDetailPage() {
           onClick={() => setShowDeleteConfirm(false)}
         >
           <div
-            className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl"
+            className="w-full max-w-sm rounded-xl bg-[#1A1F29] p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-base font-semibold text-zinc-900 mb-2">Content verwijderen?</h2>
-            <p className="text-sm text-zinc-500 mb-5">
+            <h2 className="text-base font-semibold text-white mb-2">Content verwijderen?</h2>
+            <p className="text-sm text-zinc-400 mb-5">
               Dit verwijdert het content item inclusief alle distributies. Dit kan niet ongedaan worden gemaakt.
             </p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100"
+                className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10"
               >
                 Annuleren
               </button>

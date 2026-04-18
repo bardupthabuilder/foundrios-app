@@ -13,10 +13,10 @@ type WorkOrder = {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  concept: { label: 'Concept', color: 'bg-zinc-100 text-zinc-700' },
-  actief: { label: 'Actief', color: 'bg-blue-100 text-blue-700' },
-  afgerond: { label: 'Afgerond', color: 'bg-green-100 text-green-700' },
-  gefactureerd: { label: 'Gefactureerd', color: 'bg-emerald-100 text-emerald-700' },
+  concept: { label: 'Concept', color: 'bg-[#282A2E] text-zinc-200' },
+  actief: { label: 'Actief', color: 'bg-blue-500/10 text-blue-400' },
+  afgerond: { label: 'Afgerond', color: 'bg-green-500/10 text-green-400' },
+  gefactureerd: { label: 'Gefactureerd', color: 'bg-emerald-500/10 text-emerald-400' },
 }
 
 export default function WerkbonDetailPage() {
@@ -97,17 +97,17 @@ export default function WerkbonDetailPage() {
 
   return (
     <div className="p-4 lg:p-6 pt-16 lg:pt-6 max-w-4xl">
-      <button onClick={() => router.push('/dashboard/werkbonnen')} className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-700">
+      <button onClick={() => router.push('/dashboard/werkbonnen')} className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200">
         <ArrowLeft className="h-4 w-4" /> Terug
       </button>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-zinc-900">{wo.title}</h1>
+            <h1 className="text-2xl font-bold text-white">{wo.title}</h1>
             <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${sc.color}`}>{sc.label}</span>
           </div>
-          <p className="text-sm text-zinc-500 mt-1">{wo.work_order_number} · {wo.projects?.name} · {new Date(wo.date).toLocaleDateString('nl-NL')}</p>
+          <p className="text-sm text-zinc-400 mt-1">{wo.work_order_number} · {wo.projects?.name} · {new Date(wo.date).toLocaleDateString('nl-NL')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {wo.status === 'concept' && (
@@ -131,26 +131,26 @@ export default function WerkbonDetailPage() {
       {/* KPI cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Uren</div>
+          <div className="text-xs text-zinc-400">Uren</div>
           <div className="text-lg font-semibold">{totalHours}u</div>
         </div>
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Arbeid</div>
+          <div className="text-xs text-zinc-400">Arbeid</div>
           <div className="text-lg font-semibold">{fmt(totalHoursCents)}</div>
         </div>
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Materiaal</div>
+          <div className="text-xs text-zinc-400">Materiaal</div>
           <div className="text-lg font-semibold">{fmt(totalMatCents)}</div>
         </div>
         <div className="rounded-lg border p-3">
-          <div className="text-xs text-zinc-500">Totaal</div>
+          <div className="text-xs text-zinc-400">Totaal</div>
           <div className="text-lg font-bold">{fmt(grandTotal)}</div>
         </div>
       </div>
 
       {/* Signed info */}
       {wo.signed_by && (
-        <div className="mb-6 rounded-lg bg-green-50 border border-green-200 p-3 text-sm">
+        <div className="mb-6 rounded-lg bg-green-500/10 border border-green-500/30 p-3 text-sm">
           Getekend door <strong>{wo.signed_by}</strong> op {wo.signed_at ? new Date(wo.signed_at).toLocaleDateString('nl-NL') : '—'}
         </div>
       )}
@@ -158,19 +158,19 @@ export default function WerkbonDetailPage() {
       {/* Uren */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-zinc-900">Uren</h2>
-          {editable && <button onClick={() => setShowAddHour(true)} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-900"><Plus className="h-3.5 w-3.5" /> Toevoegen</button>}
+          <h2 className="text-sm font-semibold text-white">Uren</h2>
+          {editable && <button onClick={() => setShowAddHour(true)} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-300 hover:text-white"><Plus className="h-3.5 w-3.5" /> Toevoegen</button>}
         </div>
         {wo.hours.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-zinc-400">Nog geen uren</div>
         ) : (
           <table className="w-full text-sm">
-            <thead><tr className="border-b text-left text-xs text-zinc-500"><th className="pb-2 font-medium">Medewerker</th><th className="pb-2 font-medium">Omschrijving</th><th className="pb-2 font-medium text-right w-16">Uren</th><th className="pb-2 font-medium text-right w-20">Tarief</th><th className="pb-2 font-medium text-right w-20">Totaal</th>{editable && <th className="w-8"></th>}</tr></thead>
+            <thead><tr className="border-b text-left text-xs text-zinc-400"><th className="pb-2 font-medium">Medewerker</th><th className="pb-2 font-medium">Omschrijving</th><th className="pb-2 font-medium text-right w-16">Uren</th><th className="pb-2 font-medium text-right w-20">Tarief</th><th className="pb-2 font-medium text-right w-20">Totaal</th>{editable && <th className="w-8"></th>}</tr></thead>
             <tbody>
               {wo.hours.map(h => (
                 <tr key={h.id} className="border-b last:border-0">
                   <td className="py-2">{h.employee_name || '—'}</td>
-                  <td className="py-2 text-zinc-500">{h.description || '—'}</td>
+                  <td className="py-2 text-zinc-400">{h.description || '—'}</td>
                   <td className="py-2 text-right">{Number(h.hours)}</td>
                   <td className="py-2 text-right">{fmt(h.hourly_rate_cents)}</td>
                   <td className="py-2 text-right font-medium">{fmt(h.total_cents)}</td>
@@ -185,14 +185,14 @@ export default function WerkbonDetailPage() {
       {/* Materiaal */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-zinc-900">Materiaal</h2>
-          {editable && <button onClick={() => setShowAddMat(true)} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-900"><Plus className="h-3.5 w-3.5" /> Toevoegen</button>}
+          <h2 className="text-sm font-semibold text-white">Materiaal</h2>
+          {editable && <button onClick={() => setShowAddMat(true)} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-300 hover:text-white"><Plus className="h-3.5 w-3.5" /> Toevoegen</button>}
         </div>
         {wo.materials.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-zinc-400">Nog geen materiaal</div>
         ) : (
           <table className="w-full text-sm">
-            <thead><tr className="border-b text-left text-xs text-zinc-500"><th className="pb-2 font-medium">Omschrijving</th><th className="pb-2 font-medium text-right w-16">Aantal</th><th className="pb-2 font-medium w-14">Eenheid</th><th className="pb-2 font-medium text-right w-20">Prijs</th><th className="pb-2 font-medium text-right w-20">Totaal</th>{editable && <th className="w-8"></th>}</tr></thead>
+            <thead><tr className="border-b text-left text-xs text-zinc-400"><th className="pb-2 font-medium">Omschrijving</th><th className="pb-2 font-medium text-right w-16">Aantal</th><th className="pb-2 font-medium w-14">Eenheid</th><th className="pb-2 font-medium text-right w-20">Prijs</th><th className="pb-2 font-medium text-right w-20">Totaal</th>{editable && <th className="w-8"></th>}</tr></thead>
             <tbody>
               {wo.materials.map(m => (
                 <tr key={m.id} className="border-b last:border-0">
@@ -209,16 +209,16 @@ export default function WerkbonDetailPage() {
         )}
       </div>
 
-      {wo.notes && <div className="rounded-lg border p-4"><h3 className="text-xs font-medium text-zinc-500 mb-1">Notities</h3><p className="text-sm text-zinc-700 whitespace-pre-wrap">{wo.notes}</p></div>}
+      {wo.notes && <div className="rounded-lg border p-4"><h3 className="text-xs font-medium text-zinc-400 mb-1">Notities</h3><p className="text-sm text-zinc-200 whitespace-pre-wrap">{wo.notes}</p></div>}
 
       {/* Add Hour Dialog */}
       {showAddHour && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddHour(false)}>
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Uren toevoegen</h2>
             <form onSubmit={addHour} className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-600">Medewerker</label>
+                <label className="text-xs font-medium text-zinc-300">Medewerker</label>
                 <select value={hourForm.employee_name} onChange={e => {
                   const emp = employees.find(em => em.name === e.target.value)
                   setHourForm({ ...hourForm, employee_name: e.target.value, hourly_rate: emp?.hourly_cost_cents ? emp.hourly_cost_cents / 100 : hourForm.hourly_rate })
@@ -229,20 +229,20 @@ export default function WerkbonDetailPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Uren</label>
+                  <label className="text-xs font-medium text-zinc-300">Uren</label>
                   <input type="number" step="0.5" min="0.5" value={hourForm.hours} onChange={e => setHourForm({ ...hourForm, hours: parseFloat(e.target.value) || 0 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Uurtarief (€)</label>
+                  <label className="text-xs font-medium text-zinc-300">Uurtarief (€)</label>
                   <input type="number" step="0.01" min="0" value={hourForm.hourly_rate} onChange={e => setHourForm({ ...hourForm, hourly_rate: parseFloat(e.target.value) || 0 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-zinc-600">Omschrijving</label>
+                <label className="text-xs font-medium text-zinc-300">Omschrijving</label>
                 <input value={hourForm.description} onChange={e => setHourForm({ ...hourForm, description: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Grondwerk terras" />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowAddHour(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100">Annuleren</button>
+                <button type="button" onClick={() => setShowAddHour(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
                 <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">Toevoegen</button>
               </div>
             </form>
@@ -253,31 +253,31 @@ export default function WerkbonDetailPage() {
       {/* Add Material Dialog */}
       {showAddMat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowAddMat(false)}>
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Materiaal toevoegen</h2>
             <form onSubmit={addMaterial} className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-600">Omschrijving *</label>
+                <label className="text-xs font-medium text-zinc-300">Omschrijving *</label>
                 <input required value={matForm.description} onChange={e => setMatForm({ ...matForm, description: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Tegels 60x60 antraciet" />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Aantal</label>
+                  <label className="text-xs font-medium text-zinc-300">Aantal</label>
                   <input type="number" step="0.01" min="0.01" value={matForm.quantity} onChange={e => setMatForm({ ...matForm, quantity: parseFloat(e.target.value) || 1 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Eenheid</label>
+                  <label className="text-xs font-medium text-zinc-300">Eenheid</label>
                   <select value={matForm.unit} onChange={e => setMatForm({ ...matForm, unit: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
                     <option value="stuk">Stuk</option><option value="m²">m²</option><option value="m³">m³</option><option value="m¹">m¹</option><option value="kg">kg</option><option value="zak">Zak</option><option value="pallet">Pallet</option><option value="post">Post</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-zinc-600">Prijs (€)</label>
+                  <label className="text-xs font-medium text-zinc-300">Prijs (€)</label>
                   <input type="number" step="0.01" min="0" value={matForm.unit_price} onChange={e => setMatForm({ ...matForm, unit_price: parseFloat(e.target.value) || 0 })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowAddMat(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100">Annuleren</button>
+                <button type="button" onClick={() => setShowAddMat(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
                 <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">Toevoegen</button>
               </div>
             </form>
@@ -288,15 +288,15 @@ export default function WerkbonDetailPage() {
       {/* Sign Dialog */}
       {showSign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowSign(false)}>
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-sm rounded-xl bg-[#1A1F29] p-6 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-4">Werkbon aftekenen</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-600">Naam klant / opdrachtgever</label>
+                <label className="text-xs font-medium text-zinc-300">Naam klant / opdrachtgever</label>
                 <input value={signName} onChange={e => setSignName(e.target.value)} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Naam" />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button onClick={() => setShowSign(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100">Annuleren</button>
+                <button onClick={() => setShowSign(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
                 <button onClick={() => updateStatus('afgerond')} className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">Aftekenen</button>
               </div>
             </div>

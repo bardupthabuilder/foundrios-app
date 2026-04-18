@@ -128,7 +128,7 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
-            <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-md bg-red-500/10 border border-red-500/30 px-3 py-2 text-sm text-red-400">
               {error}
             </div>
           )}
@@ -391,7 +391,7 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
         <CardFooter className="flex items-center justify-between">
           <div>
             {saved && (
-              <span className="text-sm text-green-600">Opgeslagen</span>
+              <span className="text-sm text-green-400">Opgeslagen</span>
             )}
           </div>
           <Button onClick={handleSave} disabled={saving}>
