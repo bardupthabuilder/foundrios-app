@@ -46,29 +46,51 @@ export async function POST(request: NextRequest) {
   // Service role client — RLS bypassen voor tenant aanmaken
   const serviceClient = createServiceClient()
 
-  const slug = companyName
+  const baseSlug = companyName
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
 
-  const { data: tenant, error: tenantError } = await serviceClient
-    .from('tenants')
-    .insert({
-      name: companyName,
-      slug,
-      niche,
-      region,
-      owner_name: ownerName,
-      owner_phone: ownerPhone,
-      onboarding_completed: true,
-    })
-    .select('id')
-    .single()
+  // Probeer eerst met base slug, bij collision voeg suffix toe
+  let slug = baseSlug
+  let tenant: { id: string } | null = null
 
-  if (tenantError || !tenant) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { data, error } = await serviceClient
+      .from('tenants')
+      .insert({
+        name: companyName,
+        slug,
+        niche,
+        region,
+        owner_name: ownerName,
+        owner_phone: ownerPhone,
+        onboarding_completed: true,
+      })
+      .select('id')
+      .single()
+
+    if (!error && data) {
+      tenant = data
+      break
+    }
+
+    if (error?.code === '23505' && error.message.includes('slug')) {
+      // Slug collision — voeg random suffix toe
+      slug = `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`
+      continue
+    }
+
     return NextResponse.json(
-      { error: `Kon bedrijf niet aanmaken: ${tenantError?.message}` },
+      { error: `Kon bedrijf niet aanmaken: ${error?.message}` },
+      { status: 500 }
+    )
+  }
+
+  if (!tenant) {
+    return NextResponse.json(
+      { error: 'Kon unieke bedrijfsnaam genereren — probeer opnieuw' },
       { status: 500 }
     )
   }
