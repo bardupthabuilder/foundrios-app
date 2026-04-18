@@ -24,7 +24,12 @@ import {
   CalendarCheck,
   Megaphone,
   GitBranch,
+  TrendingUp,
+  Zap,
+  ListChecks,
+  Brain,
 } from 'lucide-react'
+import { NotificationBell } from '@/components/NotificationBell'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -58,6 +63,7 @@ const navGroups = [
   {
     label: 'Financieel',
     items: [
+      { href: '/dashboard/financieel', label: 'Overzicht', icon: TrendingUp },
       { href: '/dashboard/offertes', label: 'Offertes', icon: FileText },
       { href: '/dashboard/facturen', label: 'Facturen', icon: Receipt },
     ],
@@ -75,8 +81,16 @@ const navGroups = [
     ],
   },
   {
+    label: 'Inzichten',
+    items: [
+      { href: '/dashboard/inzichten', label: 'Intelligence', icon: Brain },
+    ],
+  },
+  {
     label: 'Systeem',
     items: [
+      { href: '/dashboard/automations', label: 'Automatisering', icon: Zap },
+      { href: '/dashboard/processen', label: 'Processen', icon: ListChecks },
       { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
       { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
     ],
@@ -111,9 +125,12 @@ export function Sidebar() {
   const navContent = (
     <>
       {/* Logo */}
-      <div className="flex h-16 items-center gap-2.5 border-b border-white/5 px-5">
-        <Image src="/logo.svg" alt="FoundriOS" width={24} height={24} />
-        <span className="font-semibold tracking-tight truncate text-white">{tenantName}</span>
+      <div className="flex h-16 items-center justify-between border-b border-white/5 px-5">
+        <div className="flex items-center gap-2.5">
+          <Image src="/logo.svg" alt="FoundriOS" width={24} height={24} />
+          <span className="font-semibold tracking-tight truncate text-white">{tenantName}</span>
+        </div>
+        <NotificationBell />
       </div>
 
       {/* Nav Groups */}

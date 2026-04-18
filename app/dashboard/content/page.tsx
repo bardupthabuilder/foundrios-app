@@ -990,6 +990,22 @@ export default function ContentPage() {
         </div>
       </div>
 
+      {/* Quick AI Generate */}
+      <div className="mb-6 rounded-lg border border-foundri-yellow/20 bg-foundri-yellow/5 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-white">AI Content Assistent</h3>
+            <p className="text-xs text-zinc-400 mt-1">Genereer content op basis van je bedrijfsprofiel en recente projecten</p>
+          </div>
+          <button
+            onClick={() => setShowBatch(true)}
+            className="rounded-lg bg-foundri-yellow px-4 py-2 text-sm font-semibold text-[#0F1115] transition-all hover:shadow-[0_0_16px_rgba(246,201,69,0.3)]"
+          >
+            Genereer content
+          </button>
+        </div>
+      </div>
+
       {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
