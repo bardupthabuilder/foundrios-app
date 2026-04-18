@@ -52,6 +52,7 @@ export async function PATCH(request: NextRequest) {
     'google_review_count', 'google_review_score',
     'project_types', 'min_project_value', 'work_days', 'work_hours_start', 'work_hours_end',
     'tone_of_voice', 'ideal_customer', 'seasonal_notes', 'maintenance_frequencies',
+    'onboarding_dismissed',
   ]
 
   const updates: Record<string, unknown> = {}

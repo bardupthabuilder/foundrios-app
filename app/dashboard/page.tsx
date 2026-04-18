@@ -5,6 +5,7 @@ import { Inbox, TrendingUp, Star, FolderOpen, CalendarDays, Euro, Receipt, FileT
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { DemoSeedBanner } from '@/components/DemoSeedBanner'
+import { WelcomeBanner } from '@/components/WelcomeBanner'
 import { formatDistanceToNow } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -36,6 +37,9 @@ export default async function DashboardPage() {
     todayPlanningResult,
     invoicesResult,
     pipelineQuotesResult,
+    tenantResult,
+    employeesCountResult,
+    quotesCountResult,
   ] = await Promise.all([
     supabase
       .from('leads')
@@ -80,7 +84,29 @@ export default async function DashboardPage() {
       .select('amount_excl_vat, status')
       .eq('tenant_id', tenantId)
       .in('status', ['concept', 'verstuurd']),
+    // Onboarding progress (description, services, niche, onboarding_dismissed not in generated types)
+    supabase
+      .from('tenants')
+      .select('*')
+      .eq('id', tenantId)
+      .single(),
+    supabase
+      .from('employees')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId),
+    supabase
+      .from('quotes')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId),
   ])
+
+  // Onboarding progress — extra columns (description, services, onboarding_dismissed) exist in DB but not in generated types
+  const tenant = tenantResult.data as Record<string, unknown> | null
+  const profileComplete = !!(tenant?.description && tenant?.services && Array.isArray(tenant.services) && (tenant.services as string[]).length > 0)
+  const hasEmployees = (employeesCountResult.count || 0) > 0
+  const hasLeads = (leadsResult.count || 0) > 0
+  const hasQuotes = (quotesCountResult.count || 0) > 0
+  const showWelcome = tenant && !tenant.onboarding_dismissed
 
   const isEmpty = (leadsResult.count ?? 0) === 0 && (activeProjectsResult.count ?? 0) === 0
   const totalLeads = leadsResult.count ?? 0
@@ -133,6 +159,17 @@ export default async function DashboardPage() {
           <Link href="/dashboard/projecten"><Button size="sm">Projecten</Button></Link>
         </div>
       </div>
+
+      {showWelcome && (
+        <WelcomeBanner
+          tenantName={(tenant?.name as string) || 'FoundriOS'}
+          onboardingStep={0}
+          hasLeads={hasLeads}
+          hasEmployees={hasEmployees}
+          hasQuotes={hasQuotes}
+          profileComplete={profileComplete}
+        />
+      )}
 
       {isEmpty && <DemoSeedBanner />}
 

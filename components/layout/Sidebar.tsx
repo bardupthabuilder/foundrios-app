@@ -14,6 +14,7 @@ import {
   HardHat,
   Settings,
   CreditCard,
+  Shield,
   LogOut,
   Menu,
   X,
@@ -83,6 +84,7 @@ const navGroups = [
       { href: '/dashboard/processen', label: 'Processen', icon: ListChecks },
       { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
       { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
+      { href: '/admin', label: 'Admin', icon: Shield },
     ],
   },
 ]

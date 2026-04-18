@@ -17,6 +17,8 @@ export default async function SettingsPage() {
   const tenant = tenantResult.data
   const integrations = integrationsResult.data ?? []
 
+  const emailConfigured = !!process.env.RESEND_API_KEY
+
   const allIntegrationTypes = [
     { type: 'whatsapp', label: 'WhatsApp Business', icon: '💬', description: 'Berichten direct in je Lead Inbox' },
     { type: 'meta_lead_ads', label: 'Meta Lead Ads', icon: '📘', description: 'Facebook & Instagram leadformulieren' },
@@ -86,6 +88,16 @@ export default async function SettingsPage() {
               </div>
             )
           })}
+
+          <div className="flex items-center justify-between rounded-lg border border-white/5 bg-foundri-deep p-4">
+            <div>
+              <p className="text-sm font-medium text-white">E-mail (Resend)</p>
+              <p className="text-xs text-zinc-400">Automatische e-mails voor follow-ups en herinneringen</p>
+            </div>
+            <span className={`rounded-full px-2 py-0.5 text-xs ${emailConfigured ? 'bg-green-500/20 text-green-400' : 'bg-zinc-500/20 text-zinc-400'}`}>
+              {emailConfigured ? 'Actief' : 'Niet geconfigureerd'}
+            </span>
+          </div>
 
           <p className="text-xs text-zinc-400 mt-2">
             Neem contact op via support om een integratie in te stellen.
