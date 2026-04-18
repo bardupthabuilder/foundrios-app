@@ -2128,6 +2128,10 @@ export type Database = {
           parent_lead_id: string | null
           phone: string | null
           pipeline_stage: string | null
+          qualified_at: string | null
+          appointment_at: string | null
+          quote_sent_at: string | null
+          followed_up_at: string | null
           reasoning: string | null
           service_id: string | null
           service_type: string | null
@@ -2171,6 +2175,10 @@ export type Database = {
           parent_lead_id?: string | null
           phone?: string | null
           pipeline_stage?: string | null
+          qualified_at?: string | null
+          appointment_at?: string | null
+          quote_sent_at?: string | null
+          followed_up_at?: string | null
           reasoning?: string | null
           service_id?: string | null
           service_type?: string | null
@@ -2214,6 +2222,10 @@ export type Database = {
           parent_lead_id?: string | null
           phone?: string | null
           pipeline_stage?: string | null
+          qualified_at?: string | null
+          appointment_at?: string | null
+          quote_sent_at?: string | null
+          followed_up_at?: string | null
           reasoning?: string | null
           service_id?: string | null
           service_type?: string | null
@@ -2682,6 +2694,11 @@ export type Database = {
           status: Database["public"]["Enums"]["project_status"]
           tenant_id: string | null
           updated_at: string
+          delivered_at: string | null
+          review_requested_at: string | null
+          review_received: boolean
+          upsell_opportunity: string | null
+          upsell_status: string
         }
         Insert: {
           address?: string | null
@@ -2705,6 +2722,11 @@ export type Database = {
           status?: Database["public"]["Enums"]["project_status"]
           tenant_id?: string | null
           updated_at?: string
+          delivered_at?: string | null
+          review_requested_at?: string | null
+          review_received?: boolean
+          upsell_opportunity?: string | null
+          upsell_status?: string
         }
         Update: {
           address?: string | null

@@ -105,6 +105,28 @@ export default function ProjectDetailPage() {
   const formatCents = (cents: number) =>
     new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 
+  async function handleRetention(type: 'review' | 'upsell') {
+    const updates: Record<string, unknown> = {}
+    if (type === 'review') {
+      updates.review_requested_at = new Date().toISOString()
+    } else if (type === 'upsell') {
+      updates.upsell_status = 'identified'
+      const opportunity = prompt('Beschrijf de upsell kans:')
+      if (!opportunity) return
+      updates.upsell_opportunity = opportunity
+    }
+
+    const res = await fetch(`/api/projects/${project!.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    })
+    if (res.ok) {
+      const updated = await res.json()
+      setProject(prev => prev ? { ...prev, ...updated } : null)
+    }
+  }
+
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })
 
@@ -269,6 +291,64 @@ export default function ProjectDetailPage() {
                 )}
               </CardContent>
             </Card>
+          )}
+
+          {/* Retentie */}
+          {(project.status === 'opgeleverd' || project.status === 'gefactureerd') && (
+            <div className="rounded-lg border border-white/5 bg-[#1A1F29] p-5 space-y-4 sm:col-span-2">
+              <h3 className="text-sm font-semibold text-white">Na oplevering</h3>
+              <div className="space-y-3">
+                {/* Opleverdatum */}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Opgeleverd</span>
+                  <span className="text-zinc-200">
+                    {(project as any).delivered_at ? formatDate((project as any).delivered_at) : 'Niet ingesteld'}
+                  </span>
+                </div>
+                {/* Review */}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Review ontvangen</span>
+                  {(project as any).review_received ? (
+                    <span className="text-green-400">&#10003; Ja</span>
+                  ) : (
+                    <button
+                      onClick={() => handleRetention('review')}
+                      className="text-xs text-foundri-yellow hover:underline"
+                    >
+                      Review aanvragen
+                    </button>
+                  )}
+                </div>
+                {/* Upsell */}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Upsell</span>
+                  {!(project as any).upsell_status || (project as any).upsell_status === 'none' ? (
+                    <button
+                      onClick={() => handleRetention('upsell')}
+                      className="text-xs text-foundri-yellow hover:underline"
+                    >
+                      Kans identificeren
+                    </button>
+                  ) : (
+                    <span className={`text-xs ${
+                      (project as any).upsell_status === 'accepted' ? 'text-green-400' :
+                      (project as any).upsell_status === 'declined' ? 'text-red-400' :
+                      'text-orange-400'
+                    }`}>
+                      {(project as any).upsell_status === 'identified' ? 'Kans gevonden' :
+                       (project as any).upsell_status === 'proposed' ? 'Voorgesteld' :
+                       (project as any).upsell_status === 'accepted' ? 'Geaccepteerd' :
+                       'Afgewezen'}
+                    </span>
+                  )}
+                </div>
+                {(project as any).upsell_opportunity && (
+                  <p className="text-xs text-zinc-500 border-t border-white/5 pt-2">
+                    {(project as any).upsell_opportunity}
+                  </p>
+                )}
+              </div>
+            </div>
           )}
         </div>
       )}

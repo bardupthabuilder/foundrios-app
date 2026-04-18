@@ -23,6 +23,7 @@ import {
   Newspaper,
   CalendarCheck,
   Megaphone,
+  GitBranch,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -39,6 +40,7 @@ const navGroups = [
     label: 'Acquisitie',
     items: [
       { href: '/dashboard/leads', label: 'Lead Inbox', icon: Inbox },
+      { href: '/dashboard/pipeline', label: 'Pipeline', icon: GitBranch },
       { href: '/dashboard/klanten', label: 'Klanten', icon: Users },
       { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
     ],

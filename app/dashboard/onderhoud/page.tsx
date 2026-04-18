@@ -8,11 +8,16 @@ type Contract = {
   title: string
   frequency: string
   price_cents: number
+  mrr_cents: number | null
+  price_per_visit_cents: number | null
   next_visit: string | null
   status: string
   description: string | null
   notes: string | null
   start_date: string
+  contract_start: string | null
+  contract_end: string | null
+  visit_count: number | null
   clients: { id: string; company_name: string; phone: string | null; city: string | null } | null
 }
 
@@ -25,7 +30,7 @@ export default function OnderhoudPage() {
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [showNew, setShowNew] = useState(false)
-  const [form, setForm] = useState({ title: '', client_id: '', project_id: '', frequency: 'quarterly', price: 0, description: '', next_visit: '' })
+  const [form, setForm] = useState({ title: '', client_id: '', project_id: '', frequency: 'quarterly', price: 0, description: '', next_visit: '', contract_start: '', contract_end: '', notes: '' })
 
   useEffect(() => {
     fetch('/api/maintenance').then(r => r.json()).then(d => setContracts(Array.isArray(d) ? d : [])).finally(() => setLoading(false))
@@ -46,13 +51,16 @@ export default function OnderhoudPage() {
         price_cents: Math.round(form.price * 100),
         description: form.description || null,
         next_visit: form.next_visit || null,
+        contract_start: form.contract_start || null,
+        contract_end: form.contract_end || null,
+        notes: form.notes || null,
       }),
     })
     if (res.ok) {
       const c = await res.json()
       setContracts(prev => [c, ...prev])
       setShowNew(false)
-      setForm({ title: '', client_id: '', project_id: '', frequency: 'quarterly', price: 0, description: '', next_visit: '' })
+      setForm({ title: '', client_id: '', project_id: '', frequency: 'quarterly', price: 0, description: '', next_visit: '', contract_start: '', contract_end: '', notes: '' })
     }
   }
 
@@ -67,6 +75,7 @@ export default function OnderhoudPage() {
 
   const activeContracts = contracts.filter(c => c.status === 'active')
   const monthlyRecurring = activeContracts.reduce((sum, c) => {
+    if (c.mrr_cents) return sum + c.mrr_cents
     const multiplier = { monthly: 1, quarterly: 1/3, biannual: 1/6, annual: 1/12 }[c.frequency] ?? 0
     return sum + (c.price_cents * multiplier)
   }, 0)
@@ -115,8 +124,15 @@ export default function OnderhoudPage() {
                         {new Date(c.next_visit) <= new Date() && ' (verlopen!)'}
                       </span>
                     )}
+                    {c.visit_count != null && <span>{c.visit_count} bezoeken</span>}
+                    {c.contract_start && <span>Start: {fmtDate(c.contract_start)}</span>}
+                    {c.contract_end && <span>Eind: {fmtDate(c.contract_end)}</span>}
                   </div>
                   {c.description && <p className="text-xs text-zinc-400 mt-1">{c.description}</p>}
+                  {c.price_per_visit_cents != null && (
+                    <p className="text-xs text-zinc-400 mt-1">Prijs per bezoek: {fmt(c.price_per_visit_cents)}</p>
+                  )}
+                  {c.notes && <p className="text-xs text-zinc-500 mt-1 border-t border-white/5 pt-1">{c.notes}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="text-right">
@@ -168,9 +184,23 @@ export default function OnderhoudPage() {
                   <input type="date" value={form.next_visit} onChange={e => setForm({ ...form, next_visit: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-zinc-300">Contractstart</label>
+                  <input type="date" value={form.contract_start} onChange={e => setForm({ ...form, contract_start: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-zinc-300">Contracteinde</label>
+                  <input type="date" value={form.contract_end} onChange={e => setForm({ ...form, contract_end: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+                </div>
+              </div>
               <div>
                 <label className="text-xs font-medium text-zinc-300">Omschrijving</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" rows={2} placeholder="Snoeien, onkruid, bladruimen..." />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-300">Notities</label>
+                <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" rows={2} placeholder="Interne opmerkingen..." />
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button type="button" onClick={() => setShowNew(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>

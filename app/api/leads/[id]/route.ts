@@ -5,10 +5,15 @@ import { z } from 'zod'
 
 const UpdateLeadSchema = z.object({
   status: z.enum(['new', 'hot', 'warm', 'cold', 'won', 'lost']).optional(),
+  pipeline_stage: z.enum(['nieuw', 'gekwalificeerd', 'afspraak', 'offerte', 'opvolging', 'gewonnen', 'verloren']).optional(),
   assigned_to: z.string().uuid().nullable().optional(),
   name: z.string().min(1).max(200).optional(),
   email: z.string().email().nullable().optional(),
   phone: z.string().nullable().optional(),
+  qualified_at: z.string().datetime().nullable().optional(),
+  appointment_at: z.string().datetime().nullable().optional(),
+  quote_sent_at: z.string().datetime().nullable().optional(),
+  followed_up_at: z.string().datetime().nullable().optional(),
 })
 
 // GET /api/leads/[id] — lead detail + berichten + events
@@ -73,7 +78,7 @@ export async function PATCH(
   // Haal huidige lead op voor audit trail
   const { data: current } = await supabase
     .from('leads')
-    .select('status')
+    .select('status, pipeline_stage')
     .eq('id', id)
     .eq('tenant_id', tenantId)
     .single()
@@ -102,6 +107,17 @@ export async function PATCH(
       user_id: userId,
       event_type: 'status_changed',
       payload: { from: current.status, to: parsed.data.status },
+    })
+  }
+
+  // Audit log als pipeline_stage is gewijzigd
+  if (parsed.data.pipeline_stage && parsed.data.pipeline_stage !== current.pipeline_stage) {
+    await supabase.from('lead_events').insert({
+      lead_id: id,
+      tenant_id: tenantId,
+      user_id: userId,
+      event_type: 'pipeline_changed',
+      payload: { from: current.pipeline_stage, to: parsed.data.pipeline_stage },
     })
   }
 

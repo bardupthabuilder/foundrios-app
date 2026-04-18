@@ -83,6 +83,10 @@ export default function OffertesPage() {
 
   const fmt = (cents: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 
+  function getDaysSince(dateStr: string): number {
+    return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24))
+  }
+
   const filtered = quotes.filter(q =>
     !search || q.title.toLowerCase().includes(search.toLowerCase()) ||
     q.quote_number?.toLowerCase().includes(search.toLowerCase()) ||
@@ -156,6 +160,11 @@ export default function OffertesPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-white truncate">{q.title}</span>
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${sc.color}`}>{sc.label}</span>
+                    {q.status === 'verstuurd' && getDaysSince(q.created_at) > 3 && (
+                      <span className="text-xs text-orange-400">
+                        ⚠ {getDaysSince(q.created_at)} dagen open
+                      </span>
+                    )}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-400">
                     {q.quote_number && <span>{q.quote_number}</span>}

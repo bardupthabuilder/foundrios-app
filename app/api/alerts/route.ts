@@ -173,6 +173,58 @@ export async function GET() {
     }
   }
 
+  // 6. Leads stuck in pipeline stage > 3 days
+  const threeDaysAgoISO = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString()
+  const { data: stuckLeads } = await supabase
+    .from('leads')
+    .select('id, name, pipeline_stage, updated_at')
+    .eq('tenant_id', tenantId)
+    .in('pipeline_stage', ['gekwalificeerd', 'afspraak', 'offerte', 'opvolging'] as any)
+    .lt('updated_at', threeDaysAgoISO)
+    .limit(10)
+
+  if (stuckLeads) {
+    const stageLabels: Record<string, string> = {
+      gekwalificeerd: 'Gekwalificeerd',
+      afspraak: 'Afspraak',
+      offerte: 'Offerte',
+      opvolging: 'Opvolging',
+    }
+    for (const lead of stuckLeads) {
+      alerts.push({
+        type: 'lead',
+        severity: 'warning',
+        title: `${lead.name} — ${stageLabels[lead.pipeline_stage as string] || lead.pipeline_stage || 'Onbekend'}`,
+        description: 'Staat al meer dan 3 dagen in dezelfde fase',
+        link: `/dashboard/leads/${lead.id}`,
+      })
+    }
+  }
+
+  // 7. Projects delivered without review (> 7 days)
+  const sevenDaysAgoISO = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const { data: unreviewedProjects } = await supabase
+    .from('projects')
+    .select('id, name, delivered_at')
+    .eq('tenant_id', tenantId)
+    .eq('status', 'opgeleverd')
+    .eq('review_received', false)
+    .not('delivered_at', 'is', null)
+    .lt('delivered_at', sevenDaysAgoISO)
+    .limit(5)
+
+  if (unreviewedProjects) {
+    for (const project of unreviewedProjects) {
+      alerts.push({
+        type: 'project',
+        severity: 'warning',
+        title: `Review aanvragen: ${project.name}`,
+        description: 'Project opgeleverd, nog geen review ontvangen',
+        link: `/dashboard/projecten/${project.id}`,
+      })
+    }
+  }
+
   // Sorteer: urgent eerst
   alerts.sort((a, b) => (a.severity === 'urgent' ? -1 : 1) - (b.severity === 'urgent' ? -1 : 1))
 

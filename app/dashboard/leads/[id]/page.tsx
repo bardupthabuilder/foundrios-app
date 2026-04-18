@@ -5,6 +5,7 @@ import { LeadScoreBadge } from '@/components/leads/LeadScoreBadge'
 import { LeadSourceIcon } from '@/components/leads/LeadSourceIcon'
 import { LeadStatusSelect } from '@/components/leads/LeadStatusSelect'
 import { ConvertToClient } from '@/components/leads/ConvertToClient'
+import { ProcessChecklist } from '@/components/leads/ProcessChecklist'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
@@ -175,6 +176,17 @@ export default async function LeadDetailPage({ params }: PageProps) {
               )}
             </div>
           </div>
+
+          <Separator />
+
+          {/* Conversieproces */}
+          <ProcessChecklist
+            leadId={lead.id}
+            qualifiedAt={lead.qualified_at}
+            appointmentAt={lead.appointment_at}
+            quoteSentAt={lead.quote_sent_at}
+            followedUpAt={lead.followed_up_at}
+          />
 
           <Separator />
 
