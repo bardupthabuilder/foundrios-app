@@ -1,11 +1,16 @@
+import Image from 'next/image'
+import Link from 'next/link'
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-foundri-graphite px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-8 flex items-center justify-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-zinc-900" />
-          <span className="text-xl font-semibold tracking-tight">FoundriOS</span>
-        </div>
+        <Link href="/" className="mb-8 flex items-center justify-center gap-2.5">
+          <Image src="/logo.svg" alt="FoundriOS" width={28} height={28} />
+          <span className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-white">
+            Foundri<span className="text-foundri-yellow">OS</span>
+          </span>
+        </Link>
         {children}
       </div>
     </div>

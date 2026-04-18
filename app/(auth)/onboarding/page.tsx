@@ -2,25 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Building2, User, Check } from 'lucide-react'
+import { Building2, User, Check, ChevronRight, ChevronLeft } from 'lucide-react'
 
 const NICHES = [
   { value: 'hoveniers', label: 'Hoveniers' },
@@ -72,7 +54,6 @@ export default function OnboardingPage() {
       return
     }
 
-    // Stap 3 → submit
     setLoading(true)
     setError(null)
 
@@ -102,192 +83,188 @@ export default function OnboardingPage() {
     }
   }
 
+  const inputClass = 'w-full rounded-md border-0 bg-foundri-card px-3 py-2.5 text-sm text-white placeholder:text-foundri-muted focus:ring-2 focus:ring-foundri-yellow/50 focus:outline-none'
+
   return (
-    <Card className="w-full">
-      {/* Progress indicator */}
+    <div className="w-full rounded-lg border border-foundri-border bg-foundri-deep">
+      {/* Progress */}
       <div className="flex gap-1.5 px-6 pt-6">
         {[1, 2, 3].map((s) => (
           <div
             key={s}
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              s <= step ? 'bg-zinc-900' : 'bg-zinc-200'
+              s <= step ? 'bg-foundri-yellow' : 'bg-foundri-card'
             }`}
           />
         ))}
       </div>
 
-      {/* Stap 1: Bedrijf */}
-      {step === 1 && (
-        <>
-          <CardHeader>
-            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100">
-              <Building2 className="h-5 w-5 text-zinc-600" />
-            </div>
-            <CardTitle>Jouw bedrijf</CardTitle>
-            <CardDescription>
-              Basisgegevens om je dashboard in te richten.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {error && (
-              <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-                {error}
+      <div className="p-6">
+        {/* Stap 1: Bedrijf */}
+        {step === 1 && (
+          <>
+            <div className="mb-6">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg border border-foundri-border bg-foundri-card">
+                <Building2 className="h-5 w-5 text-foundri-yellow" />
               </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Bedrijfsnaam</Label>
-              <Input
-                id="companyName"
-                placeholder="Jansen Hoveniers"
-                value={form.companyName}
-                onChange={(e) => update('companyName', e.target.value)}
-                autoFocus
-              />
+              <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Jouw bedrijf</h1>
+              <p className="mt-1 text-sm text-foundri-muted">Basisgegevens om je dashboard in te richten.</p>
             </div>
-            <div className="space-y-2">
-              <Label>Branche</Label>
-              <Select value={form.niche} onValueChange={(v) => update('niche', v)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Kies je branche" />
-                </SelectTrigger>
-                <SelectContent>
+            <div className="space-y-4">
+              {error && (
+                <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</div>
+              )}
+              <div className="space-y-2">
+                <label htmlFor="companyName" className="text-sm font-medium text-foundri-text">Bedrijfsnaam</label>
+                <input
+                  id="companyName"
+                  placeholder="Jansen Hoveniers"
+                  value={form.companyName}
+                  onChange={(e) => update('companyName', e.target.value)}
+                  autoFocus
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foundri-text">Branche</label>
+                <select
+                  value={form.niche}
+                  onChange={(e) => update('niche', e.target.value)}
+                  className={`${inputClass} ${!form.niche ? 'text-foundri-muted' : ''}`}
+                >
+                  <option value="" disabled>Kies je branche</option>
                   {NICHES.map((n) => (
-                    <SelectItem key={n.value} value={n.value}>
-                      {n.label}
-                    </SelectItem>
+                    <option key={n.value} value={n.value}>{n.label}</option>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="region">Werkgebied</Label>
-              <Input
-                id="region"
-                placeholder="bijv. Regio Rotterdam, Noord-Holland"
-                value={form.region}
-                onChange={(e) => update('region', e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </>
-      )}
-
-      {/* Stap 2: Eigenaar */}
-      {step === 2 && (
-        <>
-          <CardHeader>
-            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100">
-              <User className="h-5 w-5 text-zinc-600" />
-            </div>
-            <CardTitle>Over jou</CardTitle>
-            <CardDescription>
-              Zodat we je kunnen bereiken als het ertoe doet.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {error && (
-              <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-                {error}
+                </select>
               </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="ownerName">Naam</Label>
-              <Input
-                id="ownerName"
-                placeholder="Jan Jansen"
-                value={form.ownerName}
-                onChange={(e) => update('ownerName', e.target.value)}
-                autoFocus
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ownerPhone">Telefoonnummer</Label>
-              <Input
-                id="ownerPhone"
-                type="tel"
-                placeholder="06 12345678"
-                value={form.ownerPhone}
-                onChange={(e) => update('ownerPhone', e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </>
-      )}
-
-      {/* Stap 3: Klaar */}
-      {step === 3 && (
-        <>
-          <CardHeader>
-            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-lg bg-green-100">
-              <Check className="h-5 w-5 text-green-600" />
-            </div>
-            <CardTitle>Klaar om te starten</CardTitle>
-            <CardDescription>
-              Je dashboard wordt ingericht voor {form.companyName}.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {error && (
-              <div className="mb-4 rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-                {error}
+              <div className="space-y-2">
+                <label htmlFor="region" className="text-sm font-medium text-foundri-text">Werkgebied</label>
+                <input
+                  id="region"
+                  placeholder="bijv. Regio Rotterdam, Noord-Holland"
+                  value={form.region}
+                  onChange={(e) => update('region', e.target.value)}
+                  className={inputClass}
+                />
               </div>
+            </div>
+          </>
+        )}
+
+        {/* Stap 2: Eigenaar */}
+        {step === 2 && (
+          <>
+            <div className="mb-6">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg border border-foundri-border bg-foundri-card">
+                <User className="h-5 w-5 text-foundri-yellow" />
+              </div>
+              <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Over jou</h1>
+              <p className="mt-1 text-sm text-foundri-muted">Zodat we je kunnen bereiken als het ertoe doet.</p>
+            </div>
+            <div className="space-y-4">
+              {error && (
+                <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</div>
+              )}
+              <div className="space-y-2">
+                <label htmlFor="ownerName" className="text-sm font-medium text-foundri-text">Naam</label>
+                <input
+                  id="ownerName"
+                  placeholder="Jan Jansen"
+                  value={form.ownerName}
+                  onChange={(e) => update('ownerName', e.target.value)}
+                  autoFocus
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="ownerPhone" className="text-sm font-medium text-foundri-text">Telefoonnummer</label>
+                <input
+                  id="ownerPhone"
+                  type="tel"
+                  placeholder="06 12345678"
+                  value={form.ownerPhone}
+                  onChange={(e) => update('ownerPhone', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Stap 3: Klaar */}
+        {step === 3 && (
+          <>
+            <div className="mb-6">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg border border-foundri-yellow/30 bg-foundri-yellow/10">
+                <Check className="h-5 w-5 text-foundri-yellow" />
+              </div>
+              <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Klaar om te starten</h1>
+              <p className="mt-1 text-sm text-foundri-muted">
+                Je dashboard wordt ingericht voor {form.companyName}.
+              </p>
+            </div>
+            {error && (
+              <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</div>
             )}
-            <div className="space-y-3 rounded-lg bg-zinc-50 p-4 text-sm">
+            <div className="space-y-3 rounded-lg bg-foundri-card p-4 text-sm">
               <div className="flex justify-between">
-                <span className="text-zinc-500">Bedrijf</span>
-                <span className="font-medium">{form.companyName}</span>
+                <span className="text-foundri-muted">Bedrijf</span>
+                <span className="font-medium text-white">{form.companyName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Branche</span>
-                <span className="font-medium">
+                <span className="text-foundri-muted">Branche</span>
+                <span className="font-medium text-white">
                   {NICHES.find((n) => n.value === form.niche)?.label}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Werkgebied</span>
-                <span className="font-medium">{form.region}</span>
+                <span className="text-foundri-muted">Werkgebied</span>
+                <span className="font-medium text-white">{form.region}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Eigenaar</span>
-                <span className="font-medium">{form.ownerName}</span>
+                <span className="text-foundri-muted">Eigenaar</span>
+                <span className="font-medium text-white">{form.ownerName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Telefoon</span>
-                <span className="font-medium">{form.ownerPhone}</span>
+                <span className="text-foundri-muted">Telefoon</span>
+                <span className="font-medium text-white">{form.ownerPhone}</span>
               </div>
             </div>
-            <p className="mt-4 text-xs text-zinc-400">
+            <p className="mt-4 text-xs text-foundri-muted">
               Je kunt later alles aanpassen en uitbreiden in Instellingen.
             </p>
-          </CardContent>
-        </>
-      )}
-
-      <CardFooter className="flex gap-2">
-        {step > 1 && (
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            onClick={() => setStep(step - 1)}
-            disabled={loading}
-          >
-            Terug
-          </Button>
+          </>
         )}
-        <Button
-          type="button"
-          className="flex-1"
-          onClick={handleNext}
-          disabled={!canContinue() || loading}
-        >
-          {loading
-            ? 'Account inrichten...'
-            : step === 3
-              ? 'Start mijn dashboard'
-              : 'Volgende'}
-        </Button>
-      </CardFooter>
-    </Card>
+
+        {/* Buttons */}
+        <div className="mt-6 flex gap-2">
+          {step > 1 && (
+            <button
+              type="button"
+              className="flex flex-1 items-center justify-center gap-1 rounded-md border border-foundri-border bg-transparent px-4 py-2.5 text-sm font-medium text-foundri-text transition-colors hover:bg-foundri-card"
+              onClick={() => setStep(step - 1)}
+              disabled={loading}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Terug
+            </button>
+          )}
+          <button
+            type="button"
+            className="flex flex-1 items-center justify-center gap-1 rounded-md bg-gradient-to-br from-foundri-yellow to-foundri-yellow-dim px-4 py-2.5 text-sm font-semibold text-foundri-graphite transition-all hover:shadow-[0_0_20px_rgba(246,201,69,0.3)] disabled:opacity-50"
+            onClick={handleNext}
+            disabled={!canContinue() || loading}
+          >
+            {loading
+              ? 'Account inrichten...'
+              : step === 3
+                ? 'Start mijn dashboard'
+                : 'Volgende'}
+            {!loading && step < 3 && <ChevronRight className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }

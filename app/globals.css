@@ -9,6 +9,21 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  /* FoundriOS brand palette */
+  --color-foundri-graphite: #0F1115;
+  --color-foundri-deep: #1A1F29;
+  --color-foundri-steel: #1A1C20;
+  --color-foundri-slate: #2B3442;
+  --color-foundri-card: #282A2E;
+  --color-foundri-hover: #333539;
+  --color-foundri-yellow: #F6C945;
+  --color-foundri-yellow-dim: #EEC13E;
+  --color-foundri-blue: #3B82F6;
+  --color-foundri-text: #E4E4E7;
+  --color-foundri-muted: #71717A;
+  --color-foundri-border: rgba(255, 255, 255, 0.08);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

@@ -1,12 +1,11 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { UserPlus, Loader2, CheckCircle, XCircle } from 'lucide-react'
 
-export default function InvitePage() {
+function InviteContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
@@ -38,7 +37,6 @@ export default function InvitePage() {
           router.refresh()
         }, 2000)
       } else if (res.status === 401) {
-        // Niet ingelogd — stuur naar registratie met token
         router.push(`/register?invite=${token}`)
       } else {
         const data = await res.json().catch(() => null)
@@ -51,53 +49,67 @@ export default function InvitePage() {
     }
   }
 
+  const iconWrap = 'mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-foundri-border'
+
   return (
-    <Card className="w-full">
-      <CardHeader className="text-center">
-        {status === 'accepting' && (
-          <>
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-              <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
-            </div>
-            <CardTitle>Uitnodiging accepteren...</CardTitle>
-            <CardDescription>Je wordt gekoppeld aan het bedrijf.</CardDescription>
-          </>
-        )}
-        {status === 'success' && (
-          <>
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-            </div>
-            <CardTitle>Welkom!</CardTitle>
-            <CardDescription>Je bent gekoppeld. Je wordt doorgestuurd naar het dashboard...</CardDescription>
-          </>
-        )}
-        {status === 'error' && (
-          <>
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
-              <XCircle className="h-5 w-5 text-red-600" />
-            </div>
-            <CardTitle>Uitnodiging mislukt</CardTitle>
-            <CardDescription>{error}</CardDescription>
-          </>
-        )}
-        {status === 'no-token' && (
-          <>
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100">
-              <UserPlus className="h-5 w-5 text-zinc-600" />
-            </div>
-            <CardTitle>Geen uitnodiging</CardTitle>
-            <CardDescription>Er is geen geldige uitnodigingslink gevonden.</CardDescription>
-          </>
-        )}
-      </CardHeader>
-      {(status === 'error' || status === 'no-token') && (
-        <CardContent className="flex justify-center">
-          <Button variant="outline" onClick={() => router.push('/login')}>
-            Naar inloggen
-          </Button>
-        </CardContent>
+    <div className="w-full rounded-lg border border-foundri-border bg-foundri-deep p-6 text-center">
+      {status === 'accepting' && (
+        <>
+          <div className={`${iconWrap} bg-foundri-card`}>
+            <Loader2 className="h-5 w-5 text-foundri-yellow animate-spin" />
+          </div>
+          <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Uitnodiging accepteren...</h1>
+          <p className="mt-1 text-sm text-foundri-muted">Je wordt gekoppeld aan het bedrijf.</p>
+        </>
       )}
-    </Card>
+      {status === 'success' && (
+        <>
+          <div className={`${iconWrap} border-foundri-yellow/30 bg-foundri-yellow/10`}>
+            <CheckCircle className="h-5 w-5 text-foundri-yellow" />
+          </div>
+          <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Welkom!</h1>
+          <p className="mt-1 text-sm text-foundri-muted">Je bent gekoppeld. Je wordt doorgestuurd naar het dashboard...</p>
+        </>
+      )}
+      {status === 'error' && (
+        <>
+          <div className={`${iconWrap} border-red-500/30 bg-red-500/10`}>
+            <XCircle className="h-5 w-5 text-red-400" />
+          </div>
+          <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Uitnodiging mislukt</h1>
+          <p className="mt-1 text-sm text-foundri-muted">{error}</p>
+        </>
+      )}
+      {status === 'no-token' && (
+        <>
+          <div className={`${iconWrap} bg-foundri-card`}>
+            <UserPlus className="h-5 w-5 text-foundri-muted" />
+          </div>
+          <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Geen uitnodiging</h1>
+          <p className="mt-1 text-sm text-foundri-muted">Er is geen geldige uitnodigingslink gevonden.</p>
+        </>
+      )}
+      {(status === 'error' || status === 'no-token') && (
+        <button
+          onClick={() => router.push('/login')}
+          className="mt-6 rounded-md border border-foundri-border bg-transparent px-4 py-2 text-sm font-medium text-foundri-text transition-colors hover:bg-foundri-card"
+        >
+          Naar inloggen
+        </button>
+      )}
+    </div>
+  )
+}
+
+export default function InvitePage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full rounded-lg border border-foundri-border bg-foundri-deep p-6 text-center">
+        <Loader2 className="mx-auto h-5 w-5 text-foundri-yellow animate-spin" />
+        <p className="mt-3 text-sm text-foundri-muted">Laden...</p>
+      </div>
+    }>
+      <InviteContent />
+    </Suspense>
   )
 }

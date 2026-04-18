@@ -4,17 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -53,61 +42,60 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Account aanmaken</CardTitle>
-        <CardDescription>
+    <div className="rounded-lg border border-foundri-border bg-foundri-deep p-6">
+      <div className="mb-6">
+        <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Account aanmaken</h1>
+        <p className="mt-1 text-sm text-foundri-muted">
           Start je gratis trial van 14 dagen — geen creditcard vereist
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleRegister}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="email">E-mailadres</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="jij@bedrijf.nl"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
+        </p>
+      </div>
+      <form onSubmit={handleRegister} className="space-y-4">
+        {error && (
+          <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            {error}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Wachtwoord</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Minimaal 8 tekens"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="new-password"
-              minLength={8}
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Account aanmaken...' : 'Account aanmaken'}
-          </Button>
-          <p className="text-center text-sm text-zinc-500">
-            Al een account?{' '}
-            <Link
-              href="/login"
-              className="font-medium text-zinc-900 underline-offset-4 hover:underline"
-            >
-              Log hier in
-            </Link>
-          </p>
-        </CardFooter>
+        )}
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium text-foundri-text">E-mailadres</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="jij@bedrijf.nl"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            className="w-full rounded-md border-0 bg-foundri-card px-3 py-2.5 text-sm text-white placeholder:text-foundri-muted focus:ring-2 focus:ring-foundri-yellow/50 focus:outline-none"
+          />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="password" className="text-sm font-medium text-foundri-text">Wachtwoord</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Minimaal 8 tekens"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+            minLength={8}
+            className="w-full rounded-md border-0 bg-foundri-card px-3 py-2.5 text-sm text-white placeholder:text-foundri-muted focus:ring-2 focus:ring-foundri-yellow/50 focus:outline-none"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-md bg-gradient-to-br from-foundri-yellow to-foundri-yellow-dim px-4 py-2.5 text-sm font-semibold text-foundri-graphite transition-all hover:shadow-[0_0_20px_rgba(246,201,69,0.3)] disabled:opacity-50"
+        >
+          {loading ? 'Account aanmaken...' : 'Account aanmaken'}
+        </button>
+        <p className="text-center text-sm text-foundri-muted">
+          Al een account?{' '}
+          <Link href="/login" className="font-medium text-foundri-yellow hover:underline underline-offset-4">
+            Log hier in
+          </Link>
+        </p>
       </form>
-    </Card>
+    </div>
   )
 }
