@@ -50,6 +50,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/blog" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname.startsWith('/admin/blog') ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
             Blog
           </Link>
+          <Link href="/admin/feedback" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname.startsWith('/admin/feedback') ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
+            Feedback
+          </Link>
           <Link href="/admin/kennisbank" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname.startsWith('/admin/kennisbank') ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
             Kennisbank
           </Link>
