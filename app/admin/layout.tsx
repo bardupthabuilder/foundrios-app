@@ -24,6 +24,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/tenants" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
             Bedrijven
           </Link>
+          <Link href="/admin/blog" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
+            Blog
+          </Link>
           <Link href="/admin/cron" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
             Cron Jobs
           </Link>

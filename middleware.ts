@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
 
   // Publieke routes
   const publicRoutes = ['/login', '/register', '/onboarding', '/invite', '/']
-  const isPublicRoute = publicRoutes.some((route) => pathname === route)
+  const isPublicRoute = publicRoutes.some((route) => pathname === route) || pathname.startsWith('/blog')
 
   // API webhooks zijn altijd publiek (worden beveiligd via signature validation)
   const isWebhook = pathname.startsWith('/api/webhooks/')
