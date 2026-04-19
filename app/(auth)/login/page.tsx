@@ -21,7 +21,8 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setError('Onjuist e-mailadres of wachtwoord.')
+      setError(error.message || 'Onjuist e-mailadres of wachtwoord.')
+      console.error('[Login] Error:', error.message, error.status)
       setLoading(false)
       return
     }

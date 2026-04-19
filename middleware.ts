@@ -48,8 +48,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // Ingelogd op auth pagina → naar dashboard
-  if (user && (pathname === '/login' || pathname === '/register')) {
+  // Ingelogd op register pagina → naar dashboard (login mag altijd, voor account wisselen)
+  if (user && pathname === '/register') {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/dashboard'
     return NextResponse.redirect(redirectUrl)
