@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.some((route) => pathname === route) || pathname.startsWith('/blog')
 
   // API webhooks zijn altijd publiek (worden beveiligd via signature validation)
-  const isWebhook = pathname.startsWith('/api/webhooks/')
+  const isWebhook = pathname.startsWith('/api/webhooks/') || pathname.startsWith('/api/auth/')
 
   if (isWebhook) {
     return supabaseResponse
