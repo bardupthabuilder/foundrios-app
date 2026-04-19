@@ -178,7 +178,7 @@ export default async function DashboardPage() {
         {hasActions ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {newLeadsCount > 0 && (
-              <Link href="/dashboard/leads?label=hot" className="flex items-center gap-3 rounded-lg border border-foundri-yellow/20 bg-foundri-yellow/5 p-4 transition-colors hover:bg-foundri-yellow/10">
+              <Link href="/dashboard/leads?filter=new" className="flex items-center gap-3 rounded-lg border border-foundri-yellow/20 bg-foundri-yellow/5 p-4 transition-colors hover:bg-foundri-yellow/10">
                 <Inbox className="h-5 w-5 text-foundri-yellow" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-white">{newLeadsCount} nieuwe leads</p>

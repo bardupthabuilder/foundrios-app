@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { FolderOpen, Plus, MapPin, Calendar, Euro, Clock } from 'lucide-react'
+import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import type { ProjectWithClient, Client, ProjectStatus, ProjectType } from '@/lib/types/project'
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -211,7 +212,7 @@ export default function ProjectenPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-zinc-400">Laden...</div>
+        <LoadingSkeleton rows={6} />
       ) : projects.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">

@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [authorized, setAuthorized] = useState(false)
   const [loading, setLoading] = useState(true)
 
@@ -40,16 +41,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="font-semibold text-white">Admin</span>
         </div>
         <nav className="flex flex-col gap-1 p-3">
-          <Link href="/admin" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
+          <Link href="/admin" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname === '/admin' ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
             Dashboard
           </Link>
-          <Link href="/admin/tenants" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
+          <Link href="/admin/tenants" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname.startsWith('/admin/tenants') ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
             Bedrijven
           </Link>
-          <Link href="/admin/blog" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
+          <Link href="/admin/blog" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname.startsWith('/admin/blog') ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
             Blog
           </Link>
-          <Link href="/admin/cron" className="rounded-lg px-3 py-2 text-sm text-zinc-400 hover:bg-white/5 hover:text-white">
+          <Link href="/admin/cron" className={`rounded-lg px-3 py-2 text-sm transition-colors ${pathname.startsWith('/admin/cron') ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}>
             Cron Jobs
           </Link>
           <div className="my-2 border-t border-white/5" />

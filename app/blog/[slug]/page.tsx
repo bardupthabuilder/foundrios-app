@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Clock, Calendar } from 'lucide-react'
+import { BlogContent } from '@/components/BlogContent'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import type { Metadata } from 'next'
@@ -104,11 +105,8 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </header>
 
-        {/* Article content — rendered as HTML */}
-        <div
-          className="blog-prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: p.content }}
-        />
+        {/* Article content — sanitized via DOMPurify */}
+        <BlogContent html={p.content} />
 
         {/* Tags */}
         {p.tags && p.tags.length > 0 && (

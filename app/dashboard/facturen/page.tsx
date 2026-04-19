@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Receipt, Search } from 'lucide-react'
+import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 
 type Invoice = {
   id: string
@@ -138,7 +139,7 @@ export default function FacturenPage() {
 
       {/* List */}
       {loading ? (
-        <div className="py-12 text-center text-sm text-zinc-400">Laden...</div>
+        <LoadingSkeleton rows={6} />
       ) : filtered.length === 0 ? (
         <div className="py-12 text-center">
           <Receipt className="mx-auto h-8 w-8 text-zinc-300" />

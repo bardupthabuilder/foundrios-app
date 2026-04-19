@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { TrendingUp, TrendingDown, Minus, Brain, Loader2 } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, Brain } from 'lucide-react'
+import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 
 interface IntelligenceData {
   period: string
@@ -88,11 +89,8 @@ export default function InzichtenPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-1 items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
-          <p className="text-sm text-zinc-500">Inzichten laden...</p>
-        </div>
+      <div className="p-4 pt-16 sm:p-6 lg:pt-6 mx-auto max-w-5xl">
+        <LoadingSkeleton rows={6} />
       </div>
     )
   }

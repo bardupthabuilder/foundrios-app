@@ -21,7 +21,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setError(error.message || 'Onjuist e-mailadres of wachtwoord.')
+      setError('Onjuist e-mailadres of wachtwoord.')
       console.error('[Login] Error:', error.message, error.status)
       setLoading(false)
       return
@@ -67,6 +67,11 @@ export default function LoginPage() {
             autoComplete="current-password"
             className="w-full rounded-md border-0 bg-foundri-card px-3 py-2.5 text-sm text-white placeholder:text-foundri-muted focus:ring-2 focus:ring-foundri-yellow/50 focus:outline-none"
           />
+        </div>
+        <div className="text-right">
+          <button type="button" className="text-xs text-foundri-muted hover:text-foundri-yellow transition-colors" onClick={() => alert('Neem contact op met support: info@foundrios.app')}>
+            Wachtwoord vergeten?
+          </button>
         </div>
         <button
           type="submit"
