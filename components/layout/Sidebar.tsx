@@ -30,6 +30,7 @@ import {
   ListChecks,
   Brain,
   Plug,
+  HelpCircle,
 } from 'lucide-react'
 import { NotificationBell } from '@/components/NotificationBell'
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
@@ -157,8 +158,13 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Admin + Logout */}
+      {/* Help + Admin + Logout */}
       <div className="border-t border-white/5 px-3 py-4 space-y-1">
+        <a href="/help" target="_blank" rel="noopener" onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-300">
+          <HelpCircle className="h-4 w-4" />
+          Hulp nodig?
+        </a>
         {isAdmin && (
           <Link
             href="/admin"
