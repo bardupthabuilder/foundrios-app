@@ -49,7 +49,6 @@ const navGroups = [
       { href: '/dashboard/leads', label: 'Lead Inbox', icon: Inbox },
       { href: '/dashboard/pipeline', label: 'Pipeline', icon: GitBranch },
       { href: '/dashboard/klanten', label: 'Klanten', icon: Users },
-      { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
     ],
   },
   {
@@ -58,35 +57,19 @@ const navGroups = [
       { href: '/dashboard/projecten', label: 'Projecten', icon: FolderOpen },
       { href: '/dashboard/planning', label: 'Planning', icon: CalendarDays },
       { href: '/dashboard/uren', label: 'Uren', icon: Clock },
-      { href: '/dashboard/werkbonnen', label: 'Werkbonnen', icon: ClipboardList },
-      { href: '/dashboard/onderhoud', label: 'Onderhoud', icon: CalendarCheck },
     ],
   },
   {
     label: 'Financieel',
     items: [
-      { href: '/dashboard/financieel', label: 'Overzicht', icon: TrendingUp },
       { href: '/dashboard/offertes', label: 'Offertes', icon: FileText },
       { href: '/dashboard/facturen', label: 'Facturen', icon: Receipt },
     ],
   },
   {
-    label: 'Overig',
-    items: [
-      { href: '/dashboard/content', label: 'Content', icon: Newspaper },
-      { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
-      { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain },
-    ],
-  },
-  {
     label: 'Systeem',
     items: [
-      { href: '/dashboard/integraties', label: 'Integraties', icon: Plug },
-      { href: '/dashboard/automations', label: 'Automatisering', icon: Zap },
-      { href: '/dashboard/processen', label: 'Processen', icon: ListChecks },
       { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
-      { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
-      { href: '/admin', label: 'Admin', icon: Shield },
     ],
   },
 ]
