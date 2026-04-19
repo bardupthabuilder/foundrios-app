@@ -1,13 +1,35 @@
-import { redirect } from 'next/navigation'
-import { requireSuperadmin } from '@/lib/admin'
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Loader2 } from 'lucide-react'
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  try {
-    await requireSuperadmin()
-  } catch {
-    redirect('/dashboard')
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const [authorized, setAuthorized] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/admin/stats')
+      .then(r => {
+        if (r.ok) {
+          setAuthorized(true)
+        } else {
+          router.push('/dashboard')
+        }
+      })
+      .catch(() => router.push('/dashboard'))
+      .finally(() => setLoading(false))
+  }, [router])
+
+  if (loading || !authorized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-foundri-graphite">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    )
   }
 
   return (

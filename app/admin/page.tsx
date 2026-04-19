@@ -1,49 +1,87 @@
-import { requireSuperadmin } from '@/lib/admin'
-import { createServiceClient } from '@/lib/supabase/server'
+'use client'
 
-export default async function AdminDashboard() {
-  await requireSuperadmin()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const service = createServiceClient() as any
+import { useState, useEffect } from 'react'
+import { Loader2 } from 'lucide-react'
 
-  const [tenantsResult, usersResult, leadsResult] = await Promise.all([
-    service.from('tenants').select('id, name, plan, subscription_status, created_at').order('created_at', { ascending: false }),
-    service.from('tenant_users').select('id', { count: 'exact', head: true }),
-    service.from('leads').select('id', { count: 'exact', head: true }),
-  ])
+type Stats = {
+  totalTenants: number
+  totalUsers: number
+  totalLeads: number
+  trialTenants: number
+  planDistribution: Record<string, number>
+}
 
-  const tenants = (tenantsResult.data ?? []) as { id: string; name: string; plan: string | null; subscription_status: string; created_at: string }[]
-  const plans: Record<string, number> = { free: 0, pro: 0, scale: 0 }
-  for (const t of tenants) {
-    const plan = t.plan || 'free'
-    plans[plan] = (plans[plan] || 0) + 1
+type Tenant = {
+  id: string
+  name: string
+  plan: string | null
+  subscription_status: string
+  created_at: string
+  user_count: number
+}
+
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<Stats | null>(null)
+  const [tenants, setTenants] = useState<Tenant[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/admin/stats').then(r => r.ok ? r.json() : Promise.reject(r.statusText)),
+      fetch('/api/admin/tenants').then(r => r.ok ? r.json() : Promise.reject(r.statusText)),
+    ])
+      .then(([statsData, tenantsData]) => {
+        setStats(statsData)
+        setTenants(tenantsData.tenants || [])
+      })
+      .catch(err => setError(String(err)))
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-20">
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      </div>
+    )
   }
+
+  if (error) {
+    return (
+      <div className="max-w-5xl p-6">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+          Admin toegang mislukt: {error}
+        </div>
+      </div>
+    )
+  }
+
+  const plans = stats?.planDistribution || { free: 0, pro: 0, scale: 0 }
 
   return (
     <div className="max-w-5xl space-y-8">
       <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Admin Dashboard</h1>
 
-      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-4">
         <div className="rounded-lg border border-white/5 bg-foundri-deep p-4">
           <p className="text-sm text-zinc-400">Bedrijven</p>
-          <p className="text-3xl font-bold text-foundri-yellow">{tenants.length}</p>
+          <p className="text-3xl font-bold text-foundri-yellow">{stats?.totalTenants || 0}</p>
         </div>
         <div className="rounded-lg border border-white/5 bg-foundri-deep p-4">
           <p className="text-sm text-zinc-400">Gebruikers</p>
-          <p className="text-3xl font-bold text-white">{usersResult.count || 0}</p>
+          <p className="text-3xl font-bold text-white">{stats?.totalUsers || 0}</p>
         </div>
         <div className="rounded-lg border border-white/5 bg-foundri-deep p-4">
           <p className="text-sm text-zinc-400">Leads (totaal)</p>
-          <p className="text-3xl font-bold text-white">{leadsResult.count || 0}</p>
+          <p className="text-3xl font-bold text-white">{stats?.totalLeads || 0}</p>
         </div>
         <div className="rounded-lg border border-white/5 bg-foundri-deep p-4">
           <p className="text-sm text-zinc-400">Pro / Scale</p>
-          <p className="text-3xl font-bold text-white">{plans.pro} / {plans.scale}</p>
+          <p className="text-3xl font-bold text-white">{plans.pro || 0} / {plans.scale || 0}</p>
         </div>
       </div>
 
-      {/* Recent tenants */}
       <div>
         <h2 className="mb-4 text-lg font-semibold text-white">Recente bedrijven</h2>
         <div className="rounded-lg border border-white/5 bg-foundri-deep">
