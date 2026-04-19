@@ -78,7 +78,6 @@ const navGroups = [
       { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
       { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain },
       { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
-      { href: '/admin', label: 'Admin', icon: Shield },
     ],
   },
 ]
@@ -88,11 +87,15 @@ export function Sidebar() {
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [tenantName, setTenantName] = useState('FoundriOS')
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     fetch('/api/tenant')
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data?.name) setTenantName(data.name) })
+      .catch(() => {})
+    fetch('/api/admin/stats')
+      .then(r => setIsAdmin(r.ok))
       .catch(() => {})
   }, [])
 
@@ -152,8 +155,18 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="border-t border-white/5 px-3 py-4">
+      {/* Admin + Logout */}
+      <div className="border-t border-white/5 px-3 py-4 space-y-1">
+        {isAdmin && (
+          <Link
+            href="/admin"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foundri-yellow transition-colors hover:bg-foundri-yellow/10"
+          >
+            <Shield className="h-4 w-4" />
+            Admin
+          </Link>
+        )}
         <button
           onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200"
