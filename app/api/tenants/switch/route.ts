@@ -16,13 +16,38 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'tenantId verplicht' }, { status: 400 })
   }
 
-  const { error } = await (supabase as any).rpc('switch_tenant', {
+  // Try RPC first
+  const { error: rpcError } = await (supabase as any).rpc('switch_tenant', {
     target_tenant_id: tenantId,
   })
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 403 })
+  if (!rpcError) {
+    return NextResponse.json({ success: true })
   }
+
+  // Fallback: direct update if user has access
+  const { data: access } = await supabase
+    .from('tenant_users')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('tenant_id', tenantId)
+    .single()
+
+  if (!access) {
+    return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
+  }
+
+  // Deactivate all, activate target
+  await supabase
+    .from('tenant_users')
+    .update({ is_active: false } as any)
+    .eq('user_id', user.id)
+
+  await supabase
+    .from('tenant_users')
+    .update({ is_active: true } as any)
+    .eq('user_id', user.id)
+    .eq('tenant_id', tenantId)
 
   return NextResponse.json({ success: true })
 }
