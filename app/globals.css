@@ -141,6 +141,16 @@
     @apply bg-background text-foreground;
   }
 
+  /* Native select/option dark theme */
+  select, option {
+    background-color: #1A1F29;
+    color: #E4E4E7;
+  }
+  select option {
+    background-color: #1A1F29;
+    color: #E4E4E7;
+  }
+
   /* Custom scrollbar — thin, donker, past bij dark theme */
   ::-webkit-scrollbar {
     width: 6px;

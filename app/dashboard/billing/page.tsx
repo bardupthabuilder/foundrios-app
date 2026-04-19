@@ -1,10 +1,34 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { format, addDays } from 'date-fns'
+import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
+import { CheckCircle2 } from 'lucide-react'
+
+const PLANS = [
+  {
+    key: 'free',
+    name: 'Free',
+    price: '€0',
+    desc: 'Alles wat je nodig hebt om te starten.',
+    features: ['Leads & klanten', 'Projecten & planning', 'Uren & werkbonnen', 'Offertes & facturen'],
+  },
+  {
+    key: 'pro',
+    name: 'Pro',
+    price: '€98',
+    desc: 'Automatiseer en bespaar tijd.',
+    features: ['Alles uit Free', 'Automatische opvolging', 'Lead scoring & pipeline', 'Onderhoudscontracten', 'Templates & exports'],
+    popular: true,
+  },
+  {
+    key: 'scale',
+    name: 'Scale',
+    price: '€280',
+    desc: 'AI intelligence en volledige leverage.',
+    features: ['Alles uit Pro', 'AI lead verwerking', 'Inzichten & voorspellingen', 'AI content assistent', 'Meerdere gebruikers'],
+  },
+]
 
 export default async function BillingPage() {
   const supabase = await createClient()
@@ -16,70 +40,76 @@ export default async function BillingPage() {
     .eq('id', tenantId)
     .single()
 
-  const isTrial = tenant?.subscription_status === 'trial'
-  const trialEnd = tenant?.trial_ends_at
-    ? format(new Date(tenant.trial_ends_at), 'd MMMM yyyy', { locale: nl })
+  const t = tenant as Record<string, unknown> | null
+  const currentPlan = (t?.plan as string) || 'free'
+  const isTrial = t?.subscription_status === 'trial'
+  const trialEnd = t?.trial_ends_at
+    ? format(new Date(t.trial_ends_at as string), 'd MMMM yyyy', { locale: nl })
     : null
 
   return (
-    <div className="p-6 max-w-2xl">
-      <h1 className="mb-6 text-2xl font-bold text-white">Abonnement</h1>
+    <div className="p-4 pt-16 sm:p-6 lg:pt-6 mx-auto max-w-4xl space-y-6">
+      <div>
+        <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Abonnement</h1>
+        <p className="mt-1 text-sm text-zinc-400">Beheer je plan en facturatie</p>
+      </div>
 
-      {/* Huidig abonnement */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Huidig plan</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-semibold text-white">FoundriOS Starter</p>
-              <p className="text-sm text-zinc-400">€297 per maand · Alle modules</p>
-            </div>
-            <Badge variant={isTrial ? 'outline' : 'default'}>
-              {isTrial ? 'Trial' : 'Actief'}
-            </Badge>
-          </div>
-
-          {isTrial && trialEnd && (
-            <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm text-amber-300">
-              Je trial loopt af op <strong>{trialEnd}</strong>. Activeer je abonnement om
-              door te gaan zonder onderbreking.
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Abonnement activeren */}
-      {isTrial && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Abonnement activeren</CardTitle>
-            <CardDescription>
-              Activeer je betaalabonnement om je account actief te houden na de trial.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4 rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold">Starter — Maandelijks</p>
-                  <p className="text-sm text-zinc-400">
-                    Alle modules · Maandelijks opzegbaar · Inclusief BTW
-                  </p>
-                </div>
-                <p className="text-2xl font-bold">€297<span className="text-sm font-normal text-zinc-400">/mnd</span></p>
-              </div>
-            </div>
-            <Button className="w-full" disabled>
-              Betaling instellen via Mollie (binnenkort)
-            </Button>
-            <p className="mt-2 text-center text-xs text-zinc-400">
-              iDEAL, creditcard en SEPA-incasso beschikbaar
-            </p>
-          </CardContent>
-        </Card>
+      {isTrial && trialEnd && (
+        <div className="rounded-lg border border-foundri-yellow/30 bg-foundri-yellow/5 px-4 py-3 text-sm text-foundri-yellow">
+          Je trial loopt af op <strong>{trialEnd}</strong>. Kies een plan om door te gaan.
+        </div>
       )}
+
+      {/* Plan cards */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        {PLANS.map((plan) => {
+          const isActive = currentPlan === plan.key
+          return (
+            <div
+              key={plan.key}
+              className={`rounded-lg border p-5 transition-colors ${
+                isActive
+                  ? 'border-foundri-yellow bg-foundri-yellow/5'
+                  : plan.popular
+                  ? 'border-foundri-yellow/30 bg-foundri-deep'
+                  : 'border-white/10 bg-foundri-deep'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-white">{plan.name}</h3>
+                {isActive && <Badge className="bg-foundri-yellow text-foundri-graphite">Actief</Badge>}
+                {plan.popular && !isActive && (
+                  <span className="rounded-full bg-foundri-yellow/20 px-2 py-0.5 text-[10px] font-bold text-foundri-yellow">Populair</span>
+                )}
+              </div>
+              <p className="text-2xl font-bold text-white">
+                {plan.price}<span className="text-sm font-normal text-zinc-400">/maand</span>
+              </p>
+              <p className="mt-1 text-sm text-zinc-400">{plan.desc}</p>
+              <ul className="mt-4 space-y-1.5">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-zinc-300">
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-foundri-yellow" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              {!isActive && (
+                <button
+                  disabled
+                  className="mt-4 w-full rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-zinc-400 opacity-50"
+                >
+                  Binnenkort beschikbaar
+                </button>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <p className="text-center text-xs text-zinc-500">
+        Betaling via iDEAL, creditcard en SEPA-incasso · Maandelijks opzegbaar
+      </p>
     </div>
   )
 }
