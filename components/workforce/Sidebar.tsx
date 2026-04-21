@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Users, Cpu, BookOpen, Settings } from 'lucide-react'
+import { Users, Bot, Cpu, BookOpen } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/workforce/dashboard', label: 'Leads', icon: Users },
-  { href: '/workforce/dashboard/runs', label: 'Agent Runs', icon: Cpu },
+  { href: '/workforce/dashboard/agents', label: 'Agents', icon: Bot },
+  { href: '/workforce/dashboard/runs', label: 'Runs', icon: Cpu },
   { href: '/workforce/dashboard/knowledge', label: 'Knowledge', icon: BookOpen },
 ]
 
@@ -23,7 +24,9 @@ export function WorkforceSidebar({ tenantName }: { tenantName?: string }) {
         <nav className="flex gap-3">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
-            const isActive = pathname === item.href
+            const isActive = item.href === '/workforce/dashboard'
+              ? pathname === '/workforce/dashboard' || pathname.startsWith('/workforce/dashboard/leads/')
+              : pathname === item.href
             return (
               <Link
                 key={item.href}
@@ -50,7 +53,9 @@ export function WorkforceSidebar({ tenantName }: { tenantName?: string }) {
         <nav className="flex-1 px-3 py-4 space-y-1">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
-            const isActive = pathname === item.href
+            const isActive = item.href === '/workforce/dashboard'
+              ? pathname === '/workforce/dashboard' || pathname.startsWith('/workforce/dashboard/leads/')
+              : pathname === item.href
             return (
               <Link
                 key={item.href}

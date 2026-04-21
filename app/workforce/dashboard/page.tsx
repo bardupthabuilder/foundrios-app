@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Users, Flame, Clock, Bot } from 'lucide-react'
 import type { FwLead } from '@/lib/workforce/types'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -18,6 +20,11 @@ const QUAL_COLORS: Record<string, string> = {
   warm: 'bg-orange-500/20 text-orange-400',
   cold: 'bg-blue-500/20 text-blue-400',
   reject: 'bg-neutral-500/20 text-neutral-400',
+}
+
+interface Stats {
+  leads: { total: number; hot: number; warm: number; cold: number; new_today: number }
+  agents: { active_24h: number; avg_response_ms: number; total_runs: number; success_rate: number }
 }
 
 function Badge({ label, colorClass }: { label: string; colorClass: string }) {
@@ -38,23 +45,47 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(hours / 24)}d`
 }
 
+function StatCard({ icon: Icon, label, value, sub }: { icon: React.ElementType; label: string; value: string | number; sub?: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
+      <div className="flex items-center gap-2 text-neutral-500 mb-2">
+        <Icon className="h-4 w-4" />
+        <span className="text-xs uppercase tracking-wider">{label}</span>
+      </div>
+      <p className="text-2xl font-semibold">{value}</p>
+      {sub && <p className="text-xs text-neutral-500 mt-1">{sub}</p>}
+    </div>
+  )
+}
+
 export default function WorkforceLeadsPage() {
+  const router = useRouter()
   const [leads, setLeads] = useState<FwLead[]>([])
+  const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [qualFilter, setQualFilter] = useState<string>('all')
 
-  async function fetchLeads() {
-    const res = await fetch('/workforce/api/leads')
-    if (res.ok) {
-      const data = await res.json()
+  async function fetchData() {
+    const [leadsRes, statsRes] = await Promise.all([
+      fetch('/workforce/api/leads'),
+      fetch('/workforce/api/stats'),
+    ])
+    if (leadsRes.ok) {
+      const data = await leadsRes.json()
       setLeads(data.leads || [])
+    }
+    if (statsRes.ok) {
+      const data = await statsRes.json()
+      setStats(data)
     }
     setLoading(false)
   }
 
   useEffect(() => {
-    fetchLeads()
-    const interval = setInterval(fetchLeads, 10000)
+    fetchData()
+    const interval = setInterval(fetchData, 10000)
     return () => clearInterval(interval)
   }, [])
 
@@ -70,16 +101,24 @@ export default function WorkforceLeadsPage() {
       }),
     })
     setSending(false)
-    fetchLeads()
+    fetchData()
   }
+
+  // Client-side filtering
+  const filtered = leads.filter((lead) => {
+    if (statusFilter !== 'all' && lead.status !== statusFilter) return false
+    if (qualFilter !== 'all' && lead.qualification !== qualFilter) return false
+    return true
+  })
 
   return (
     <div>
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Leads</h1>
           <p className="text-sm text-neutral-400 mt-1">
-            {leads.length} lead{leads.length !== 1 ? 's' : ''} totaal
+            {filtered.length} van {leads.length} lead{leads.length !== 1 ? 's' : ''}
           </p>
         </div>
         <button
@@ -91,9 +130,68 @@ export default function WorkforceLeadsPage() {
         </button>
       </div>
 
+      {/* Stats Cards */}
+      {stats && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <StatCard
+            icon={Users}
+            label="Totaal leads"
+            value={stats.leads.total}
+            sub={stats.leads.new_today > 0 ? `+${stats.leads.new_today} vandaag` : undefined}
+          />
+          <StatCard
+            icon={Flame}
+            label="Hot leads"
+            value={stats.leads.hot}
+            sub={stats.leads.warm > 0 ? `${stats.leads.warm} warm` : undefined}
+          />
+          <StatCard
+            icon={Clock}
+            label="Responstijd"
+            value={stats.agents.avg_response_ms > 0 ? `${(stats.agents.avg_response_ms / 1000).toFixed(1)}s` : '—'}
+            sub="gem. intake agent"
+          />
+          <StatCard
+            icon={Bot}
+            label="Agents actief"
+            value={stats.agents.active_24h}
+            sub={stats.agents.total_runs > 0 ? `${stats.agents.success_rate}% success` : undefined}
+          />
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="flex gap-3 mb-4">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="bg-neutral-800 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white"
+        >
+          <option value="all">Alle statussen</option>
+          <option value="new">New</option>
+          <option value="qualified">Qualified</option>
+          <option value="conversation">Conversation</option>
+          <option value="booking">Booking</option>
+          <option value="booked">Booked</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select
+          value={qualFilter}
+          onChange={(e) => setQualFilter(e.target.value)}
+          className="bg-neutral-800 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white"
+        >
+          <option value="all">Alle scores</option>
+          <option value="hot">Hot</option>
+          <option value="warm">Warm</option>
+          <option value="cold">Cold</option>
+          <option value="reject">Reject</option>
+        </select>
+      </div>
+
+      {/* Table */}
       {loading ? (
         <div className="text-neutral-400 text-sm">Laden...</div>
-      ) : leads.length === 0 ? (
+      ) : filtered.length === 0 && leads.length === 0 ? (
         <div className="border border-white/10 rounded-xl p-12 text-center">
           <p className="text-neutral-400 mb-4">Nog geen leads.</p>
           <p className="text-sm text-neutral-500">
@@ -102,6 +200,10 @@ export default function WorkforceLeadsPage() {
               /workforce/api/webhook/lead
             </code>
           </p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="border border-white/10 rounded-xl p-8 text-center">
+          <p className="text-neutral-400">Geen leads met deze filters.</p>
         </div>
       ) : (
         <div className="border border-white/10 rounded-xl overflow-hidden">
@@ -119,35 +221,28 @@ export default function WorkforceLeadsPage() {
               </tr>
             </thead>
             <tbody>
-              {leads.map((lead) => (
+              {filtered.map((lead) => (
                 <tr
                   key={lead.id}
-                  className="border-b border-white/10 hover:bg-white/5 transition-colors"
+                  onClick={() => router.push(`/workforce/dashboard/leads/${lead.id}`)}
+                  className="border-b border-white/10 hover:bg-white/5 transition-colors cursor-pointer"
                 >
                   <td className="px-4 py-3 font-medium">{lead.name || '—'}</td>
                   <td className="px-4 py-3 text-neutral-300">{lead.company || '—'}</td>
                   <td className="px-4 py-3 text-neutral-300">{lead.service || '—'}</td>
                   <td className="px-4 py-3 text-neutral-300">{lead.region || '—'}</td>
                   <td className="px-4 py-3">
-                    <Badge
-                      label={lead.status}
-                      colorClass={STATUS_COLORS[lead.status] || 'bg-neutral-500/20 text-neutral-400'}
-                    />
+                    <Badge label={lead.status} colorClass={STATUS_COLORS[lead.status] || 'bg-neutral-500/20 text-neutral-400'} />
                   </td>
                   <td className="px-4 py-3">
                     {lead.qualification ? (
-                      <Badge
-                        label={lead.qualification}
-                        colorClass={QUAL_COLORS[lead.qualification] || 'bg-neutral-500/20 text-neutral-400'}
-                      />
+                      <Badge label={lead.qualification} colorClass={QUAL_COLORS[lead.qualification] || 'bg-neutral-500/20 text-neutral-400'} />
                     ) : (
                       <span className="text-neutral-500">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-neutral-400">{lead.source || '—'}</td>
-                  <td className="px-4 py-3 text-neutral-500 text-right">
-                    {timeAgo(lead.created_at)}
-                  </td>
+                  <td className="px-4 py-3 text-neutral-500 text-right">{timeAgo(lead.created_at)}</td>
                 </tr>
               ))}
             </tbody>
