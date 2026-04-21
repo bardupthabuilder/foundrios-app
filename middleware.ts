@@ -29,29 +29,45 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Publieke routes
+  // FoundriOS publieke routes
   const publicRoutes = ['/login', '/register', '/onboarding', '/invite', '/']
   const isPublicRoute = publicRoutes.some((route) => pathname === route) || pathname.startsWith('/blog') || pathname.startsWith('/help')
 
+  // Workforce publieke routes
+  const workforcePublicRoutes = ['/workforce', '/workforce/login', '/workforce/register', '/workforce/onboarding']
+  const isWorkforcePublic = workforcePublicRoutes.some((route) => pathname === route)
+
+  // Detect product context
+  const isWorkforce = pathname.startsWith('/workforce')
+
   // API webhooks zijn altijd publiek (worden beveiligd via signature validation)
-  const isWebhook = pathname.startsWith('/api/webhooks/') || pathname.startsWith('/api/auth/')
+  const isWebhook =
+    pathname.startsWith('/api/webhooks/') ||
+    pathname.startsWith('/api/auth/') ||
+    pathname.startsWith('/workforce/api/webhook/')
 
   if (isWebhook) {
     return supabaseResponse
   }
 
-  // Niet ingelogd → naar login
-  if (!user && !isPublicRoute) {
+  // Niet ingelogd → naar juiste login
+  if (!user && !isPublicRoute && !isWorkforcePublic) {
     const redirectUrl = request.nextUrl.clone()
-    redirectUrl.pathname = '/login'
+    redirectUrl.pathname = isWorkforce ? '/workforce/login' : '/login'
     redirectUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(redirectUrl)
   }
 
-  // Ingelogd op register pagina → naar dashboard (login mag altijd, voor account wisselen)
+  // Ingelogd op register pagina → naar dashboard
   if (user && pathname === '/register') {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/dashboard'
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  if (user && pathname === '/workforce/register') {
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = '/workforce/dashboard'
     return NextResponse.redirect(redirectUrl)
   }
 
