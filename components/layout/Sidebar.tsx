@@ -31,6 +31,7 @@ import {
   Brain,
   Plug,
   HelpCircle,
+  BookOpen,
 } from 'lucide-react'
 import { NotificationBell } from '@/components/NotificationBell'
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
@@ -77,6 +78,7 @@ const navGroups = [
     items: [
       { href: '/dashboard/content', label: 'Content', icon: Newspaper },
       { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
+      { href: '/dashboard/handboek', label: 'Handboek', icon: BookOpen },
       { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain },
       { href: '/dashboard/automations', label: 'Automatisering', icon: Zap },
       { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
