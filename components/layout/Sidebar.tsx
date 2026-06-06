@@ -32,14 +32,30 @@ import {
   Plug,
   HelpCircle,
   BookOpen,
+  BookOpenCheck,
+  Rocket,
+  Briefcase,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
 } from 'lucide-react'
 import { NotificationBell } from '@/components/NotificationBell'
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
+import { BottomNav } from '@/components/layout/BottomNav'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { tierAtLeast, getRequiredTier, TIER_LABELS, type Tier } from '@/lib/tier-client'
 
-const navGroups = [
+type NavItem = {
+  href: string
+  label: string
+  icon: typeof LayoutDashboard
+  feature?: string
+}
+
+const navGroups: { label: string | null; items: NavItem[] }[] = [
   {
     label: null,
     items: [
@@ -47,42 +63,62 @@ const navGroups = [
     ],
   },
   {
-    label: 'Acquisitie',
+    label: 'Foundations',
+    items: [
+      { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
+      { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
+    ],
+  },
+  {
+    label: 'Sales',
     items: [
       { href: '/dashboard/leads', label: 'Lead Inbox', icon: Inbox },
       { href: '/dashboard/pipeline', label: 'Pipeline', icon: GitBranch },
       { href: '/dashboard/klanten', label: 'Klanten', icon: Users },
       { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
+      { href: '/dashboard/offertes', label: 'Offertes', icon: FileText },
     ],
   },
   {
-    label: 'Uitvoering',
+    label: 'Team',
     items: [
-      { href: '/dashboard/projecten', label: 'Projecten', icon: FolderOpen },
+      { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
       { href: '/dashboard/planning', label: 'Planning', icon: CalendarDays },
-      { href: '/dashboard/uren', label: 'Uren', icon: Clock },
       { href: '/dashboard/werkbonnen', label: 'Werkbonnen', icon: ClipboardList },
+      { href: '/dashboard/uren', label: 'Uren', icon: Clock },
       { href: '/dashboard/onderhoud', label: 'Onderhoud', icon: CalendarCheck },
+      { href: '/dashboard/projecten', label: 'Projecten', icon: FolderOpen },
     ],
   },
   {
     label: 'Financieel',
     items: [
       { href: '/dashboard/financieel', label: 'Overzicht', icon: TrendingUp },
-      { href: '/dashboard/offertes', label: 'Offertes', icon: FileText },
       { href: '/dashboard/facturen', label: 'Facturen', icon: Receipt },
     ],
   },
   {
-    label: 'Systeem',
+    label: 'Media & Copy',
     items: [
-      { href: '/dashboard/content', label: 'Content', icon: Newspaper },
-      { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
+      { href: '/dashboard/content', label: 'Content', icon: Newspaper, feature: 'content_ai' },
+      { href: '/dashboard/templates', label: 'Templates', icon: Mail },
+      { href: '/dashboard/sops', label: 'SOPs', icon: ListChecks },
       { href: '/dashboard/handboek', label: 'Handboek', icon: BookOpen },
-      { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain },
-      { href: '/dashboard/automations', label: 'Automatisering', icon: Zap },
-      { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
-      { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
+    ],
+  },
+  {
+    label: 'Freedom Systems',
+    items: [
+      { href: '/dashboard/automations', label: 'Automatisering', icon: Zap, feature: 'automations' },
+      { href: '/dashboard/playbooks', label: 'Playbooks', icon: BookOpenCheck },
+    ],
+  },
+  {
+    label: 'Scaling',
+    items: [
+      { href: '/dashboard/growth', label: 'Groeiplan', icon: Rocket, feature: 'growth_unlock' },
+      { href: '/dashboard/managed/status', label: 'Managed Growth', icon: Briefcase },
+      { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain, feature: 'intelligence' },
     ],
   },
 ]
@@ -92,17 +128,52 @@ export function Sidebar() {
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [tenantName, setTenantName] = useState('FoundriOS')
+  const [tenantPlan, setTenantPlan] = useState<Tier>('free')
   const [isAdmin, setIsAdmin] = useState(false)
+  const [demoActive, setDemoActive] = useState(false)
+  const [demoBusy, setDemoBusy] = useState(false)
 
   useEffect(() => {
     fetch('/api/tenant')
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.name) setTenantName(data.name) })
+      .then(data => {
+        if (data?.name) setTenantName(data.name)
+        if (data?.plan) setTenantPlan(data.plan as Tier)
+      })
       .catch(() => {})
     fetch('/api/admin/stats')
       .then(r => setIsAdmin(r.ok))
       .catch(() => {})
+    fetch('/api/demo-mode')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data) {
+          setDemoActive(data.active === true)
+          if (data.canToggle === true) setIsAdmin(true)
+        }
+      })
+      .catch(() => {})
   }, [])
+
+  async function toggleDemo() {
+    if (demoBusy) return
+    setDemoBusy(true)
+    const next = !demoActive
+    try {
+      const r = await fetch('/api/demo-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: next }),
+      })
+      if (r.ok) {
+        const data = await r.json()
+        setDemoActive(data.active === true)
+        router.refresh()
+      }
+    } finally {
+      setDemoBusy(false)
+    }
+  }
 
   async function handleLogout() {
     const supabase = createClient()
@@ -139,20 +210,25 @@ export function Sidebar() {
             {group.items.map((item) => {
               const Icon = item.icon
               const active = isActive(item.href)
+              const requiredTier = item.feature ? getRequiredTier(item.feature) : 'free'
+              const locked = item.feature ? !tierAtLeast(tenantPlan, requiredTier) : false
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={locked ? '/dashboard/billing/upgrade' : item.href}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     active
                       ? 'bg-white/10 text-white'
-                      : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+                      : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200',
+                    locked && 'opacity-70'
                   )}
+                  title={locked ? `${TIER_LABELS[requiredTier]} functie — upgrade vereist` : undefined}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
-                  {item.label}
+                  <span className="flex-1 truncate">{item.label}</span>
+                  {locked && <Lock className="h-3 w-3 shrink-0 text-foundri-yellow/70" />}
                 </Link>
               )
             })}
@@ -176,6 +252,22 @@ export function Sidebar() {
             <Shield className="h-4 w-4" />
             Admin
           </Link>
+        )}
+        {isAdmin && (
+          <button
+            onClick={toggleDemo}
+            disabled={demoBusy}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50',
+              demoActive
+                ? 'bg-red-600/20 text-red-400 hover:bg-red-600/30'
+                : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+            )}
+            title={demoActive ? 'Demo modus uitschakelen' : 'Demo modus inschakelen'}
+          >
+            {demoActive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {demoActive ? 'Demo: AAN' : 'Demo modus'}
+          </button>
         )}
         <button
           onClick={handleLogout}
@@ -222,6 +314,9 @@ export function Sidebar() {
       <aside className="hidden lg:flex h-screen w-60 shrink-0 flex-col border-r border-white/5 bg-foundri-surface">
         {navContent}
       </aside>
+
+      {/* Mobile bottom nav */}
+      <BottomNav />
     </>
   )
 }
