@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { enforceLimit } from '@/lib/limits'
+import { channelForSource } from '@/lib/lead-channel'
+import { notifyNewLead } from '@/lib/notify'
 import { scoreLead } from '@/lib/ai'
 import { z } from 'zod'
 
@@ -72,12 +75,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
+  const limitResponse = await enforceLimit(tenantId, 'leads')
+  if (limitResponse) return limitResponse
+
   const { name, email, phone, source, message } = parsed.data
 
-  // Lead aanmaken
+  // Elke aanvraag krijgt meteen een volgende actie. Een open aanvraag zonder
+  // volgende actie is precies het lek dat FoundriOS hoort te dichten.
   const { data: lead, error: insertError } = await supabase
     .from('leads')
-    .insert({ tenant_id: tenantId, name, email, phone, source })
+    .insert({
+      tenant_id: tenantId, name, email, phone, source,
+      next_action: 'Eerste contact opnemen',
+      next_action_at: new Date().toISOString(),
+    } as any)
     .select()
     .single()
 
@@ -87,13 +98,16 @@ export async function POST(request: NextRequest) {
 
   // Eerste bericht opslaan als die er is
   if (message) {
-    await supabase.from('lead_messages').insert({
+    const { error: messageError } = await supabase.from('lead_messages').insert({
       lead_id: lead.id,
       tenant_id: tenantId,
       direction: 'inbound',
-      channel: source,
+      channel: channelForSource(source),
       content: message,
     })
+    // De lead staat er al; een mislukt eerste bericht mag de aanvraag niet weggooien,
+    // maar moet wel zichtbaar zijn in de logs in plaats van stil te verdwijnen.
+    if (messageError) console.error('lead_messages insert mislukt:', messageError.message)
   }
 
   // AI scoring asynchroon uitvoeren
@@ -135,6 +149,15 @@ export async function POST(request: NextRequest) {
     .select()
     .eq('id', lead.id)
     .single()
+
+  // Direct melden, niet wachten op de nachtelijke cron. De reactietijd telt vanaf nu.
+  await notifyNewLead(supabase, {
+    tenantId,
+    leadId: lead.id,
+    name,
+    source,
+    aiLabel: (updatedLead as { ai_label?: string | null } | null)?.ai_label ?? null,
+  })
 
   return NextResponse.json(updatedLead, { status: 201 })
 }

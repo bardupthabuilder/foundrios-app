@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { seedDefaultAutomations } from '@/lib/automation-engine'
 import { z } from 'zod'
 
 const OnboardingSchema = z.object({
@@ -107,6 +108,19 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
+
+  // Seed standaard SOPs (idempotent — faalt stil als al aanwezig of functie missing)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (serviceClient as any).rpc('seed_default_sops', { p_tenant_id: tenant.id })
+  } catch {
+    // Niet blocking — SOPs kunnen later geseed worden
+  }
+
+  // De drie gratis bewakers: aanvraag blijft liggen, offerte niet opgevolgd,
+  // factuur te laat. Zonder deze regels doet de Automatisering-module niets.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await seedDefaultAutomations(serviceClient as any, tenant.id)
 
   return NextResponse.json({ tenantId: tenant.id }, { status: 201 })
 }

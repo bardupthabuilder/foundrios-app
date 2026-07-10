@@ -3,7 +3,7 @@ import { requireTenant } from '@/lib/tenant'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Zap } from 'lucide-react'
 
 const PLANS = [
   {
@@ -11,23 +11,34 @@ const PLANS = [
     name: 'Free',
     price: '€0',
     desc: 'Alles wat je nodig hebt om te starten.',
-    features: ['Leads & klanten', 'Projecten & planning', 'Uren & werkbonnen', 'Offertes & facturen'],
+    sparks: null,
+    features: ['Leads & klanten', 'Projecten & planning', 'Taken & notities', 'Offerte/factuur status', 'Basis dashboard'],
   },
   {
     key: 'pro',
     name: 'Pro',
     price: '€98',
-    desc: 'Automatiseer en bespaar tijd.',
-    features: ['Alles uit Free', 'Automatische opvolging', 'Lead scoring & pipeline', 'Onderhoudscontracten', 'Templates & exports'],
+    desc: 'Voor vakbedrijven die omzetlekken willen dichten met AI en opvolging.',
+    sparks: 1000,
     popular: true,
+    features: ['Alles uit Free', 'AI-kwalificatie', 'Automatische opvolging', 'Offerte-opvolging & reviewverzoeken', 'Content Engine basic', '1.000 Sparks / maand'],
   },
   {
     key: 'scale',
     name: 'Scale',
-    price: '€280',
-    desc: 'AI intelligence en volledige leverage.',
-    features: ['Alles uit Pro', 'AI lead verwerking', 'Inzichten & voorspellingen', 'AI content assistent', 'Meerdere gebruikers'],
+    price: '€998',
+    desc: 'Voor grotere vakbedrijven met teams, locaties en serieuze omzet.',
+    sparks: 15000,
+    features: ['Alles uit Pro', 'Meerdere locaties & teams', 'Advanced AI-workflows', 'Sales & retentie dashboards', '10 gebruikers inbegrepen', '15.000 Sparks / maand'],
   },
+]
+
+const SPARKS_BUNDLES = [
+  { label: '1.000 extra Sparks', price: '€19' },
+  { label: '5.000 extra Sparks', price: '€79' },
+  { label: '10.000 extra Sparks', price: '€139' },
+  { label: '25.000 extra Sparks', price: '€299' },
+  { label: '50.000 extra Sparks', price: '€499' },
 ]
 
 export default async function BillingPage() {
@@ -47,8 +58,11 @@ export default async function BillingPage() {
     ? format(new Date(t.trial_ends_at as string), 'd MMMM yyyy', { locale: nl })
     : null
 
+  const activePlan = PLANS.find(p => p.key === currentPlan)
+  const sparksIncluded = activePlan?.sparks ?? null
+
   return (
-    <div className="p-4 pt-16 sm:p-6 lg:pt-6 mx-auto max-w-4xl space-y-6">
+    <div className="p-4 pt-16 sm:p-6 lg:pt-6 mx-auto max-w-4xl space-y-8">
       <div>
         <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Abonnement</h1>
         <p className="mt-1 text-sm text-zinc-400">Beheer je plan en facturatie</p>
@@ -105,6 +119,56 @@ export default async function BillingPage() {
             </div>
           )
         })}
+      </div>
+
+      {/* Sparks overzicht */}
+      <div className="rounded-lg border border-white/10 bg-foundri-deep p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <Zap className="h-4 w-4 text-foundri-yellow" />
+          <h2 className="font-semibold text-white">Sparks</h2>
+          <span className="text-xs text-zinc-500">— slimme acties die FoundriOS voor je uitvoert</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 text-sm">
+          <div className="rounded-md bg-white/5 p-3">
+            <p className="text-zinc-400 text-xs mb-1">Inbegrepen</p>
+            <p className="font-semibold text-white">
+              {sparksIncluded ? sparksIncluded.toLocaleString('nl-NL') : 'Geen'}
+            </p>
+          </div>
+          <div className="rounded-md bg-white/5 p-3">
+            <p className="text-zinc-400 text-xs mb-1">Gebruikt</p>
+            <p className="font-semibold text-white">—</p>
+          </div>
+          <div className="rounded-md bg-white/5 p-3">
+            <p className="text-zinc-400 text-xs mb-1">Resterend</p>
+            <p className="font-semibold text-white">—</p>
+          </div>
+        </div>
+
+        {currentPlan === 'free' && (
+          <p className="text-xs text-zinc-500">Upgrade naar Pro voor 1.000 Sparks per maand.</p>
+        )}
+
+        {/* Extra Sparks bundles */}
+        {currentPlan !== 'free' && (
+          <div className="space-y-2 pt-2 border-t border-white/10">
+            <p className="text-xs font-medium text-zinc-400">Extra Sparks nodig? Voeg ze toe wanneer je wilt.</p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {SPARKS_BUNDLES.map((b) => (
+                <button
+                  key={b.label}
+                  disabled
+                  className="flex items-center justify-between rounded-md border border-white/10 px-3 py-2 text-xs text-zinc-300 opacity-60"
+                >
+                  <span>{b.label}</span>
+                  <span className="text-foundri-yellow font-medium">{b.price}</span>
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-zinc-600">Betaling binnenkort beschikbaar</p>
+          </div>
+        )}
       </div>
 
       <p className="text-center text-xs text-zinc-500">

@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import type { AiScoreResult } from './types/lead'
+import { z } from 'zod'
 
 // ─── OpenRouter Client (lazy — voorkomt build-time crash zonder key) ─────────
 
@@ -22,6 +23,7 @@ function getClient(): OpenAI {
 // ─── Model Config ────────────────────────────────────────────────────────────
 
 const DEFAULT_MODEL = process.env.DEFAULT_AI_MODEL || 'openai/gpt-4o-mini'
+const BATCH_API_ENABLED = process.env.BATCH_API_ENABLED !== 'false'
 
 export type ModelOverride = string | undefined
 
@@ -65,6 +67,37 @@ const SCORE_SCHEMA = {
   required: ['score', 'label', 'summary', 'urgency', 'intent'],
 }
 
+const LEAD_SCORE_SYSTEM_PROMPT = 'Je bent een kwalificatie-assistent voor vakbedrijven. Analyseer leads op budget, urgentie, project-specificiteit en contactinfo. Score eerlijk op basis van beschikbare informatie.'
+
+function scoreLeadDeterministic(params: {
+  name: string
+  source: string
+  messages: string[]
+  email?: string | null
+  phone?: string | null
+}): AiScoreResult | null {
+  const fullText = params.messages.join(' ').toLowerCase()
+  let score = 0
+
+  if (fullText.includes('budget') || fullText.includes('€') || fullText.includes('euro')) score += 30
+  if (fullText.includes('week') || fullText.includes('urgent') || fullText.includes('snel')) score += 25
+  if (fullText.length > 100) score += 15
+  if (params.email && params.phone) score += 20
+
+  if (score >= 60) {
+    return {
+      score,
+      label: score > 70 ? 'hot' : 'warm',
+      summary: `Lead van ${params.name} via ${params.source}. Duidelijke signalen voor kwaliteit.`,
+      budget_estimate: fullText.includes('€') ? 'Budget vermeld' : null,
+      urgency: score > 70 ? 'high' : score > 40 ? 'medium' : 'low',
+      intent: fullText.substring(0, 50) + (fullText.length > 50 ? '...' : ''),
+    }
+  }
+
+  return null
+}
+
 export async function scoreLead(
   params: {
     name: string
@@ -75,6 +108,11 @@ export async function scoreLead(
   },
   model?: ModelOverride
 ): Promise<AiScoreResult> {
+  const deterministicResult = scoreLeadDeterministic(params)
+  if (deterministicResult) {
+    return deterministicResult
+  }
+
   const contactInfo = [
     params.email ? `E-mail: ${params.email}` : null,
     params.phone ? `Telefoon: ${params.phone}` : null,
@@ -82,32 +120,29 @@ export async function scoreLead(
     .filter(Boolean)
     .join(', ')
 
-  const prompt = `Je bent een kwalificatie-assistent voor een vakbedrijf. Analyseer de volgende lead en geef een score.
+  const prompt = `Analyseer deze lead en geef een score.
 
 **Lead informatie:**
 - Naam: ${params.name}
 - Bron: ${params.source}
 - Contactgegevens: ${contactInfo || 'Niet opgegeven'}
 
-**Berichten van de lead:**
+**Berichten:**
 ${params.messages.map((m, i) => `${i + 1}. "${m}"`).join('\n')}
 
-**Scorecriteria:**
-- Budget vermeld of duidelijke prijsverwachting: +30 punten
-- Tijdlijn of urgentie duidelijk: +25 punten
-- Specifiek project beschreven: +25 punten
-- Contactgegevens volledig (naam + tel/email): +20 punten
+**Criteria:** Budget +30 | Urgentie +25 | Project specifiek +25 | Contactinfo +20
 
-Geef een eerlijke score op basis van de beschikbare informatie. Als er weinig informatie is, scoor laag.
-
-Antwoord uitsluitend in JSON-formaat volgens dit schema:
+Antwoord uitsluitend in JSON-formaat:
 ${JSON.stringify(SCORE_SCHEMA.properties, null, 2)}`
 
   const response = await getClient().chat.completions.create({
     model: getModel(model),
-    max_tokens: 1024,
+    max_tokens: 512,
     response_format: { type: 'json_object' },
-    messages: [{ role: 'user', content: prompt }],
+    messages: [
+      { role: 'system', content: LEAD_SCORE_SYSTEM_PROMPT },
+      { role: 'user', content: prompt },
+    ],
   })
 
   const text = response.choices[0]?.message?.content
@@ -190,7 +225,7 @@ ${CONTENT_SCHEMA_DESCRIPTION}`
 
   const response = await getClient().chat.completions.create({
     model: getModel(model),
-    max_tokens: 2048,
+    max_tokens: 1024,
     response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: CONTENT_SYSTEM_PROMPT },
@@ -233,6 +268,70 @@ export async function generateBatch(
   return results
 }
 
+const MULTI_FIELD_SCHEMA = {
+  type: 'object' as const,
+  properties: {
+    fields: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          hook: { type: 'string', description: 'Openingszin (max 20 woorden)' },
+          body: { type: 'string', description: 'Hoofdtekst, ik-vorm' },
+          cta: { type: 'string', description: 'CTA (max 15 woorden)' },
+          visual_prompt: { type: 'string', description: 'Visuele beschrijving' },
+          script: { type: 'string', nullable: true, description: 'Video script of null' },
+        },
+        required: ['hook', 'body', 'cta', 'visual_prompt'],
+      },
+    },
+  },
+  required: ['fields'],
+}
+
+export async function generateContentFields(
+  params: {
+    topic: string
+    fields: ('hook' | 'body' | 'cta' | 'visual_prompt' | 'script')[]
+    existing_hook?: string
+    existing_body?: string
+    platform?: string
+    content_template?: string
+  },
+  model?: ModelOverride
+): Promise<Record<string, string>> {
+  const contextLines: string[] = [`**Onderwerp:** ${params.topic}`]
+  if (params.content_template) contextLines.push(`**Template:** ${params.content_template}`)
+  if (params.platform) contextLines.push(`**Platform:** ${params.platform}`)
+  if (params.existing_hook) contextLines.push(`**Bestaande hook:** ${params.existing_hook}`)
+  if (params.existing_body) contextLines.push(`**Bestaande body:** ${params.existing_body}`)
+
+  const fieldList = params.fields.join(', ')
+  const prompt = `${contextLines.join('\n')}
+
+Genereer alle aangevraagde velden in één keer: ${fieldList}.
+Volg de schema-structuur.`
+
+  const response = await getClient().chat.completions.create({
+    model: getModel(model),
+    max_tokens: 512,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: CONTENT_SYSTEM_PROMPT },
+      { role: 'user', content: prompt },
+    ],
+  })
+
+  const text = response.choices[0]?.message?.content
+  if (!text) throw new Error('OpenRouter retourneerde geen response voor velden')
+
+  const result = JSON.parse(text)
+  const fieldObj = result.fields[0] || {}
+  return Object.fromEntries(
+    params.fields.map(f => [f, fieldObj[f] || ''])
+  )
+}
+
 export async function generateContentField(
   params: {
     field: 'hook' | 'body' | 'cta' | 'visual_prompt' | 'script'
@@ -244,48 +343,16 @@ export async function generateContentField(
   },
   model?: ModelOverride
 ): Promise<string> {
-  const fieldDescriptions: Record<typeof params.field, string> = {
-    hook: 'een pakkende openingszin die direct aandacht trekt met een resultaat of pijn (max 20 woorden)',
-    body: 'de hoofdtekst van de post, direct en nuchter, in ik-vorm vanuit eigen ervaring',
-    cta: 'een duidelijke call-to-action (max 15 woorden, geen twee acties)',
-    visual_prompt:
-      'een concrete beschrijving voor het visuele element (foto, video of grafiek)',
-    script:
-      'een video- of reelscript dat de kijker direct aanspreekt, informeel maar professioneel',
-  }
-
-  const contextLines: string[] = [`**Onderwerp:** ${params.topic}`]
-  if (params.content_template) {
-    contextLines.push(`**Template:** ${params.content_template}`)
-  }
-  if (params.platform) {
-    contextLines.push(`**Platform:** ${params.platform}`)
-  }
-  if (params.existing_hook) {
-    contextLines.push(`**Bestaande hook:** ${params.existing_hook}`)
-  }
-  if (params.existing_body) {
-    contextLines.push(`**Bestaande body:** ${params.existing_body}`)
-  }
-
-  const prompt = `${contextLines.join('\n')}
-
-Schrijf alleen ${fieldDescriptions[params.field]}.
-Geef uitsluitend de tekst terug, geen uitleg, geen label, geen aanhalingstekens.`
-
-  const response = await getClient().chat.completions.create({
-    model: getModel(model),
-    max_tokens: 512,
-    messages: [
-      { role: 'system', content: CONTENT_SYSTEM_PROMPT },
-      { role: 'user', content: prompt },
-    ],
-  })
-
-  const text = response.choices[0]?.message?.content
-  if (!text) {
-    throw new Error(`OpenRouter retourneerde geen tekst voor veld: ${params.field}`)
-  }
-
-  return text.trim()
+  const result = await generateContentFields(
+    {
+      topic: params.topic,
+      fields: [params.field],
+      existing_hook: params.existing_hook,
+      existing_body: params.existing_body,
+      platform: params.platform,
+      content_template: params.content_template,
+    },
+    model
+  )
+  return result[params.field] || ''
 }

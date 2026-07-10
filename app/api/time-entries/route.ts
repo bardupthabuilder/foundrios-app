@@ -7,7 +7,8 @@ const CreateTimeEntrySchema = z.object({
   employee_id: z.string().uuid(),
   project_id: z.string().uuid(),
   entry_date: z.string(),
-  hours: z.number().min(0.5).max(24),
+  // Kwartier is de kleinste eenheid die de UI aanbiedt (timer rondt af op 0,25 u).
+  hours: z.number().min(0.25).max(24),
   start_time: z.string().optional().nullable(),
   end_time: z.string().optional().nullable(),
   description: z.string().optional().nullable(),

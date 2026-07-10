@@ -55,6 +55,9 @@ type NavItem = {
   feature?: string
 }
 
+// Volgorde volgt de geldstroom van het bedrijf:
+// aanvraag → offerte → klus → planning → werkbon → uren → factuur.
+// Wat de eigenaar dagelijks nodig heeft staat bovenaan; groeimodules onderaan.
 const navGroups: { label: string | null; items: NavItem[] }[] = [
   {
     label: null,
@@ -63,62 +66,57 @@ const navGroups: { label: string | null; items: NavItem[] }[] = [
     ],
   },
   {
-    label: 'Foundations',
+    label: 'Werk binnenhalen',
     items: [
-      { href: '/dashboard/settings', label: 'Instellingen', icon: Settings },
-      { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
-    ],
-  },
-  {
-    label: 'Sales',
-    items: [
-      { href: '/dashboard/leads', label: 'Lead Inbox', icon: Inbox },
+      { href: '/dashboard/leads', label: 'Aanvragen', icon: Inbox },
       { href: '/dashboard/pipeline', label: 'Pipeline', icon: GitBranch },
       { href: '/dashboard/klanten', label: 'Klanten', icon: Users },
-      { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
       { href: '/dashboard/offertes', label: 'Offertes', icon: FileText },
     ],
   },
   {
-    label: 'Team',
+    label: 'Werk uitvoeren',
     items: [
-      { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
+      { href: '/dashboard/projecten', label: 'Klussen', icon: FolderOpen },
       { href: '/dashboard/planning', label: 'Planning', icon: CalendarDays },
       { href: '/dashboard/werkbonnen', label: 'Werkbonnen', icon: ClipboardList },
       { href: '/dashboard/uren', label: 'Uren', icon: Clock },
-      { href: '/dashboard/onderhoud', label: 'Onderhoud', icon: CalendarCheck },
-      { href: '/dashboard/projecten', label: 'Projecten', icon: FolderOpen },
+      { href: '/dashboard/team', label: 'Medewerkers', icon: HardHat },
     ],
   },
   {
-    label: 'Financieel',
+    label: 'Geld binnenhalen',
     items: [
-      { href: '/dashboard/financieel', label: 'Overzicht', icon: TrendingUp },
       { href: '/dashboard/facturen', label: 'Facturen', icon: Receipt },
+      { href: '/dashboard/financieel', label: 'Financieel overzicht', icon: TrendingUp },
+      { href: '/dashboard/onderhoud', label: 'Onderhoud', icon: CalendarCheck },
     ],
   },
   {
-    label: 'Media & Copy',
+    label: 'Werkwijze',
     items: [
-      { href: '/dashboard/content', label: 'Content', icon: Newspaper, feature: 'content_ai' },
       { href: '/dashboard/templates', label: 'Templates', icon: Mail },
-      { href: '/dashboard/sops', label: 'SOPs', icon: ListChecks },
+      { href: '/dashboard/sops', label: 'Werkinstructies', icon: ListChecks },
       { href: '/dashboard/handboek', label: 'Handboek', icon: BookOpen },
     ],
   },
   {
-    label: 'Freedom Systems',
+    label: 'Groeien',
     items: [
+      { href: '/dashboard/campagnes', label: 'Campagnes', icon: Megaphone },
+      { href: '/dashboard/content', label: 'Content', icon: Newspaper, feature: 'content_ai' },
       { href: '/dashboard/automations', label: 'Automatisering', icon: Zap, feature: 'automations' },
       { href: '/dashboard/playbooks', label: 'Playbooks', icon: BookOpenCheck },
-    ],
-  },
-  {
-    label: 'Scaling',
-    items: [
       { href: '/dashboard/growth', label: 'Groeiplan', icon: Rocket, feature: 'growth_unlock' },
       { href: '/dashboard/managed/status', label: 'Managed Growth', icon: Briefcase },
       { href: '/dashboard/inzichten', label: 'Inzichten', icon: Brain, feature: 'intelligence' },
+    ],
+  },
+  {
+    label: 'Instellingen',
+    items: [
+      { href: '/dashboard/settings', label: 'Bedrijfsgegevens', icon: Settings },
+      { href: '/dashboard/billing', label: 'Abonnement', icon: CreditCard },
     ],
   },
 ]

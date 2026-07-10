@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
 import { z } from 'zod'
 
@@ -12,8 +12,17 @@ const UpdateQuoteSchema = z.object({
   amount_excl_vat: z.number().int().min(0).optional(),
   vat_pct: z.number().optional(),
   valid_until: z.string().optional().nullable(),
+  follow_up_at: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 })
+
+/** Twee dagen na versturen. Wachten tot de offerte verlopen is, is te laat. */
+function defaultFollowUp(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 2)
+  d.setHours(9, 0, 0, 0)
+  return d.toISOString()
+}
 
 export async function GET(
   request: NextRequest,
@@ -81,9 +90,20 @@ export async function PATCH(
   }
 
   // Set timestamps based on status
-  if (parsed.data.status === 'verstuurd') updateData.sent_at = new Date().toISOString()
-  if (parsed.data.status === 'akkoord') updateData.accepted_at = new Date().toISOString()
-  if (parsed.data.status === 'afgewezen') updateData.rejected_at = new Date().toISOString()
+  if (parsed.data.status === 'verstuurd') {
+    updateData.sent_at = new Date().toISOString()
+    // Een verstuurde offerte zonder opvolgdatum is verloren omzet. Als de client
+    // er geen meestuurt, zetten we er zelf een.
+    if (!parsed.data.follow_up_at) updateData.follow_up_at = defaultFollowUp()
+  }
+  if (parsed.data.status === 'akkoord') {
+    updateData.accepted_at = new Date().toISOString()
+    updateData.follow_up_at = null // beslist; niets meer na te bellen
+  }
+  if (parsed.data.status === 'afgewezen') {
+    updateData.rejected_at = new Date().toISOString()
+    updateData.follow_up_at = null
+  }
 
   const { data, error } = await supabase
     .from('quotes')
@@ -94,6 +114,20 @@ export async function PATCH(
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Log status transitions to quote_events via service client (table has no insert RLS)
+  if (parsed.data.status && ['verstuurd', 'rejected', 'afgewezen'].includes(parsed.data.status)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const svc = createServiceClient() as any
+    const eventType = parsed.data.status === 'verstuurd' ? 'sent' : 'rejected'
+    await svc.from('quote_events').insert({
+      tenant_id: tenantId,
+      quote_id: id,
+      event_type: eventType,
+      metadata: { actor: 'dashboard' },
+    })
+  }
+
   return NextResponse.json(data)
 }
 

@@ -53,11 +53,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-foundri-border bg-foundri-graphite/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.svg" alt="FoundriOS" width={28} height={28} />
-            <span className="font-[family-name:var(--font-display)] text-lg font-bold tracking-tight text-white">
-              Foundri<span className="text-foundri-yellow">OS</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo-horizontal.png" alt="FoundriOS" width={180} height={36} className="mix-blend-screen" />
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/blog" className="px-3 py-2 text-sm font-medium text-foundri-yellow">
@@ -136,11 +133,8 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       <footer className="border-t border-foundri-border px-6 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="FoundriOS" width={20} height={20} />
-            <span className="font-[family-name:var(--font-display)] text-sm font-semibold text-white">
-              Foundri<span className="text-foundri-yellow">OS</span>
-            </span>
+          <div className="flex items-center">
+            <Image src="/logo-horizontal.png" alt="FoundriOS" width={140} height={28} className="mix-blend-screen" />
           </div>
           <p className="text-sm text-foundri-muted">&copy; {new Date().getFullYear()} FoundriOS</p>
         </div>

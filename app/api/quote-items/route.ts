@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { tenantOwnsParent } from '@/lib/ownership'
 import { z } from 'zod'
 
 const CreateItemSchema = z.object({
@@ -14,8 +15,9 @@ const CreateItemSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
+  let tenantId: string
   try {
-    await requireTenant()
+    tenantId = (await requireTenant()).tenantId
   } catch {
     return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
   }
@@ -24,6 +26,10 @@ export async function POST(request: NextRequest) {
   const parsed = CreateItemSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+  }
+
+  if (!(await tenantOwnsParent(supabase, 'quotes', parsed.data.quote_id, tenantId))) {
+    return NextResponse.json({ error: 'Offerte niet gevonden' }, { status: 404 })
   }
 
   const total_cents = Math.round(parsed.data.quantity * parsed.data.unit_price_cents)

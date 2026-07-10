@@ -14,6 +14,9 @@ const UpdateLeadSchema = z.object({
   appointment_at: z.string().datetime().nullable().optional(),
   quote_sent_at: z.string().datetime().nullable().optional(),
   followed_up_at: z.string().datetime().nullable().optional(),
+  // De belofte: wat gebeurt er hierna, en wanneer.
+  next_action: z.string().max(200).nullable().optional(),
+  next_action_at: z.string().datetime().nullable().optional(),
 })
 
 // GET /api/leads/[id] — lead detail + berichten + events
@@ -87,9 +90,20 @@ export async function PATCH(
     return NextResponse.json({ error: 'Lead niet gevonden' }, { status: 404 })
   }
 
+  // Een gewonnen of verloren aanvraag heeft geen volgende actie meer. Zonder dit
+  // blijft hij voor altijd op de Vandaag-lijst staan.
+  const patch: Record<string, unknown> = { ...parsed.data }
+  const closed =
+    parsed.data.status === 'won' || parsed.data.status === 'lost' ||
+    parsed.data.pipeline_stage === 'gewonnen' || parsed.data.pipeline_stage === 'verloren'
+  if (closed) {
+    patch.next_action = null
+    patch.next_action_at = null
+  }
+
   const { data: updated, error } = await supabase
     .from('leads')
-    .update(parsed.data as any)
+    .update(patch as any)
     .eq('id', id)
     .eq('tenant_id', tenantId)
     .select()

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, ClipboardList, Search } from 'lucide-react'
+import { Plus, ClipboardList, Search, ChevronRight } from 'lucide-react'
 
 type WorkOrder = {
   id: string
@@ -16,11 +16,11 @@ type WorkOrder = {
   projects: { id: string; name: string } | null
 }
 
-const statusConfig: Record<string, { label: string; color: string }> = {
-  concept: { label: 'Concept', color: 'bg-foundri-card text-zinc-200' },
-  actief: { label: 'Actief', color: 'bg-blue-500/10 text-blue-400' },
-  afgerond: { label: 'Afgerond', color: 'bg-green-500/10 text-green-400' },
-  gefactureerd: { label: 'Gefactureerd', color: 'bg-emerald-500/10 text-emerald-400' },
+const statusConfig: Record<string, { label: string; color: string; bar: string }> = {
+  concept:     { label: 'Concept',     color: 'text-zinc-300',  bar: 'bg-zinc-500' },
+  actief:      { label: 'Actief',      color: 'text-blue-400',  bar: 'bg-blue-500' },
+  afgerond:    { label: 'Afgerond',    color: 'text-green-400', bar: 'bg-green-500' },
+  gefactureerd:{ label: 'Gefactureerd',color: 'text-emerald-400',bar: 'bg-emerald-500' },
 }
 
 const tabs = [
@@ -39,6 +39,7 @@ export default function WerkbonnenPage() {
   const [showNew, setShowNew] = useState(false)
   const [projects, setProjects] = useState<{ id: string; name: string; client_id?: string }[]>([])
   const [form, setForm] = useState({ title: '', project_id: '', date: new Date().toISOString().split('T')[0] })
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     fetchItems()
@@ -56,6 +57,7 @@ export default function WerkbonnenPage() {
 
   async function create(e: React.FormEvent) {
     e.preventDefault()
+    setSaving(true)
     const project = projects.find(p => p.id === form.project_id)
     const res = await fetch('/api/work-orders', {
       method: 'POST',
@@ -71,96 +73,197 @@ export default function WerkbonnenPage() {
       setForm({ title: '', project_id: '', date: new Date().toISOString().split('T')[0] })
       router.push(`/dashboard/werkbonnen/${wo.id}`)
     }
+    setSaving(false)
   }
 
   const filtered = items.filter(wo =>
     !search || wo.title.toLowerCase().includes(search.toLowerCase()) ||
     wo.work_order_number?.toLowerCase().includes(search.toLowerCase()) ||
-    wo.projects?.name?.toLowerCase().includes(search.toLowerCase())
+    wo.projects?.name?.toLowerCase().includes(search.toLowerCase()) ||
+    wo.clients?.name?.toLowerCase().includes(search.toLowerCase())
   )
 
+  // Group by status for mobile: actief first
+  const sorted = [...filtered].sort((a, b) => {
+    const order: Record<string, number> = { actief: 0, concept: 1, afgerond: 2, gefactureerd: 3 }
+    return (order[a.status] ?? 9) - (order[b.status] ?? 9)
+  })
+
   return (
-    <div className="p-4 lg:p-6 pt-16 lg:pt-6">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="p-4 lg:p-6">
+      {/* Header */}
+      <div className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Werkbonnen</h1>
+          <h1 className="text-xl font-bold text-white lg:text-2xl">Werkbonnen</h1>
           <p className="text-sm text-zinc-400">{filtered.length} werkbonnen</p>
         </div>
-        <button onClick={() => setShowNew(true)} className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800">
+        {/* Desktop: inline button */}
+        <button
+          onClick={() => setShowNew(true)}
+          className="hidden lg:inline-flex items-center gap-2 rounded-lg bg-foundri-card px-4 py-2.5 text-sm font-medium text-white hover:bg-foundri-hover transition-colors"
+        >
           <Plus className="h-4 w-4" /> Nieuwe werkbon
         </button>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Zoek werkbon..." className="w-full rounded-lg border py-2 pl-9 pr-3 text-sm" />
-        </div>
-        <div className="flex gap-1">
-          {tabs.map(t => (
-            <button key={t.key} onClick={() => setFilter(t.key)} className={`rounded-lg px-3 py-1.5 text-xs font-medium ${filter === t.key ? 'bg-zinc-900 text-white' : 'bg-foundri-card text-zinc-300 hover:bg-white/15'}`}>
-              {t.label}
-            </button>
-          ))}
-        </div>
+      {/* Search */}
+      <div className="mb-3 relative">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Zoek op naam, project, klant..."
+          className="w-full rounded-lg border border-white/8 bg-foundri-card py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-white/20"
+        />
       </div>
 
+      {/* Status tabs — scrollable on mobile */}
+      <div className="mb-4 flex gap-1 overflow-x-auto scrollbar-none pb-1">
+        {tabs.map(t => (
+          <button
+            key={t.key}
+            onClick={() => setFilter(t.key)}
+            className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
+              filter === t.key
+                ? 'bg-white text-black'
+                : 'bg-foundri-card text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* List */}
       {loading ? (
-        <div className="py-12 text-center text-sm text-zinc-400">Laden...</div>
-      ) : filtered.length === 0 ? (
-        <div className="py-12 text-center">
-          <ClipboardList className="mx-auto h-8 w-8 text-zinc-300" />
-          <p className="mt-2 text-sm text-zinc-400">Nog geen werkbonnen</p>
+        <div className="space-y-2">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-20 rounded-xl bg-foundri-card animate-pulse" />
+          ))}
+        </div>
+      ) : sorted.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <ClipboardList className="mx-auto h-10 w-10 text-zinc-600 mb-3" />
+          <p className="text-base font-medium text-zinc-300">Geen werkbonnen</p>
+          <p className="mt-1 text-sm text-zinc-500">
+            {search ? 'Probeer een andere zoekterm' : 'Maak je eerste werkbon aan'}
+          </p>
+          <button
+            onClick={() => setShowNew(true)}
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-foundri-yellow px-4 py-2 text-sm font-medium text-black"
+          >
+            <Plus className="h-4 w-4" /> Nieuwe werkbon
+          </button>
         </div>
       ) : (
         <div className="space-y-2">
-          {filtered.map(wo => {
+          {sorted.map(wo => {
             const sc = statusConfig[wo.status] || statusConfig.concept
+            const clientName = wo.clients?.company_name || wo.clients?.name
             return (
-              <div key={wo.id} onClick={() => router.push(`/dashboard/werkbonnen/${wo.id}`)} className="flex cursor-pointer items-center gap-4 rounded-lg border p-4 hover:bg-white/5 transition-colors">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-white truncate">{wo.title}</span>
-                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${sc.color}`}>{sc.label}</span>
+              <button
+                key={wo.id}
+                onClick={() => router.push(`/dashboard/werkbonnen/${wo.id}`)}
+                className="flex w-full items-center gap-0 rounded-xl bg-foundri-card hover:bg-foundri-hover active:scale-[0.99] transition-all overflow-hidden text-left"
+              >
+                {/* Status bar — left side */}
+                <div className={`w-1 self-stretch shrink-0 ${sc.bar}`} />
+
+                <div className="flex flex-1 items-center gap-3 px-4 py-3.5 min-w-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-medium text-white text-sm truncate">{wo.title}</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-400">
+                      {wo.work_order_number && (
+                        <span className="font-mono">{wo.work_order_number}</span>
+                      )}
+                      {clientName && <span className="truncate max-w-[120px]">{clientName}</span>}
+                      {wo.projects && <span className="truncate max-w-[120px]">{wo.projects.name}</span>}
+                      <span>{new Date(wo.date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}</span>
+                    </div>
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-400">
-                    {wo.work_order_number && <span>{wo.work_order_number}</span>}
-                    {wo.projects && <span>{wo.projects.name}</span>}
-                    <span>{new Date(wo.date).toLocaleDateString('nl-NL')}</span>
-                    {wo.signed_by && <span>Getekend: {wo.signed_by}</span>}
+
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className={`text-xs font-medium ${sc.color}`}>{sc.label}</span>
+                    <ChevronRight className="h-4 w-4 text-zinc-600" />
                   </div>
                 </div>
-              </div>
+              </button>
             )
           })}
         </div>
       )}
 
+      {/* Mobile FAB */}
+      <button
+        onClick={() => setShowNew(true)}
+        className="fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-foundri-yellow text-black shadow-xl active:scale-95 transition-transform lg:hidden"
+      >
+        <Plus className="h-6 w-6" strokeWidth={2.5} />
+      </button>
+
+      {/* New werkbon sheet / modal */}
       {showNew && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNew(false)}>
-          <div className="w-full max-w-md rounded-xl bg-foundri-deep p-6 shadow-xl" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold mb-4">Nieuwe werkbon</h2>
-            <form onSubmit={create} className="space-y-3">
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 sm:p-4"
+          onClick={() => setShowNew(false)}
+        >
+          <div
+            className="w-full sm:max-w-md rounded-t-2xl sm:rounded-xl bg-foundri-deep border-t border-white/5 sm:border p-6 shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Drag handle — mobile only */}
+            <div className="w-10 h-1 rounded-full bg-white/15 mx-auto mb-5 sm:hidden" />
+            <h2 className="text-base font-semibold text-white mb-4">Nieuwe werkbon</h2>
+            <form onSubmit={create} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-zinc-300">Titel *</label>
-                <input required value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" placeholder="Dag 1 — terras uitgraven" />
+                <label className="text-xs font-medium text-zinc-400">Titel *</label>
+                <input
+                  required
+                  autoFocus
+                  value={form.title}
+                  onChange={e => setForm({ ...form, title: e.target.value })}
+                  className="mt-1.5 w-full rounded-lg border border-white/8 bg-foundri-card px-3 py-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-white/20"
+                  placeholder="Dag 1 — terras uitgraven"
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-zinc-300">Project *</label>
-                  <select required value={form.project_id} onChange={e => setForm({ ...form, project_id: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
-                    <option value="">Selecteer...</option>
-                    {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-300">Datum</label>
-                  <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
-                </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-400">Project *</label>
+                <select
+                  required
+                  value={form.project_id}
+                  onChange={e => setForm({ ...form, project_id: e.target.value })}
+                  className="mt-1.5 w-full rounded-lg border border-white/8 bg-foundri-card px-3 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+                >
+                  <option value="">Selecteer project...</option>
+                  {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowNew(false)} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10">Annuleren</button>
-                <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">Aanmaken</button>
+              <div>
+                <label className="text-xs font-medium text-zinc-400">Datum</label>
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={e => setForm({ ...form, date: e.target.value })}
+                  className="mt-1.5 w-full rounded-lg border border-white/8 bg-foundri-card px-3 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+                />
+              </div>
+              <div className="flex gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowNew(false)}
+                  className="flex-1 rounded-lg py-3 text-sm font-medium text-zinc-300 bg-foundri-card hover:bg-foundri-hover transition-colors"
+                >
+                  Annuleren
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 rounded-lg bg-foundri-yellow py-3 text-sm font-medium text-black disabled:opacity-50 transition-opacity"
+                >
+                  {saving ? 'Aanmaken...' : 'Aanmaken'}
+                </button>
               </div>
             </form>
           </div>

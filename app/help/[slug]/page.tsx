@@ -29,11 +29,8 @@ export default async function HelpArticlePage({ params }: PageProps) {
     <div className="min-h-screen bg-foundri-graphite text-foundri-text">
       <nav className="sticky top-0 z-50 border-b border-foundri-border bg-foundri-graphite/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.svg" alt="FoundriOS" width={28} height={28} />
-            <span className="font-[family-name:var(--font-display)] text-lg font-bold tracking-tight text-white">
-              Foundri<span className="text-foundri-yellow">OS</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo-horizontal.png" alt="FoundriOS" width={180} height={36} className="mix-blend-screen" />
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/help" className="px-3 py-2 text-sm font-medium text-foundri-yellow">Help</Link>

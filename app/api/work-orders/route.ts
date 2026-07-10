@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { enforceLimit } from '@/lib/limits'
 import { z } from 'zod'
 
 const CreateSchema = z.object({
@@ -43,6 +44,9 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const parsed = CreateSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+  const limitResponse = await enforceLimit(tenantId, 'work_orders')
+  if (limitResponse) return limitResponse
 
   const { count } = await supabase.from('work_orders').select('*', { count: 'exact', head: true }).eq('tenant_id', tenantId)
   const woNumber = `WB-${String((count ?? 0) + 1).padStart(4, '0')}`

@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireTenant } from '@/lib/tenant'
+import { requireFeature } from '@/lib/middleware/requireFeature'
 
 export async function GET() {
-  let tenantId: string
-  try {
-    const tenant = await requireTenant()
-    tenantId = tenant.tenantId
-  } catch {
-    return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-  }
+  const gate = await requireFeature('intelligence')
+  if (!gate.ok) return gate.response
+  const tenantId = gate.tenantId
 
   const supabase = await createClient()
 

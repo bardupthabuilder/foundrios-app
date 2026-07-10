@@ -6,6 +6,7 @@ import { LeadSourceIcon } from '@/components/leads/LeadSourceIcon'
 import { LeadStatusSelect } from '@/components/leads/LeadStatusSelect'
 import { ConvertToClient } from '@/components/leads/ConvertToClient'
 import { ProcessChecklist } from '@/components/leads/ProcessChecklist'
+import { NextActionCard } from '@/components/leads/NextActionCard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
@@ -126,13 +127,21 @@ export default async function LeadDetailPage({ params }: PageProps) {
         </div>
 
         {/* Reply box */}
-        <ReplyBox leadId={lead.id} />
+        <ReplyBox leadId={lead.id} leadName={lead.name} />
       </div>
 
       {/* Sidebar — Lead info */}
       <aside className="w-80 flex-shrink-0 overflow-y-auto border-l bg-foundri-deep">
         <div className="p-5 space-y-5">
           {/* AI Samenvatting */}
+          {/* Volgende actie staat bovenaan: het is het enige wat echt moet gebeuren. */}
+          <NextActionCard
+            leadId={lead.id}
+            nextAction={(lead as Record<string, unknown>).next_action as string | null}
+            nextActionAt={(lead as Record<string, unknown>).next_action_at as string | null}
+            closed={lead.status === 'won' || lead.status === 'lost'}
+          />
+
           {lead.ai_summary && (
             <Card>
               <CardHeader className="pb-2">

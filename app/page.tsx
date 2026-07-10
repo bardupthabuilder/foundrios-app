@@ -28,16 +28,13 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-foundri-border bg-foundri-graphite/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.svg" alt="FoundriOS" width={28} height={28} />
-            <span className="font-[family-name:var(--font-display)] text-lg font-bold tracking-tight text-white">
-              Foundri<span className="text-foundri-yellow">OS</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo-horizontal.png" alt="FoundriOS" width={180} height={36} className="mix-blend-screen" />
           </Link>
           <div className="flex items-center gap-3">
             <Link
               href="/blog"
-              className="rounded-md px-4 py-2 text-sm font-medium text-foundri-muted transition-colors hover:text-white"
+              className="hidden sm:block rounded-md px-4 py-2 text-sm font-medium text-foundri-muted transition-colors hover:text-white"
             >
               Blog
             </Link>
@@ -46,6 +43,12 @@ export default function LandingPage() {
               className="rounded-md px-4 py-2 text-sm font-medium text-foundri-muted transition-colors hover:text-white"
             >
               Inloggen
+            </Link>
+            <Link
+              href="/demo"
+              className="rounded-md border border-foundri-yellow/30 px-4 py-2 text-sm font-medium text-foundri-yellow transition-all hover:bg-foundri-yellow/10"
+            >
+              Bekijk demo
             </Link>
             <Link
               href="/register"
@@ -83,8 +86,15 @@ export default function LandingPage() {
                 Start gratis trial
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
-              <p className="text-sm text-foundri-muted">Binnen 60 seconden operationeel</p>
+              <Link
+                href="/demo"
+                className="flex items-center gap-2 rounded-md border border-white/10 bg-foundri-deep px-6 py-3 text-base font-medium text-white transition-all hover:border-white/20 hover:bg-foundri-card"
+              >
+                Bekijk live demo
+                <ArrowRight className="h-4 w-4 text-foundri-muted" />
+              </Link>
             </div>
+            <p className="mt-3 text-sm text-foundri-muted">Binnen 60 seconden operationeel · geen creditcard</p>
           </div>
         </section>
 
@@ -226,9 +236,9 @@ export default function LandingPage() {
                 <ul className="mt-6 space-y-2 text-sm text-zinc-300">
                   <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Leads & klanten</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Projecten & planning</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Uren & werkbonnen</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Offertes & facturen</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />14 dagen gratis trial</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Taken & notities</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Offerte/factuur status</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />Basis dashboard</li>
                 </ul>
                 <Link href="/register" className="mt-6 block rounded-md border border-white/10 px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-white/5">
                   Start gratis
@@ -241,13 +251,14 @@ export default function LandingPage() {
                 </div>
                 <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-white">Pro</h3>
                 <p className="mt-1 text-3xl font-bold text-foundri-yellow">€98<span className="text-sm font-normal text-foundri-muted">/maand</span></p>
-                <p className="mt-3 text-sm text-foundri-muted">Automatiseer en bespaar tijd.</p>
+                <p className="mt-3 text-sm text-foundri-muted">Voor vakbedrijven die omzetlekken willen dichten met AI en opvolging.</p>
                 <ul className="mt-6 space-y-2 text-sm text-zinc-300">
                   <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Alles uit Free</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />AI-kwalificatie</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Automatische opvolging</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Lead scoring & pipeline</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Onderhoudscontracten</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Templates & exports</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Offerte-opvolging & reviewverzoeken</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />Content Engine basic</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-foundri-yellow shrink-0" />1.000 Sparks / maand</li>
                 </ul>
                 <Link href="/register" className="mt-6 block rounded-md bg-gradient-to-br from-foundri-yellow to-foundri-yellow-dim px-4 py-2.5 text-center text-sm font-semibold text-foundri-graphite transition-all hover:shadow-[0_0_20px_rgba(246,201,69,0.3)]">
                   Start Pro trial
@@ -255,18 +266,41 @@ export default function LandingPage() {
               </div>
               {/* Scale */}
               <div className="rounded-lg border border-white/10 bg-foundri-deep p-6">
+                <div className="mb-2 inline-block rounded-full border border-white/20 px-2 py-0.5 text-[10px] font-semibold text-white/50">Voor groeiende bedrijven</div>
                 <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-white">Scale</h3>
-                <p className="mt-1 text-3xl font-bold text-white">€280<span className="text-sm font-normal text-foundri-muted">/maand</span></p>
-                <p className="mt-3 text-sm text-foundri-muted">AI intelligence en volledige leverage.</p>
+                <p className="mt-1 text-3xl font-bold text-white">€998<span className="text-sm font-normal text-foundri-muted">/maand</span></p>
+                <p className="mt-3 text-sm text-foundri-muted">Voor grotere vakbedrijven met teams, locaties en serieuze omzet.</p>
                 <ul className="mt-6 space-y-2 text-sm text-zinc-300">
                   <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />Alles uit Pro</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />AI lead verwerking</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />Inzichten & voorspellingen</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />AI content assistent</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />Meerdere gebruikers</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />Meerdere locaties & teams</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />Advanced AI-workflows</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />Sales & retentie dashboards</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />10 gebruikers inbegrepen</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />15.000 Sparks / maand</li>
                 </ul>
-                <Link href="/register" className="mt-6 block rounded-md border border-white/10 px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-white/5">
-                  Start Scale trial
+                <Link href="/register?intent=scale" className="mt-6 block rounded-md border border-white/10 px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-white/5">
+                  Plan Scale demo
+                </Link>
+              </div>
+            </div>
+
+            {/* Managed by Groeneveld Media — DFY upsell */}
+            <div className="mt-10 rounded-lg border border-white/10 bg-foundri-deep p-6 sm:p-8">
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="max-w-xl">
+                  <h3 className="font-[family-name:var(--font-display)] text-lg font-bold text-white">
+                    Geen tijd om dit zelf te doen?
+                  </h3>
+                  <p className="mt-2 text-sm text-foundri-muted">
+                    Laat Groeneveld Media het complete systeem voor je uitvoeren — advertenties, opvolging, content en groei. Vanaf €980/maand. Alleen voor geschikte bedrijven.
+                  </p>
+                </div>
+                <Link
+                  href="/register?intent=managed"
+                  className="inline-flex items-center gap-2 rounded-md border border-foundri-yellow/40 bg-foundri-yellow/10 px-4 py-2.5 text-sm font-semibold text-foundri-yellow transition hover:bg-foundri-yellow/15"
+                >
+                  Aanvraag indienen
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
@@ -297,11 +331,8 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-foundri-border px-6 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="FoundriOS" width={20} height={20} />
-            <span className="font-[family-name:var(--font-display)] text-sm font-semibold text-white">
-              Foundri<span className="text-foundri-yellow">OS</span>
-            </span>
+          <div className="flex items-center">
+            <Image src="/logo-horizontal.png" alt="FoundriOS" width={140} height={28} className="mix-blend-screen" />
           </div>
           <div className="flex items-center gap-6 text-sm text-foundri-muted">
             <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>

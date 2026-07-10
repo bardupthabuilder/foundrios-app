@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireTenant } from '@/lib/tenant'
+import { requireFeature } from '@/lib/middleware/requireFeature'
 import { generateContent } from '@/lib/ai'
 
 // POST /api/content/batch — batch AI content generatie voor meerdere onderwerpen
 export async function POST(request: NextRequest) {
+  const gate = await requireFeature('content_ai')
+  if (!gate.ok) return gate.response
+  const tenantId = gate.tenantId
   const supabase = await createClient()
-  let tenantId: string
-  try {
-    const t = await requireTenant()
-    tenantId = t.tenantId
-  } catch {
-    return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-  }
 
   const body = await request.json()
   const { topics, content_template, platforms, context } = body as {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireTenant } from '@/lib/tenant'
+import { requireFeature } from '@/lib/middleware/requireFeature'
 
 function toCSV(data: Record<string, unknown>[], columns: string[]): string {
   const header = columns.join(',')
@@ -39,13 +39,9 @@ const TYPE_CONFIGS: Record<string, { table: string; columns: string[] }> = {
 }
 
 export async function GET(request: NextRequest) {
-  let tenantId: string
-  try {
-    const t = await requireTenant()
-    tenantId = t.tenantId
-  } catch {
-    return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-  }
+  const gate = await requireFeature('export')
+  if (!gate.ok) return gate.response
+  const tenantId = gate.tenantId
 
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type')

@@ -1,29 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { TIER_FEATURES, TIER_ORDER, getRequiredTier, type Tier } from '@/lib/tier-client'
 
-const TIER_FEATURES: Record<string, string> = {
-  // Pro features
-  automations: 'pro',
-  auto_followup: 'pro',
-  templates: 'pro',
-  lead_scoring: 'pro',
-  maintenance_contracts: 'pro',
-  content_ai: 'pro',
-  export: 'pro',
-  payment_reminders: 'pro',
-
-  // Scale features
-  intelligence: 'scale',
-  ai_assistants: 'scale',
-  benchmarks: 'scale',
-  predictions: 'scale',
-  multi_user: 'scale',
-  advanced_workflows: 'scale',
-}
-
-const TIER_ORDER = { free: 0, pro: 1, scale: 2 }
-
-export async function checkFeature(feature: string): Promise<{ allowed: boolean; requiredTier: string; currentTier: string }> {
+export async function checkFeature(feature: string): Promise<{ allowed: boolean; requiredTier: Tier; currentTier: Tier }> {
   const { tenantId } = await requireTenant()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = await createClient() as any
@@ -34,10 +13,10 @@ export async function checkFeature(feature: string): Promise<{ allowed: boolean;
     .eq('id', tenantId)
     .single()
 
-  const currentTier = tenant?.plan || 'free'
-  const requiredTier = TIER_FEATURES[feature] || 'free'
+  const currentTier = (tenant?.plan || 'free') as Tier
+  const requiredTier = getRequiredTier(feature)
 
-  const allowed = (TIER_ORDER[currentTier as keyof typeof TIER_ORDER] || 0) >= (TIER_ORDER[requiredTier as keyof typeof TIER_ORDER] || 0)
+  const allowed = (TIER_ORDER[currentTier] || 0) >= (TIER_ORDER[requiredTier] || 0)
 
   return { allowed, requiredTier, currentTier }
 }

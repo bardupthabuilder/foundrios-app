@@ -9,21 +9,23 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist);
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
-  /* FoundriOS brand palette */
-  --color-foundri-graphite: #0F1115;
-  --color-foundri-surface: #111317;
-  --color-foundri-deep: #1A1F29;
-  --color-foundri-steel: #1A1C20;
-  --color-foundri-slate: #2B3442;
-  --color-foundri-card: #282A2E;
-  --color-foundri-hover: #333539;
-  --color-foundri-yellow: #F6C945;
-  --color-foundri-yellow-dim: #EEC13E;
+  --font-display: 'Satoshi', var(--font-display), sans-serif;
+  --font-body: 'Satoshi', var(--font-body), sans-serif;
+  /* FoundriOS brand palette — rebrand 2026-05-15 */
+  --color-foundri-graphite: #0D0D0D;
+  --color-foundri-surface: #1A1A1A;
+  --color-foundri-deep: #1F1F1F;
+  --color-foundri-steel: #1A1A1A;
+  --color-foundri-slate: #2A2A2A;
+  --color-foundri-card: #252525;
+  --color-foundri-hover: #303030;
+  --color-foundri-yellow: #D4A827;
+  --color-foundri-yellow-dim: #B8901E;
+  --color-foundri-beige: #EDE5D8;
+  --color-foundri-green: #3A8A3A;
   --color-foundri-blue: #3B82F6;
   --color-foundri-text: #E4E4E7;
-  --color-foundri-muted: #71717A;
+  --color-foundri-muted: #787878;
   --color-foundri-border: rgba(255, 255, 255, 0.08);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -65,38 +67,38 @@
 
 :root {
   --radius: 0.625rem;
-  /* FoundriOS Dark Industrial Theme */
-  --background: #0F1115;
+  /* FoundriOS Dark Theme — rebrand 2026-05-15 */
+  --background: #0D0D0D;
   --foreground: #E4E4E7;
-  --card: #1A1F29;
+  --card: #1F1F1F;
   --card-foreground: #E4E4E7;
-  --popover: #1A1F29;
+  --popover: #1F1F1F;
   --popover-foreground: #E4E4E7;
-  --primary: #F6C945;
-  --primary-foreground: #0F1115;
-  --secondary: #2B3442;
+  --primary: #D4A827;
+  --primary-foreground: #0D0D0D;
+  --secondary: #2A2A2A;
   --secondary-foreground: #E4E4E7;
-  --muted: #282A2E;
-  --muted-foreground: #71717A;
-  --accent: #2B3442;
+  --muted: #252525;
+  --muted-foreground: #787878;
+  --accent: #2A2A2A;
   --accent-foreground: #E4E4E7;
   --destructive: #EF4444;
   --border: rgba(255, 255, 255, 0.08);
   --input: rgba(255, 255, 255, 0.12);
-  --ring: #F6C945;
-  --chart-1: #F6C945;
+  --ring: #D4A827;
+  --chart-1: #D4A827;
   --chart-2: #3B82F6;
-  --chart-3: #10B981;
+  --chart-3: #3A8A3A;
   --chart-4: #8B5CF6;
-  --chart-5: #F59E0B;
-  --sidebar: #111317;
+  --chart-5: #B8901E;
+  --sidebar: #1A1A1A;
   --sidebar-foreground: #E4E4E7;
-  --sidebar-primary: #F6C945;
-  --sidebar-primary-foreground: #0F1115;
-  --sidebar-accent: #1A1F29;
+  --sidebar-primary: #D4A827;
+  --sidebar-primary-foreground: #0D0D0D;
+  --sidebar-accent: #1F1F1F;
   --sidebar-accent-foreground: #E4E4E7;
   --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #F6C945;
+  --sidebar-ring: #D4A827;
 }
 
 .dark {
@@ -204,7 +206,7 @@
   margin-bottom: 1.25rem;
 }
 .blog-prose a {
-  color: #F6C945;
+  color: #D4A827;
   text-decoration: none;
 }
 .blog-prose a:hover {
@@ -230,14 +232,14 @@
   line-height: 1.7;
 }
 .blog-prose blockquote {
-  border-left: 3px solid rgba(246, 201, 69, 0.3);
+  border-left: 3px solid rgba(212, 168, 39, 0.3);
   padding-left: 1rem;
   color: #a1a1aa;
   font-style: italic;
   margin: 1.5rem 0;
 }
 .blog-prose code {
-  color: #F6C945;
+  color: #D4A827;
   background-color: #282A2E;
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;

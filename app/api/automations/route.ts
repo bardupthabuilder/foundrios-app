@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { requireFeature } from '@/lib/middleware/requireFeature'
 import { z } from 'zod'
 
 const RuleSchema = z.object({
@@ -46,15 +47,11 @@ export async function GET() {
 
 // POST /api/automations — create new rule
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  const gate = await requireFeature('automations')
+  if (!gate.ok) return gate.response
+  const tenantId = gate.tenantId
 
-  let tenantId: string
-  try {
-    const t = await requireTenant()
-    tenantId = t.tenantId
-  } catch {
-    return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const body = await request.json()
   const parsed = RuleSchema.safeParse(body)

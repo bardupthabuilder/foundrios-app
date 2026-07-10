@@ -69,6 +69,12 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
     premium_usp: ((tenant?.premium_usp as string[]) || []).join('\n'),
     google_review_count: (tenant?.google_review_count as number)?.toString() || '',
     google_review_score: (tenant?.google_review_score as number)?.toString() || '',
+    logo_url: (tenant?.logo_url as string) || '',
+    iban: (tenant?.iban as string) || '',
+    kvk_number: (tenant?.kvk_number as string) || '',
+    vat_number: (tenant?.vat_number as string) || '',
+    primary_color: (tenant?.primary_color as string) || '#2d6a2d',
+    default_payment_days: (tenant?.default_payment_days as number)?.toString() || '30',
   })
 
   function update(field: string, value: string) {
@@ -389,6 +395,94 @@ export function CompanyProfileForm({ tenant }: { tenant: Tenant | null }) {
                 onChange={(e) => update('social_tiktok', e.target.value)}
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Juridische & Betalingsgegevens */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Juridische & Betalingsgegevens</CardTitle>
+          <CardDescription>
+            Vereist op facturen. Gebruikt voor PDF-branding en betaaltermijnen.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="kvk_number">KvK-nummer</Label>
+              <Input
+                id="kvk_number"
+                placeholder="12345678"
+                value={form.kvk_number}
+                onChange={(e) => update('kvk_number', e.target.value)}
+              />
+              <p className="text-xs text-zinc-400">8-9 cijfers</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="vat_number">BTW-nummer</Label>
+              <Input
+                id="vat_number"
+                placeholder="NL012345678B01"
+                value={form.vat_number}
+                onChange={(e) => update('vat_number', e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="iban">IBAN</Label>
+            <Input
+              id="iban"
+              placeholder="NL91ABCD0123456789"
+              value={form.iban}
+              onChange={(e) => update('iban', e.target.value)}
+            />
+            <p className="text-xs text-zinc-400">Nederlands rekeningnummer</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="primary_color">Huiskleur (PDF-branding)</Label>
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <Input
+                    id="primary_color"
+                    placeholder="#2d6a2d"
+                    value={form.primary_color}
+                    onChange={(e) => update('primary_color', e.target.value)}
+                  />
+                </div>
+                <div
+                  className="w-10 h-10 rounded border border-zinc-600"
+                  style={{ backgroundColor: form.primary_color }}
+                />
+              </div>
+              <p className="text-xs text-zinc-400">Hex kleur, bijv. #2d6a2d</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="default_payment_days">Betaaltermijn (standaard)</Label>
+              <Select value={form.default_payment_days} onValueChange={(v) => update('default_payment_days', v)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Kies termijn" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="14">14 dagen</SelectItem>
+                  <SelectItem value="21">21 dagen</SelectItem>
+                  <SelectItem value="30">30 dagen</SelectItem>
+                  <SelectItem value="45">45 dagen</SelectItem>
+                  <SelectItem value="60">60 dagen</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="logo_url">Logo URL</Label>
+            <Input
+              id="logo_url"
+              placeholder="https://cdn.example.com/logo.png"
+              value={form.logo_url}
+              onChange={(e) => update('logo_url', e.target.value)}
+            />
+            <p className="text-xs text-zinc-400">Volledige URL naar logo afbeelding — verschijnt bovenaan offerte/factuur PDF</p>
           </div>
         </CardContent>
       </Card>

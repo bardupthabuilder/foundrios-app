@@ -39,14 +39,13 @@ export function ConvertToClient({ leadId, leadName, leadPhone, leadEmail }: Conv
     })
     if (res.ok) {
       const client = await res.json()
-      // Automatically set lead status to won
       await fetch(`/api/leads/${leadId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'won' }),
       })
       setOpen(false)
-      router.push(`/dashboard/klanten`)
+      router.push(`/dashboard/klanten/${client.id}`)
     }
     setSaving(false)
   }

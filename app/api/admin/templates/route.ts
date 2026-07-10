@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 const TemplateSchema = z.object({
   name: z.string().min(1),
-  type: z.enum(['offerte', 'werkbon', 'email', 'campagne', 'sop']),
+  type: z.enum(['offerte', 'werkbon', 'email', 'campagne', 'sop', 'whatsapp', 'sms', 'sales_script', 'ad_copy', 'form_questions', 'sequence', 'review_request', 'contract', 'invoice_reminder', 'calculation']),
   content: z.record(z.string(), z.unknown()).default({}),
   category: z.string().optional(),
   description: z.string().optional(),

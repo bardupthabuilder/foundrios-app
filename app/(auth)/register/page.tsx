@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Mail } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function RegisterPage() {
@@ -11,6 +12,8 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailSent, setEmailSent] = useState(false)
+  const [sentTo, setSentTo] = useState('')
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
@@ -24,7 +27,7 @@ export default function RegisterPage() {
     }
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -38,7 +41,42 @@ export default function RegisterPage() {
       return
     }
 
-    router.push('/onboarding')
+    if (data.session) {
+      // Email autoconfirm aan — meteen door naar onboarding
+      router.push('/onboarding')
+    } else {
+      // Email confirmatie vereist — toon instructie
+      setSentTo(email)
+      setEmailSent(true)
+      setLoading(false)
+    }
+  }
+
+  if (emailSent) {
+    return (
+      <div className="rounded-lg border border-foundri-border bg-foundri-deep p-6 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-foundri-yellow/30 bg-foundri-yellow/10">
+          <Mail className="h-6 w-6 text-foundri-yellow" />
+        </div>
+        <h1 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">Controleer je inbox</h1>
+        <p className="mt-2 text-sm text-foundri-muted">
+          We hebben een bevestigingslink gestuurd naar
+        </p>
+        <p className="mt-1 text-sm font-medium text-white">{sentTo}</p>
+        <p className="mt-4 text-sm text-foundri-muted">
+          Klik op de link in de mail om je account te activeren en door te gaan met het inrichten van je dashboard.
+        </p>
+        <p className="mt-6 text-xs text-foundri-muted">
+          Geen mail ontvangen?{' '}
+          <button
+            onClick={() => setEmailSent(false)}
+            className="font-medium text-foundri-yellow hover:underline underline-offset-4"
+          >
+            Probeer opnieuw
+          </button>
+        </p>
+      </div>
+    )
   }
 
   return (

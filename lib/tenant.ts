@@ -16,17 +16,25 @@ export async function requireTenant(): Promise<{ tenantId: string; userId: strin
     throw new Error('Niet ingelogd')
   }
 
-  const { data: tenantUser, error: tenantError } = await supabase
+  // Een gebruiker kan bij meerdere bedrijven horen (zie TenantSwitcher).
+  // `.single()` gooide dan een fout — "meerdere rijen" — en de gebruiker werd
+  // eindeloos naar onboarding gestuurd. De actieve tenant staat in `is_active`.
+  //
+  // `is_active` staat nog niet in de gegenereerde types; vandaar de losse client.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: tenantUser, error: tenantError } = await (supabase as any)
     .from('tenant_users')
-    .select('tenant_id')
+    .select('tenant_id, is_active')
     .eq('user_id', user.id)
-    .single()
+    .order('is_active', { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle()
 
   if (tenantError || !tenantUser) {
     throw new Error('Geen tenant gevonden voor deze gebruiker')
   }
 
-  return { tenantId: tenantUser.tenant_id, userId: user.id }
+  return { tenantId: (tenantUser as { tenant_id: string }).tenant_id, userId: user.id }
 }
 
 /**

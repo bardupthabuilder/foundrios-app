@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 const tabs = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Vandaag' },
-  { href: '/dashboard/leads', icon: Inbox, label: 'Leads' },
+  { href: '/dashboard/leads', icon: Inbox, label: 'Aanvragen' },
   { href: '/dashboard/werkbonnen', icon: ClipboardList, label: 'Werkbonnen' },
   { href: '/dashboard/planning', icon: CalendarDays, label: 'Planning' },
 ]
@@ -25,7 +25,7 @@ const quickActions = [
     href: '/dashboard/leads',
     icon: Inbox,
     color: 'text-green-400',
-    label: 'Lead',
+    label: 'Aanvraag',
     sub: 'Nieuwe aanvraag registreren',
   },
   {

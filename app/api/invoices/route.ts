@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { enforceLimit } from '@/lib/limits'
 import { z } from 'zod'
 
 const CreateInvoiceSchema = z.object({
@@ -59,6 +60,9 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
+
+  const limitResponse = await enforceLimit(tenantId, 'invoices')
+  if (limitResponse) return limitResponse
 
   // Generate invoice number
   const { count } = await supabase

@@ -8,13 +8,34 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Users, Plus, Phone, Mail, MapPin } from 'lucide-react'
+import { Users, Plus, Phone, MapPin, Star, AlertCircle } from 'lucide-react'
 import type { Client } from '@/lib/types/project'
+import { formatEuroCents } from '@/lib/parse-budget'
+
+// /api/clients verrijkt elke klant met omzet en recentheid.
+type ClientWithValue = Client & {
+  total_spent_cents: number
+  project_count: number
+  last_project: { id: string; name: string } | null
+  days_since_last_job: number | null
+}
+
+function lastJobLabel(days: number): string {
+  if (days <= 0) return 'klus vandaag'
+  if (days === 1) return '1 dag geleden'
+  if (days < 60) return `${days} dagen geleden`
+  const months = Math.round(days / 30)
+  if (months < 24) return `${months} maanden geleden`
+  return `${Math.round(days / 365)} jaar geleden`
+}
+
+interface RetentieItem { client_id: string; client_name: string; project_id: string; project_name: string; reason: 'review_pending' | 'upsell_opportunity' }
 
 export default function KlantenPage() {
   const router = useRouter()
-  const [clients, setClients] = useState<Client[]>([])
+  const [clients, setClients] = useState<ClientWithValue[]>([])
   const [loading, setLoading] = useState(true)
+  const [retentie, setRetentie] = useState<RetentieItem[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
   const [saving, setSaving] = useState(false)
 
@@ -27,10 +48,13 @@ export default function KlantenPage() {
   const [notes, setNotes] = useState('')
 
   useEffect(() => {
-    fetch('/api/clients')
-      .then((r) => r.json())
-      .then(setClients)
-      .finally(() => setLoading(false))
+    Promise.all([
+      fetch('/api/clients').then(r => r.json()),
+      fetch('/api/dashboard/retentie').then(r => r.ok ? r.json() : []).catch(() => []),
+    ]).then(([cls, ret]) => {
+      setClients(cls)
+      setRetentie(ret)
+    }).finally(() => setLoading(false))
   }, [])
 
   async function handleAdd() {
@@ -50,7 +74,12 @@ export default function KlantenPage() {
     })
     if (res.ok) {
       const client = await res.json()
-      setClients((prev) => [client, ...prev])
+      // POST geeft de kale klant terug; de afgeleide waardes komen pas bij de
+      // volgende GET. Nulwaardes voorkomen een half gerenderde kaart.
+      setClients((prev) => [
+        { ...client, total_spent_cents: 0, project_count: 0, last_project: null, days_since_last_job: null },
+        ...prev,
+      ])
       setDialogOpen(false)
       setName(''); setContactName(''); setPhone(''); setEmail(''); setAddress(''); setCity(''); setNotes('')
     }
@@ -113,6 +142,39 @@ export default function KlantenPage() {
         </Dialog>
       </div>
 
+      {/* Retentie strip */}
+      {retentie.length > 0 && (
+        <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4 space-y-2">
+          <div className="flex items-center gap-2 text-sm font-medium text-yellow-400">
+            <AlertCircle className="h-4 w-4" />
+            Aandacht nodig ({retentie.length})
+          </div>
+          <div className="space-y-1">
+            {retentie.map((item, i) => (
+              <div key={i} className="flex items-center justify-between text-sm py-1.5 border-t border-white/5">
+                <div>
+                  <span className="font-medium text-zinc-200">{item.client_name}</span>
+                  <span className="text-zinc-500 ml-2">· {item.project_name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {item.reason === 'review_pending' ? (
+                    <span className="flex items-center gap-1 text-xs text-yellow-400"><Star className="h-3 w-3" />Review uitstaand</span>
+                  ) : (
+                    <span className="text-xs text-orange-400">Upsell kans</span>
+                  )}
+                  <button
+                    onClick={() => router.push(`/dashboard/projecten/${item.project_id}`)}
+                    className="text-xs text-zinc-400 hover:text-zinc-200 underline"
+                  >
+                    Bekijk
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="text-center py-12 text-zinc-400">Laden...</div>
       ) : clients.length === 0 ? (
@@ -137,6 +199,28 @@ export default function KlantenPage() {
                     {client.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{client.phone}</span>}
                     {client.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{client.city}</span>}
                   </div>
+
+                  {/* Wat deze klant waard is, en hoe lang je niets van je liet horen.
+                      Dit maakt een onderhoud- of upsellgesprek vanzelfsprekend. */}
+                  {(client.total_spent_cents > 0 || client.days_since_last_job !== null) && (
+                    <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs">
+                      {client.total_spent_cents > 0 && (
+                        <span className="font-medium text-emerald-400">
+                          {formatEuroCents(client.total_spent_cents)} besteed
+                        </span>
+                      )}
+                      {client.project_count > 0 && (
+                        <span className="text-zinc-500">
+                          {client.project_count} {client.project_count === 1 ? 'klus' : 'klussen'}
+                        </span>
+                      )}
+                      {client.days_since_last_job !== null && (
+                        <span className={client.days_since_last_job > 365 ? 'text-orange-400' : 'text-zinc-500'}>
+                          {lastJobLabel(client.days_since_last_job)}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

@@ -8,9 +8,15 @@ type Quote = {
   id: string; quote_number: string | null; title: string; description: string | null
   status: string; amount_excl_vat: number; amount_incl_vat: number; vat_pct: number
   valid_until: string | null; created_at: string; notes: string | null
+  advance_pct: number | null; milestone_pct: number | null; final_pct: number | null
+  payment_note: string | null
   clients: any; items: QuoteItem[]
 }
-type Tenant = { name: string; owner_name: string | null; email: string | null; phone: string | null; address: string | null; region: string | null; website: string | null }
+type Tenant = {
+  name: string; owner_name: string | null; email: string | null; phone: string | null; address: string | null; region: string | null; website: string | null
+  logo_url: string | null; iban: string | null; kvk_number: string | null; vat_number: string | null
+  primary_color: string | null; default_payment_days: number | null
+}
 
 export default function QuotePrintPage() {
   const { id } = useParams()
@@ -40,15 +46,17 @@ export default function QuotePrintPage() {
 
   if (!quote || !tenant) return <div style={{ padding: 40, fontFamily: 'system-ui' }}>Laden...</div>
 
+  const color = tenant.primary_color || '#2d6a2d'
+
   return (
     <>
       <style>{`
-        @media print { .no-print { display: none !important; } @page { margin: 20mm; } }
-        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: #18181b; }
+        @media print { .no-print { display: none !important; } @page { margin: 18mm 20mm; } }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: #18181b; background: #fff; }
       `}</style>
 
       <div className="no-print" style={{ position: 'fixed', top: 16, right: 16, zIndex: 50, display: 'flex', gap: 8 }}>
-        <button onClick={() => window.print()} style={{ padding: '8px 16px', background: '#18181b', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
+        <button onClick={() => window.print()} style={{ padding: '8px 16px', background: '#18181b', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>
           Download PDF
         </button>
         <button onClick={() => window.close()} style={{ padding: '8px 16px', background: '#f4f4f5', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
@@ -56,32 +64,40 @@ export default function QuotePrintPage() {
         </button>
       </div>
 
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: 40 }}>
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 48px' }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 48 }}>
-          <div>
-            <div style={{ fontSize: 24, fontWeight: 700 }}>{tenant.name}</div>
-            {tenant.owner_name && <div style={{ fontSize: 13, color: '#71717a', marginTop: 4 }}>{tenant.owner_name}</div>}
-            {tenant.email && <div style={{ fontSize: 13, color: '#71717a' }}>{tenant.email}</div>}
-            {(tenant as any).owner_phone && <div style={{ fontSize: 13, color: '#71717a' }}>{(tenant as any).owner_phone}</div>}
-            {tenant.website && <div style={{ fontSize: 13, color: '#71717a' }}>{tenant.website}</div>}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40, paddingBottom: 20, borderBottom: `3px solid ${color}` }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flex: 1 }}>
+            {tenant.logo_url && (
+              <img src={tenant.logo_url} alt={tenant.name} style={{ maxHeight: 72, maxWidth: 160, objectFit: 'contain', marginTop: 2 }} />
+            )}
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 700, color }}>{tenant.name}</div>
+              {tenant.owner_name && <div style={{ fontSize: 12, color: '#71717a', marginTop: 3 }}>{tenant.owner_name}</div>}
+              {(tenant as any).owner_phone || tenant.phone
+                ? <div style={{ fontSize: 12, color: '#71717a' }}>{(tenant as any).owner_phone || tenant.phone}</div>
+                : null}
+              {tenant.email && <div style={{ fontSize: 12, color: '#71717a' }}>{tenant.email}</div>}
+              {tenant.website && <div style={{ fontSize: 12, color: '#71717a' }}>{tenant.website}</div>}
+            </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 28, fontWeight: 700, color: '#18181b' }}>OFFERTE</div>
-            {quote.quote_number && <div style={{ fontSize: 14, color: '#71717a', marginTop: 4 }}>{quote.quote_number}</div>}
-            <div style={{ fontSize: 13, color: '#71717a', marginTop: 2 }}>Datum: {fmtDate(quote.created_at)}</div>
-            {quote.valid_until && <div style={{ fontSize: 13, color: '#71717a' }}>Geldig tot: {fmtDate(quote.valid_until)}</div>}
+          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+            <div style={{ fontSize: 30, fontWeight: 800, color, letterSpacing: 1 }}>OFFERTE</div>
+            {quote.quote_number && <div style={{ fontSize: 13, color: '#71717a', marginTop: 4, fontWeight: 500 }}>{quote.quote_number}</div>}
+            <div style={{ fontSize: 12, color: '#71717a', marginTop: 3 }}>Datum: {fmtDate(quote.created_at)}</div>
+            {quote.valid_until && <div style={{ fontSize: 12, color: '#71717a' }}>Geldig tot: {fmtDate(quote.valid_until)}</div>}
           </div>
         </div>
 
         {/* Klant */}
         {quote.clients && (
-          <div style={{ marginBottom: 32, padding: 16, background: '#fafafa', borderRadius: 8 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Aan</div>
-            <div style={{ fontWeight: 600 }}>{quote.clients.company_name || quote.clients.name}</div>
-            {quote.clients.contact_name && <div style={{ fontSize: 13, color: '#52525b' }}>{quote.clients.contact_name}</div>}
+          <div style={{ marginBottom: 32, padding: '14px 16px', background: '#f9fafb', borderRadius: 8, borderLeft: `4px solid ${color}` }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 6 }}>Aan</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{quote.clients.company_name || quote.clients.name}</div>
+            {quote.clients.contact_name && <div style={{ fontSize: 13, color: '#52525b', marginTop: 2 }}>{quote.clients.contact_name}</div>}
             {quote.clients.address && <div style={{ fontSize: 13, color: '#52525b' }}>{quote.clients.address}</div>}
             {quote.clients.city && <div style={{ fontSize: 13, color: '#52525b' }}>{quote.clients.city}</div>}
+            {quote.clients.phone && <div style={{ fontSize: 13, color: '#52525b', marginTop: 4 }}>{quote.clients.phone}</div>}
             {quote.clients.email && <div style={{ fontSize: 13, color: '#52525b' }}>{quote.clients.email}</div>}
           </div>
         )}
@@ -129,12 +145,44 @@ export default function QuotePrintPage() {
               <span style={{ color: '#71717a' }}>BTW ({quote.vat_pct}%)</span>
               <span>{fmt(quote.amount_incl_vat - quote.amount_excl_vat)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontSize: 16, fontWeight: 700, borderTop: '2px solid #18181b', marginTop: 4 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontSize: 16, fontWeight: 700, borderTop: `2px solid ${color}`, marginTop: 4, color }}>
               <span>Totaal incl. BTW</span>
               <span>{fmt(quote.amount_incl_vat)}</span>
             </div>
           </div>
         </div>
+
+        {/* Betalingsstructuur (if applicable) */}
+        {quote.advance_pct && quote.advance_pct > 0 && (
+          <div style={{ padding: 16, background: '#f9f5f0', borderLeft: `4px solid ${color}`, marginBottom: 32, borderRadius: 4 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color, marginBottom: 12 }}>Betalingsstructuur</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
+              {quote.advance_pct > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>• Aanbetaling bij akkoord: {quote.advance_pct}%</span>
+                  <span style={{ fontWeight: 600 }}>{fmt((quote.amount_incl_vat * quote.advance_pct) / 100)}</span>
+                </div>
+              )}
+              {quote.milestone_pct && quote.milestone_pct > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>• Tussentijdse betaling: {quote.milestone_pct}%</span>
+                  <span style={{ fontWeight: 600 }}>{fmt((quote.amount_incl_vat * quote.milestone_pct) / 100)}</span>
+                </div>
+              )}
+              {quote.final_pct && quote.final_pct > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>• Eindafrekening: {quote.final_pct}%</span>
+                  <span style={{ fontWeight: 600 }}>{fmt((quote.amount_incl_vat * quote.final_pct) / 100)}</span>
+                </div>
+              )}
+            </div>
+            {quote.payment_note && (
+              <div style={{ fontSize: 12, color: '#52525b', marginTop: 10, paddingTop: 10, borderTop: '1px solid #e4d5c2', fontStyle: 'italic' }}>
+                {quote.payment_note}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Notities */}
         {quote.notes && (

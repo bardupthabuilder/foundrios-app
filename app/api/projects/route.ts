@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { enforceLimit } from '@/lib/limits'
 import { z } from 'zod'
 
 const CreateProjectSchema = z.object({
@@ -33,11 +34,18 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('projects')
-    .select('*, clients(id, name, phone), time_entries(hours)')
+    // Kosten = echte loonkosten per medewerker + materiaal. Alleen `hours` maal
+    // het verkooptarief gaf een te rooskleurige marge op de lijst.
+    .select('*, clients(id, name, phone), time_entries(hours, employees(hourly_cost_cents)), material_entries(total_cents)')
     .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false })
 
-  if (statusFilter) {
+  // `status=open` = alles wat nog loopt. Planning en Uren vroegen eerder alleen
+  // om 'actief', maar een net aangemaakte klus staat op 'gepland' — die viel dus
+  // uit de keuzelijst en je kon hem niet inplannen.
+  if (statusFilter === 'open') {
+    query = query.in('status', ['gepland', 'actief', 'pauze'])
+  } else if (statusFilter) {
     query = query.eq('status', statusFilter as any)
   }
 
@@ -59,6 +67,9 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const parsed = CreateProjectSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+  const limitResponse = await enforceLimit(tenantId, 'projects')
+  if (limitResponse) return limitResponse
 
   const { data, error } = await supabase
     .from('projects')

@@ -35,6 +35,9 @@ export default function TeamPage() {
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('monteur')
   const [color, setColor] = useState('#6366f1')
+  // Kostprijs per uur. Elke margeberekening in de app hangt hiervan af, maar het
+  // veld stond nooit in het formulier — dus stond het overal op nul.
+  const [hourlyCost, setHourlyCost] = useState('')
 
   useEffect(() => {
     fetch('/api/employees')
@@ -48,7 +51,10 @@ export default function TeamPage() {
     const res = await fetch('/api/employees', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone: phone || null, email: email || null, role, color }),
+      body: JSON.stringify({
+        name, phone: phone || null, email: email || null, role, color,
+        hourly_cost_cents: hourlyCost ? Math.round(parseFloat(hourlyCost) * 100) : null,
+      }),
     })
     if (res.ok) {
       const emp = await res.json()
@@ -59,6 +65,7 @@ export default function TeamPage() {
       setEmail('')
       setRole('monteur')
       setColor('#6366f1')
+      setHourlyCost('')
     }
     setSaving(false)
   }
@@ -76,6 +83,7 @@ export default function TeamPage() {
   const [editEmail, setEditEmail] = useState('')
   const [editRole, setEditRole] = useState('monteur')
   const [editColor, setEditColor] = useState('#6366f1')
+  const [editHourlyCost, setEditHourlyCost] = useState('')
   const [editSaving, setEditSaving] = useState(false)
 
   function openEdit(emp: Employee) {
@@ -85,6 +93,8 @@ export default function TeamPage() {
     setEditEmail(emp.email || '')
     setEditRole(emp.role || 'monteur')
     setEditColor(emp.color || '#6366f1')
+    const cost = (emp as { hourly_cost_cents?: number | null }).hourly_cost_cents
+    setEditHourlyCost(cost ? String(cost / 100) : '')
     setEditOpen(true)
   }
 
@@ -100,6 +110,7 @@ export default function TeamPage() {
         email: editEmail || null,
         role: editRole,
         color: editColor,
+        hourly_cost_cents: editHourlyCost ? Math.round(parseFloat(editHourlyCost) * 100) : null,
       }),
     })
     if (res.ok) {
@@ -140,16 +151,28 @@ export default function TeamPage() {
                   <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="jan@bedrijf.nl" />
                 </div>
               </div>
-              <div>
-                <Label>Rol</Label>
-                <Select value={role} onValueChange={setRole}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(ROLE_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Rol</Label>
+                  <Select value={role} onValueChange={setRole}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(ROLE_LABELS).map(([k, v]) => (
+                        <SelectItem key={k} value={k}>{v}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Kostprijs per uur</Label>
+                  <Input
+                    type="number" step="0.50" min="0"
+                    value={hourlyCost}
+                    onChange={(e) => setHourlyCost(e.target.value)}
+                    placeholder="45.00"
+                  />
+                  <p className="mt-1 text-xs text-zinc-500">Wat deze medewerker jou kost. Bepaalt de marge per klus.</p>
+                </div>
               </div>
               <div>
                 <Label>Kleur (planningsbord)</Label>
@@ -231,6 +254,16 @@ export default function TeamPage() {
                 <Label>E-mail</Label>
                 <Input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
               </div>
+            </div>
+            <div>
+              <Label>Kostprijs per uur</Label>
+              <Input
+                type="number" step="0.50" min="0"
+                value={editHourlyCost}
+                onChange={(e) => setEditHourlyCost(e.target.value)}
+                placeholder="45.00"
+              />
+              <p className="mt-1 text-xs text-zinc-500">Wat deze medewerker jou kost. Bepaalt de marge per klus.</p>
             </div>
             <div>
               <Label>Rol</Label>

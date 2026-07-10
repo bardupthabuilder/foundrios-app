@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { scoreLead } from '@/lib/ai'
+import { notifyNewLead } from '@/lib/notify'
 
 // Meta webhook verificatie
 export async function GET(request: NextRequest) {
@@ -79,7 +80,9 @@ export async function POST(request: NextRequest) {
           email,
           phone,
           source: 'meta_lead_ads',
-        })
+          next_action: 'Eerste contact opnemen',
+          next_action_at: new Date().toISOString(),
+        } as any)
         .select()
         .single()
 
@@ -122,8 +125,17 @@ export async function POST(request: NextRequest) {
             status: score.label,
           } as any)
           .eq('id', newLead.id)
+        // Melden ná scoring, zodat een hete lead als urgent binnenkomt.
+        await notifyNewLead(supabase, {
+          tenantId, leadId: newLead.id, name,
+          source: 'meta_lead_ads', aiLabel: score.label,
+        })
       } catch (err) {
         console.error('Meta lead scoring mislukt:', err)
+        // Scoring kan falen; de melding mag daar niet van afhangen.
+        await notifyNewLead(supabase, {
+          tenantId, leadId: newLead.id, name, source: 'meta_lead_ads',
+        })
       }
     }
   }

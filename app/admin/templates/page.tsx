@@ -7,8 +7,18 @@ const TYPES = [
   { value: 'offerte', label: 'Offerte', color: 'bg-foundri-yellow/20 text-foundri-yellow' },
   { value: 'werkbon', label: 'Werkbon', color: 'bg-blue-500/20 text-blue-400' },
   { value: 'email', label: 'E-mail', color: 'bg-green-500/20 text-green-400' },
+  { value: 'whatsapp', label: 'WhatsApp', color: 'bg-emerald-500/20 text-emerald-400' },
+  { value: 'sms', label: 'SMS', color: 'bg-cyan-500/20 text-cyan-400' },
   { value: 'campagne', label: 'Campagne', color: 'bg-purple-500/20 text-purple-400' },
+  { value: 'ad_copy', label: 'Ad copy', color: 'bg-pink-500/20 text-pink-400' },
+  { value: 'sales_script', label: 'Sales script', color: 'bg-rose-500/20 text-rose-400' },
   { value: 'sop', label: 'SOP', color: 'bg-orange-500/20 text-orange-400' },
+  { value: 'form_questions', label: 'Formulier', color: 'bg-indigo-500/20 text-indigo-400' },
+  { value: 'sequence', label: 'Sequentie', color: 'bg-violet-500/20 text-violet-400' },
+  { value: 'review_request', label: 'Review', color: 'bg-amber-500/20 text-amber-400' },
+  { value: 'contract', label: 'Contract', color: 'bg-slate-500/20 text-slate-300' },
+  { value: 'invoice_reminder', label: 'Factuur', color: 'bg-red-500/20 text-red-400' },
+  { value: 'calculation', label: 'Calculatie', color: 'bg-teal-500/20 text-teal-400' },
 ]
 
 type Template = { id: string; name: string; type: string; content: any; description: string; is_default: boolean; status: string }

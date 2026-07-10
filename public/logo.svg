@@ -1,8 +1,23 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Geometric F-mark inspired by brand kit -->
-  <!-- Outer shell (gray) -->
-  <path d="M4 6C4 4.89543 4.89543 4 6 4H20L28 12V14H12V20H20V26H6C4.89543 26 4 25.1046 4 24V6Z" fill="#2B3442"/>
-  <!-- Inner highlight (yellow) -->
-  <path d="M8 4H20L28 12H12L8 4Z" fill="#F6C945"/>
-  <path d="M12 14H28V20H20V14Z" fill="#F6C945" opacity="0.6"/>
+  <!-- Gold outer hexagon (pointed top/bottom) -->
+  <path d="M16 1L29 8.5V23.5L16 31L3 23.5V8.5Z" fill="#D4A827"/>
+  <!-- Dark inner hexagon -->
+  <path d="M16 4.5L25.5 10V22L16 27.5L6.5 22V10Z" fill="#0D0D0D"/>
+  <!-- Gold lion body/mane -->
+  <path d="M16 7L22 10.5L23.5 15L22 19.5L19 22L16 23L13 22L10 19.5L8.5 15L10 10.5Z" fill="#D4A827"/>
+  <!-- Dark face interior -->
+  <path d="M16 9.5L20.5 12.5L21 17L18.5 20L16 21.5L13.5 20L11 17L11.5 12.5Z" fill="#0D0D0D"/>
+  <!-- Gold brow/forehead ridge -->
+  <path d="M14 12.5L16 11L18 12.5L17.5 13L16 12L14.5 13Z" fill="#D4A827"/>
+  <!-- Gold left cheek -->
+  <path d="M11.5 15L13.5 13L13.5 17.5L11.5 18Z" fill="#D4A827"/>
+  <!-- Gold right cheek -->
+  <path d="M20.5 15L18.5 13L18.5 17.5L20.5 18Z" fill="#D4A827"/>
+  <!-- Gold muzzle -->
+  <path d="M13.5 17.5L16 16L18.5 17.5L16 21Z" fill="#D4A827" opacity="0.85"/>
+  <!-- Eyes (dark, angular) -->
+  <ellipse cx="14.2" cy="14.2" rx="1.2" ry="1" fill="#0D0D0D"/>
+  <ellipse cx="17.8" cy="14.2" rx="1.2" ry="1" fill="#0D0D0D"/>
+  <!-- Nose -->
+  <path d="M15.3 17.3L16 18.3L16.7 17.3H15.3Z" fill="#0D0D0D"/>
 </svg>

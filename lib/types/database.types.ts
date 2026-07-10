@@ -2699,6 +2699,7 @@ export type Database = {
           review_received: boolean
           upsell_opportunity: string | null
           upsell_status: string
+          review_url: string | null
         }
         Insert: {
           address?: string | null
@@ -2727,6 +2728,7 @@ export type Database = {
           review_received?: boolean
           upsell_opportunity?: string | null
           upsell_status?: string
+          review_url?: string | null
         }
         Update: {
           address?: string | null
@@ -2750,6 +2752,12 @@ export type Database = {
           status?: Database["public"]["Enums"]["project_status"]
           tenant_id?: string | null
           updated_at?: string
+          delivered_at?: string | null
+          review_requested_at?: string | null
+          review_received?: boolean
+          upsell_opportunity?: string | null
+          upsell_status?: string
+          review_url?: string | null
         }
         Relationships: [
           {
@@ -2775,6 +2783,51 @@ export type Database = {
           },
           {
             foreignKeyName: "projects_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_tasks: {
+        Row: {
+          created_at: string
+          done: boolean
+          id: string
+          project_id: string
+          sort_order: number
+          tenant_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          done?: boolean
+          id?: string
+          project_id: string
+          sort_order?: number
+          tenant_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          done?: boolean
+          id?: string
+          project_id?: string
+          sort_order?: number
+          tenant_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_tasks_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"

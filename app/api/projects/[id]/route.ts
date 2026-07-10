@@ -16,6 +16,12 @@ const UpdateProjectSchema = z.object({
   budget_cents: z.number().int().optional().nullable(),
   hourly_rate_cents: z.number().int().optional().nullable(),
   notes: z.string().optional().nullable(),
+  delivered_at: z.string().optional().nullable(),
+  review_requested_at: z.string().optional().nullable(),
+  review_received: z.boolean().optional(),
+  review_url: z.string().optional().nullable(),
+  upsell_status: z.enum(['none', 'identified', 'proposed', 'accepted', 'declined']).optional(),
+  upsell_opportunity: z.string().optional().nullable(),
 })
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { FolderOpen, Plus, MapPin, Calendar, Euro, Clock } from 'lucide-react'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { calculateBurn } from '@/lib/project-burn'
 import type { ProjectWithClient, Client, ProjectStatus, ProjectType } from '@/lib/types/project'
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -262,26 +263,52 @@ export default function ProjectenPage() {
                       </span>
                     )}
                     {(() => {
-                      const entries = (project as any).time_entries as { hours: number }[] | undefined
-                      const totalHours = entries?.reduce((sum: number, e: { hours: number }) => sum + (e.hours ?? 0), 0) ?? 0
-                      if (totalHours === 0) return null
-                      const costCents = project.hourly_rate_cents ? totalHours * project.hourly_rate_cents : 0
-                      const marginPct = project.budget_cents && costCents > 0 ? Math.round(((project.budget_cents - costCents) / project.budget_cents) * 100) : null
+                      const burn = calculateBurn(project)
+                      if (burn.hours === 0 && burn.materialCents === 0) return null
                       return (
-                        <>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {totalHours}u geregistreerd
-                          </span>
-                          {marginPct !== null && (
-                            <span className={`font-medium ${marginPct >= 30 ? 'text-green-400' : marginPct >= 10 ? 'text-orange-500' : 'text-red-500'}`}>
-                              {marginPct}% marge
-                            </span>
-                          )}
-                        </>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {burn.hours}u geregistreerd
+                        </span>
                       )
                     })()}
                   </div>
+
+                  {/* Besteed versus budget. Zichtbaar tijdens de klus, niet pas erna. */}
+                  {(() => {
+                    const burn = calculateBurn(project)
+                    if (burn.ratio === null || burn.spentCents === 0) return null
+
+                    const pct = Math.round(burn.ratio * 100)
+                    const bar =
+                      burn.status === 'over' ? 'bg-red-500'
+                        : burn.status === 'krap' ? 'bg-orange-500'
+                          : 'bg-green-500'
+                    const text =
+                      burn.status === 'over' ? 'text-red-400'
+                        : burn.status === 'krap' ? 'text-orange-400'
+                          : 'text-zinc-400'
+
+                    return (
+                      <div className="mt-3">
+                        <div className="mb-1 flex items-center justify-between text-xs">
+                          <span className="text-zinc-500">
+                            {formatCents(burn.spentCents)} van {formatCents(burn.budgetCents!)} besteed
+                          </span>
+                          <span className={`font-medium ${text}`}>
+                            {burn.status === 'over'
+                              ? `${pct}% — over budget`
+                              : burn.status === 'krap'
+                                ? `${pct}% — let op`
+                                : `${pct}%`}
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+                          <div className={`h-full rounded-full ${bar}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                        </div>
+                      </div>
+                    )
+                  })()}
                 </div>
               </CardContent>
             </Card>

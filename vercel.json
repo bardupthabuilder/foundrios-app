@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/execute",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/quote-expiry",
+      "schedule": "0 2 * * *"
     }
   ]
 }

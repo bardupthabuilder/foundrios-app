@@ -9,6 +9,9 @@ const UpdateSchema = z.object({
   status: z.enum(['concept', 'actief', 'afgerond', 'gefactureerd']).optional(),
   date: z.string().optional(),
   signed_by: z.string().optional().nullable(),
+  // Getekende handtekening als PNG data-URL. Begrensd zodat een verdwaalde
+  // upload de rij niet opblaast; een krabbel is ruim onder de 200 kB.
+  signature_data: z.string().max(200_000).startsWith('data:image/png;base64,').optional().nullable(),
   notes: z.string().optional().nullable(),
 })
 

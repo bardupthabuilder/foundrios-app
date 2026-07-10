@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
+import { enforceLimit } from '@/lib/limits'
 import { z } from 'zod'
 
 const CreateQuoteSchema = z.object({
@@ -58,6 +59,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
+  const limitResponse = await enforceLimit(tenantId, 'quotes')
+  if (limitResponse) return limitResponse
+
   const { amount_excl_vat, vat_pct } = parsed.data
   const amount_incl_vat = Math.round(amount_excl_vat * (1 + vat_pct / 100))
 
@@ -68,6 +72,7 @@ export async function POST(request: NextRequest) {
     .eq('tenant_id', tenantId)
   const quoteNumber = `OFF-${String((count ?? 0) + 1).padStart(4, '0')}`
 
+  // sign_token wordt automatisch gegenereerd door DB default (migration 026)
   const { data, error } = await supabase
     .from('quotes')
     .insert({

@@ -30,8 +30,12 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // FoundriOS publieke routes
-  const publicRoutes = ['/login', '/register', '/onboarding', '/invite', '/']
-  const isPublicRoute = publicRoutes.some((route) => pathname === route) || pathname.startsWith('/blog') || pathname.startsWith('/help')
+  const publicRoutes = ['/login', '/register', '/onboarding', '/invite', '/', '/demo']
+  const isPublicRoute =
+    publicRoutes.some((route) => pathname === route) ||
+    pathname.startsWith('/blog') ||
+    pathname.startsWith('/help') ||
+    pathname.startsWith('/q/')
 
   // Workforce publieke routes
   const workforcePublicRoutes = ['/workforce', '/workforce/login', '/workforce/register', '/workforce/onboarding']
@@ -40,13 +44,17 @@ export async function middleware(request: NextRequest) {
   // Detect product context
   const isWorkforce = pathname.startsWith('/workforce')
 
-  // API webhooks zijn altijd publiek (worden beveiligd via signature validation)
-  const isWebhook =
+  // API webhooks en externe API proxies zijn altijd publiek (worden beveiligd via andere auth)
+  const isPublicAPI =
     pathname.startsWith('/api/webhooks/') ||
     pathname.startsWith('/api/auth/') ||
+    pathname.startsWith('/api/paperclip/') ||
+    pathname.startsWith('/api/q/') ||
+    pathname.startsWith('/api/cron/') ||
+    pathname.startsWith('/api/demo/') ||
     pathname.startsWith('/workforce/api/webhook/')
 
-  if (isWebhook) {
+  if (isPublicAPI) {
     return supabaseResponse
   }
 

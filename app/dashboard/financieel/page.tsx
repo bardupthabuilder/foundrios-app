@@ -1,7 +1,7 @@
 import { requireTenant } from '@/lib/tenant'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { TrendingUp, TrendingDown, DollarSign, Receipt, FileText, ArrowRight, AlertTriangle, BarChart3, Download } from 'lucide-react'
+import { TrendingUp, TrendingDown, DollarSign, Receipt, FileText, ArrowRight, AlertTriangle, BarChart3, Download, RefreshCw } from 'lucide-react'
 
 const fmtEur = (cents: number) =>
   new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
@@ -19,13 +19,16 @@ export default async function FinancieelPage() {
   const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0).toISOString()
 
   // Parallel queries
-  const [invoicesResult, lastMonthInvoicesResult, quotesResult, projectsResult, timeResult, materialResult] = await Promise.all([
+  const [invoicesResult, lastMonthInvoicesResult, quotesResult, projectsResult, timeResult, materialResult, maintenanceResult, decidedQuotesResult] = await Promise.all([
     supabase.from('invoices').select('id, amount_excl_vat, status, due_date, paid_at, created_at').eq('tenant_id', tenantId),
     supabase.from('invoices').select('amount_excl_vat, status, paid_at').eq('tenant_id', tenantId).eq('status', 'paid').gte('paid_at', startOfLastMonth).lt('paid_at', startOfMonth),
     supabase.from('quotes').select('amount_excl_vat, status').eq('tenant_id', tenantId).in('status', ['concept', 'verstuurd']),
     supabase.from('projects').select('id, name, budget_cents, hourly_rate_cents, status, client_id').eq('tenant_id', tenantId).eq('status', 'actief'),
     supabase.from('time_entries').select('project_id, hours, employee_id').eq('tenant_id', tenantId),
     supabase.from('material_entries').select('project_id, total_cents').eq('tenant_id', tenantId),
+    supabase.from('maintenance_contracts' as any).select('frequency, price_cents, mrr_cents, status').eq('tenant_id', tenantId).eq('status', 'active'),
+    // Alle afgehandelde offertes: hieruit volgt de historische winkans.
+    supabase.from('quotes').select('status').eq('tenant_id', tenantId).in('status', ['akkoord', 'afgewezen', 'verlopen']),
   ])
 
   const invoices = invoicesResult.data ?? []
@@ -34,6 +37,25 @@ export default async function FinancieelPage() {
   const projects = projectsResult.data ?? []
   const timeEntries = timeResult.data ?? []
   const materialEntries = materialResult.data ?? []
+  const maintenanceContracts: Array<{ frequency: string; price_cents: number | null; mrr_cents: number | null }> = (maintenanceResult.data as any) ?? []
+
+  // MRR from active onderhoud contracts
+  const FREQ_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, biannual: 6, annual: 12 }
+  const mrrCents = maintenanceContracts.reduce((sum, c) => {
+    if (c.mrr_cents) return sum + c.mrr_cents
+    const months = FREQ_MONTHS[c.frequency] ?? 3
+    return sum + Math.round((c.price_cents ?? 0) / months)
+  }, 0)
+
+  // Seizoen indicator
+  const month = now.getMonth() // 0-11
+  const seizoen = month <= 1 || month === 11
+    ? { label: 'Slapend seizoen', color: 'text-blue-400', bg: 'bg-blue-500/8 border-blue-500/15' }
+    : month <= 3
+    ? { label: 'Vroeg seizoen', color: 'text-green-400', bg: 'bg-green-500/8 border-green-500/15' }
+    : month <= 8
+    ? { label: 'Hoogseizoen', color: 'text-foundri-yellow', bg: 'bg-yellow-500/8 border-yellow-500/15' }
+    : { label: 'Herfstseizoen', color: 'text-orange-400', bg: 'bg-orange-500/8 border-orange-500/15' }
 
   // --- KPI Calculations ---
 
@@ -64,6 +86,13 @@ export default async function FinancieelPage() {
 
   // Pipeline (quotes concept + verstuurd)
   const pipeline = quotes.reduce((sum, q) => sum + (q.amount_excl_vat ?? 0), 0)
+
+  // Verwachte omzet: pipeline maal de winkans die dit bedrijf zelf heeft laten zien.
+  // Zonder historie is elk percentage een gok, dus tonen we dan niets.
+  const decidedQuotes = decidedQuotesResult.data ?? []
+  const wonQuotes = decidedQuotes.filter((q) => q.status === 'akkoord').length
+  const winRate = decidedQuotes.length > 0 ? wonQuotes / decidedQuotes.length : null
+  const verwachteOmzet = winRate !== null ? Math.round(pipeline * winRate) : null
 
   // Gemiddelde dealwaarde
   const allPaid = invoices.filter((inv) => inv.status === 'paid')
@@ -107,6 +136,13 @@ export default async function FinancieelPage() {
   // --- KPI Cards Data ---
   const kpiCards = [
     {
+      label: 'MRR — Onderhoud',
+      value: fmtEur(mrrCents),
+      sub: `${maintenanceContracts.length} actieve contracten`,
+      trend: 'mrr' as const,
+      icon: RefreshCw,
+    },
+    {
       label: 'Omzet deze maand',
       value: fmtEur(omzetDezeMaand),
       sub: trend !== 0 ? fmtPct(trend) + ' vs vorige maand' : 'Geen vergelijking',
@@ -127,6 +163,15 @@ export default async function FinancieelPage() {
       sub: `${openstaandeOffertesCount} openstaande offertes`,
       trend: 'neutral' as const,
       icon: FileText,
+    },
+    {
+      label: 'Verwachte omzet',
+      value: verwachteOmzet !== null ? fmtEur(verwachteOmzet) : '—',
+      sub: winRate !== null
+        ? `${Math.round(winRate * 100)}% winkans over ${decidedQuotes.length} offertes`
+        : 'Nog geen afgehandelde offertes',
+      trend: 'neutral' as const,
+      icon: TrendingUp,
     },
     {
       label: 'Openstaand',
@@ -170,7 +215,12 @@ export default async function FinancieelPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Financieel overzicht</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-white">Financieel overzicht</h1>
+            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${seizoen.bg} ${seizoen.color}`}>
+              {seizoen.label}
+            </span>
+          </div>
           <p className="mt-0.5 text-sm text-zinc-400">
             Omzet, marges en openstaande posten in een oogopslag
           </p>
@@ -208,11 +258,14 @@ export default async function FinancieelPage() {
           const isWarning = card.trend === 'warning'
           const isUp = card.trend === 'up'
           const isDown = card.trend === 'down'
+          const isMrr = card.trend === 'mrr'
           return (
             <div
               key={card.label}
               className={`rounded-xl border p-4 transition-colors ${
-                card.highlight
+                isMrr
+                  ? 'border-emerald-500/20 bg-emerald-500/5'
+                  : card.highlight
                   ? 'border-foundri-yellow/20 bg-foundri-yellow/5'
                   : isWarning
                     ? 'border-red-500/20 bg-red-500/5'
@@ -222,7 +275,7 @@ export default async function FinancieelPage() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-zinc-400">{card.label}</span>
                 <Icon className={`h-4 w-4 ${
-                  card.highlight ? 'text-foundri-yellow' : isWarning ? 'text-red-400' : 'text-zinc-500'
+                  isMrr ? 'text-emerald-400' : card.highlight ? 'text-foundri-yellow' : isWarning ? 'text-red-400' : 'text-zinc-500'
                 }`} />
               </div>
               <p className={`text-xl font-bold ${

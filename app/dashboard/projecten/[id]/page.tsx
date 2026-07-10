@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ArrowLeft, MapPin, Clock, Euro, Package, Calendar, User } from 'lucide-react'
+import { ArrowLeft, MapPin, Clock, Euro, Package, Plus, Trash2, CheckCircle2, Circle, ExternalLink } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import type { Project, ProjectStatus, TimeEntry, MaterialEntry, PlanningEntry } from '@/lib/types/project'
+
+interface ProjectTask { id: string; title: string; done: boolean; created_at: string }
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   gepland: 'Gepland',
@@ -27,7 +30,7 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
   gearchiveerd: 'bg-foundri-card text-zinc-400',
 }
 
-type TabKey = 'overzicht' | 'uren' | 'materiaal' | 'planning' | 'nacalculatie'
+type TabKey = 'overzicht' | 'taken' | 'uren' | 'materiaal' | 'planning' | 'nacalculatie'
 
 interface ProjectDetail extends Project {
   clients: { id: string; name: string; contact_name: string | null; phone: string | null; email: string | null; address: string | null; city: string | null } | null
@@ -69,6 +72,10 @@ export default function ProjectDetailPage() {
   const [updatingStatus, setUpdatingStatus] = useState(false)
   const [nacalculatie, setNacalculatie] = useState<NacalculatieData | null>(null)
   const [nacLoading, setNacLoading] = useState(false)
+  const [tasks, setTasks] = useState<ProjectTask[]>([])
+  const [tasksLoaded, setTasksLoaded] = useState(false)
+  const [newTaskTitle, setNewTaskTitle] = useState('')
+  const [addingTask, setAddingTask] = useState(false)
 
   useEffect(() => {
     fetch(`/api/projects/${id}`)
@@ -77,6 +84,15 @@ export default function ProjectDetailPage() {
       .catch(() => router.push('/dashboard/projecten'))
       .finally(() => setLoading(false))
   }, [id, router])
+
+  useEffect(() => {
+    if (tab === 'taken' && !tasksLoaded) {
+      fetch(`/api/projects/${id}/tasks`)
+        .then(r => r.json())
+        .then(data => { setTasks(data); setTasksLoaded(true) })
+        .catch(() => setTasksLoaded(true))
+    }
+  }, [tab, id, tasksLoaded])
 
   useEffect(() => {
     if (tab === 'nacalculatie' && !nacalculatie && !nacLoading) {
@@ -105,10 +121,46 @@ export default function ProjectDetailPage() {
   const formatCents = (cents: number) =>
     new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 
-  async function handleRetention(type: 'review' | 'upsell') {
+  async function addTask() {
+    if (!newTaskTitle.trim() || addingTask) return
+    setAddingTask(true)
+    const res = await fetch(`/api/projects/${id}/tasks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newTaskTitle.trim() }),
+    })
+    if (res.ok) {
+      const task = await res.json()
+      setTasks(prev => [...prev, task])
+      setNewTaskTitle('')
+    }
+    setAddingTask(false)
+  }
+
+  async function toggleTask(taskId: string, done: boolean) {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, done } : t))
+    await fetch(`/api/projects/${id}/tasks?task_id=${taskId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ done }),
+    })
+  }
+
+  async function deleteTask(taskId: string) {
+    setTasks(prev => prev.filter(t => t.id !== taskId))
+    await fetch(`/api/projects/${id}/tasks?task_id=${taskId}`, { method: 'DELETE' })
+  }
+
+  async function handleRetention(type: 'review' | 'upsell' | 'review_received' | 'review_url') {
     const updates: Record<string, unknown> = {}
     if (type === 'review') {
       updates.review_requested_at = new Date().toISOString()
+    } else if (type === 'review_received') {
+      updates.review_received = true
+    } else if (type === 'review_url') {
+      const url = prompt('Plak de review-link (Google / Trustpilot):')
+      if (!url) return
+      updates.review_url = url
     } else if (type === 'upsell') {
       updates.upsell_status = 'identified'
       const opportunity = prompt('Beschrijf de upsell kans:')
@@ -137,8 +189,10 @@ export default function ProjectDetailPage() {
   if (!project) return null
 
   const totalCents = project.totals.labor_cents + project.totals.material_cents
+  const doneTasks = tasks.filter(t => t.done).length
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'overzicht', label: 'Overzicht' },
+    { key: 'taken', label: tasksLoaded ? `Taken (${tasks.length})` : 'Taken' },
     { key: 'uren', label: `Uren (${project.totals.hours}u)` },
     { key: 'materiaal', label: `Materiaal (${project.material_entries.length})` },
     { key: 'planning', label: `Planning (${project.planning_entries.length})` },
@@ -307,17 +361,26 @@ export default function ProjectDetailPage() {
                 </div>
                 {/* Review */}
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-400">Review ontvangen</span>
-                  {(project as any).review_received ? (
-                    <span className="text-green-400">&#10003; Ja</span>
-                  ) : (
-                    <button
-                      onClick={() => handleRetention('review')}
-                      className="text-xs text-foundri-yellow hover:underline"
-                    >
-                      Review aanvragen
-                    </button>
-                  )}
+                  <span className="text-zinc-400">Review</span>
+                  <div className="flex items-center gap-2">
+                    {(project as any).review_received ? (
+                      <span className="text-green-400 text-xs">✓ Ontvangen</span>
+                    ) : (project as any).review_requested_at ? (
+                      <>
+                        <span className="text-zinc-500 text-xs">Aangevraagd</span>
+                        <button onClick={() => handleRetention('review_received')} className="text-xs text-green-400 hover:underline">Ontvangen</button>
+                      </>
+                    ) : (
+                      <button onClick={() => handleRetention('review')} className="text-xs text-foundri-yellow hover:underline">Aanvragen</button>
+                    )}
+                    {(project as any).review_url ? (
+                      <a href={(project as any).review_url} target="_blank" rel="noopener" className="text-zinc-400 hover:text-zinc-200">
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : (
+                      <button onClick={() => handleRetention('review_url')} className="text-xs text-zinc-500 hover:text-zinc-300">+ link</button>
+                    )}
+                  </div>
                 </div>
                 {/* Upsell */}
                 <div className="flex items-center justify-between text-sm">
@@ -350,6 +413,65 @@ export default function ProjectDetailPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {tab === 'taken' && (
+        <div className="space-y-3">
+          {/* Voortgang */}
+          {tasks.length > 0 && (
+            <div className="flex items-center gap-3 text-sm text-zinc-400">
+              <div className="flex-1 bg-foundri-card rounded-full h-1.5">
+                <div
+                  className="bg-green-500 h-1.5 rounded-full transition-all"
+                  style={{ width: `${tasks.length ? Math.round((doneTasks / tasks.length) * 100) : 0}%` }}
+                />
+              </div>
+              <span>{doneTasks}/{tasks.length} klaar</span>
+            </div>
+          )}
+
+          {/* Takenlijst */}
+          <div className="space-y-1">
+            {!tasksLoaded ? (
+              <div className="py-6 text-center text-zinc-400 text-sm">Laden...</div>
+            ) : tasks.length === 0 ? (
+              <div className="py-6 text-center text-zinc-400 text-sm">Nog geen taken. Voeg de eerste taak toe.</div>
+            ) : (
+              tasks.map(task => (
+                <div key={task.id} className="group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-white/5 transition-colors">
+                  <button onClick={() => toggleTask(task.id, !task.done)} className="shrink-0 text-zinc-400 hover:text-green-400 transition-colors">
+                    {task.done
+                      ? <CheckCircle2 className="h-5 w-5 text-green-400" />
+                      : <Circle className="h-5 w-5" />}
+                  </button>
+                  <span className={`flex-1 text-sm ${task.done ? 'line-through text-zinc-500' : 'text-zinc-200'}`}>
+                    {task.title}
+                  </span>
+                  <button
+                    onClick={() => deleteTask(task.id)}
+                    className="opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 transition-all"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Nieuwe taak */}
+          <div className="flex gap-2 pt-1">
+            <Input
+              value={newTaskTitle}
+              onChange={e => setNewTaskTitle(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && addTask()}
+              placeholder="Nieuwe taak toevoegen..."
+              className="flex-1 bg-foundri-card border-white/10 text-sm"
+            />
+            <Button onClick={addTask} disabled={!newTaskTitle.trim() || addingTask} size="sm">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
 

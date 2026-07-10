@@ -46,6 +46,7 @@ export async function PATCH(request: NextRequest) {
     'name', 'niche', 'region', 'owner_name', 'owner_phone',
     'description', 'services', 'avg_project_value', 'team_size',
     'website', 'email', 'logo_url',
+    'iban', 'kvk_number', 'vat_number', 'primary_color', 'default_payment_days',
     'social_linkedin', 'social_instagram', 'social_facebook',
     'social_google_business', 'social_tiktok',
     'premium_tagline', 'premium_guarantees', 'premium_usp',

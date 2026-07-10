@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { DemoSeedBanner } from '@/components/DemoSeedBanner'
 import { WelcomeBanner } from '@/components/WelcomeBanner'
+import { TodayWidget } from '@/components/dashboard/TodayWidget'
 import { formatDistanceToNow } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -172,6 +173,11 @@ export default async function DashboardPage() {
       )}
 
       {isEmpty && <DemoSeedBanner />}
+
+      {/* Section 0: Vandaag */}
+      <section className="mb-8">
+        <TodayWidget />
+      </section>
 
       {/* Section 1: Action Items */}
       <section className="mb-8">

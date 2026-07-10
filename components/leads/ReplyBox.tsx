@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Send } from 'lucide-react'
+import { TemplatePicker } from '@/components/leads/TemplatePicker'
 
-export function ReplyBox({ leadId }: { leadId: string }) {
+export function ReplyBox({ leadId, leadName = '' }: { leadId: string; leadName?: string }) {
   const router = useRouter()
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
@@ -42,6 +43,7 @@ export function ReplyBox({ leadId }: { leadId: string }) {
           }
         }}
       />
+      <TemplatePicker leadName={leadName} onPick={setContent} />
       <button
         type="submit"
         disabled={!content.trim() || loading}
