@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireFeature } from '@/lib/middleware/requireFeature'
 import { generateContent } from '@/lib/ai'
+import { channelByKey, parseChannelKey } from '@/lib/content-channels'
 
 // POST /api/content/generate — AI content generatie (tier-gated: content_ai)
 export async function POST(request: NextRequest) {
@@ -26,10 +27,16 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // platforms bevat channel-keys ("facebook:zakelijk") — voor de AI-prompt
+  // gebruiken we de leesbare labels, voor content_distributions de losse
+  // platform/profile_type velden.
+  const channelLabels = platforms.map((key) => channelByKey(key)?.label ?? key)
+  const channels = platforms.map(parseChannelKey).filter((c): c is { platform: string; profile_type: string } => c !== null)
+
   // Genereer content via Claude
   let generated
   try {
-    generated = await generateContent({ topic, content_template, platforms, context })
+    generated = await generateContent({ topic, content_template, platforms: channelLabels, context })
   } catch (err) {
     console.error('Content generatie mislukt:', err)
     return NextResponse.json({ error: 'AI generatie mislukt' }, { status: 500 })
@@ -59,12 +66,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: insertError?.message }, { status: 500 })
   }
 
-  // Maak distributies aan voor elk platform
-  if (platforms.length > 0) {
-    const distributionInserts = platforms.map((platform) => ({
+  // Maak distributies aan voor elk kanaal
+  if (channels.length > 0) {
+    const distributionInserts = channels.map((c) => ({
       content_item_id: contentItem.id,
       tenant_id: tenantId,
-      platform,
+      platform: c.platform,
+      profile_type: c.profile_type,
       status: 'gepland',
     }))
 

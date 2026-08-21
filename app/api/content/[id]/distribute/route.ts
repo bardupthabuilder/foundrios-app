@@ -2,7 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireTenant } from '@/lib/tenant'
 
-// POST /api/content/[id]/distribute — distributies aanmaken voor geselecteerde platforms
+interface ChannelInput {
+  platform: string
+  profile_type?: string | null
+}
+
+function channelKey(platform: string, profileType: string | null | undefined) {
+  return `${platform}:${profileType ?? ''}`
+}
+
+// POST /api/content/[id]/distribute — distributies aanmaken voor geselecteerde kanalen
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -18,10 +27,10 @@ export async function POST(
   }
 
   const body = await request.json()
-  const { platforms } = body as { platforms: string[] }
+  const { channels } = body as { channels: ChannelInput[] }
 
-  if (!Array.isArray(platforms)) {
-    return NextResponse.json({ error: 'platforms moet een array zijn' }, { status: 400 })
+  if (!Array.isArray(channels)) {
+    return NextResponse.json({ error: 'channels moet een array zijn' }, { status: 400 })
   }
 
   // Verify content item belongs to tenant
@@ -39,16 +48,17 @@ export async function POST(
   // Haal bestaande distributies op
   const { data: existingDistributions } = await supabase
     .from('content_distributions')
-    .select('id, platform')
+    .select('id, platform, profile_type')
     .eq('content_item_id', id)
     .eq('tenant_id', tenantId)
 
-  const existingPlatforms = (existingDistributions ?? []).map((d: any) => d.platform as string)
+  const existingKeys = new Set((existingDistributions ?? []).map((d) => channelKey(d.platform, d.profile_type)))
+  const newKeys = new Set(channels.map((c) => channelKey(c.platform, c.profile_type)))
 
-  // Verwijder distributies voor platforms die niet meer in de nieuwe lijst staan
+  // Verwijder distributies voor kanalen die niet meer in de nieuwe lijst staan
   const toDelete = (existingDistributions ?? [])
-    .filter((d: any) => !platforms.includes(d.platform))
-    .map((d: any) => d.id)
+    .filter((d) => !newKeys.has(channelKey(d.platform, d.profile_type)))
+    .map((d) => d.id)
 
   if (toDelete.length > 0) {
     await supabase
@@ -57,13 +67,14 @@ export async function POST(
       .in('id', toDelete)
   }
 
-  // Voeg nieuwe distributies toe voor platforms die nog niet bestaan
-  const toInsert = platforms
-    .filter((platform) => !existingPlatforms.includes(platform))
-    .map((platform) => ({
+  // Voeg nieuwe distributies toe voor kanalen die nog niet bestaan
+  const toInsert = channels
+    .filter((c) => !existingKeys.has(channelKey(c.platform, c.profile_type)))
+    .map((c) => ({
       content_item_id: id,
       tenant_id: tenantId,
-      platform,
+      platform: c.platform,
+      profile_type: c.profile_type ?? null,
       status: 'gepland',
     }))
 

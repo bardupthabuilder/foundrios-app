@@ -17,11 +17,17 @@ import {
   LayoutGrid,
   CalendarDays,
   List,
+  BarChart3,
+  Settings,
   Search,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Loader2,
 } from 'lucide-react'
+import { CHANNELS, channelByKey, type ContentChannel } from '@/lib/content-channels'
+import { ResultatenView } from './ResultatenView'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -64,16 +70,6 @@ const TEMPLATES = [
   { key: 'lead_magnet', label: 'Lead Magnet' },
 ]
 
-const PLATFORMS = [
-  { key: 'instagram', label: 'Instagram', color: '#E4405F' },
-  { key: 'linkedin', label: 'LinkedIn', color: '#0A66C2' },
-  { key: 'facebook', label: 'Facebook', color: '#1877F2' },
-  { key: 'tiktok', label: 'TikTok', color: '#000000' },
-  { key: 'youtube', label: 'YouTube', color: '#FF0000' },
-  { key: 'google_business', label: 'Google Business', color: '#4285F4' },
-  { key: 'nextdoor', label: 'Nextdoor', color: '#8ED500' },
-]
-
 const getStatusConfig = (key: string) =>
   STATUSES.find((s) => s.key === key) ?? STATUSES[0]
 
@@ -87,14 +83,15 @@ function PlatformDots({ platforms }: { platforms: string[] | null }) {
   return (
     <div className="flex items-center gap-0.5">
       {platforms.map((p) => {
-        const cfg = PLATFORMS.find((pl) => pl.key === p)
-        if (!cfg) return null
+        const cfg = channelByKey(p)
+        // Legacy platform-waarden (linkedin/tiktok/etc. van vóór V2) krijgen
+        // een neutrale fallback-dot in plaats van te crashen.
         return (
           <span
             key={p}
-            title={cfg.label}
+            title={cfg?.label ?? p}
             className="h-2 w-2 rounded-full inline-block"
-            style={{ backgroundColor: cfg.color }}
+            style={{ backgroundColor: cfg?.color ?? '#71717a' }}
           />
         )
       })}
@@ -459,18 +456,20 @@ function NewContentDialog({
   onCreated,
   defaultStatus,
   defaultDate,
+  enabledChannels,
 }: {
   open: boolean
   onClose: () => void
   onCreated: (item: ContentItem) => void
   defaultStatus?: string
   defaultDate?: string
+  enabledChannels: ContentChannel[]
 }) {
   const [form, setForm] = useState<NewContentForm>({
     title: '',
     content_template: '',
     status: defaultStatus ?? 'ideeen',
-    platforms: ['instagram', 'linkedin'],
+    platforms: enabledChannels.slice(0, 2).map((c) => c.key),
     scheduled_date: defaultDate ?? '',
   })
   const [saving, setSaving] = useState(false)
@@ -512,7 +511,7 @@ function NewContentDialog({
       if (res.ok) {
         const item = await res.json()
         onCreated(item)
-        setForm({ title: '', content_template: '', status: 'ideeen', platforms: ['instagram', 'linkedin'], scheduled_date: '' })
+        setForm({ title: '', content_template: '', status: 'ideeen', platforms: enabledChannels.slice(0, 2).map((c) => c.key), scheduled_date: '' })
         onClose()
       }
     } finally {
@@ -579,23 +578,26 @@ function NewContentDialog({
             </div>
           </div>
 
-          {/* Platforms */}
+          {/* Channels */}
           <div>
-            <label className="text-xs font-medium text-zinc-300">Platforms</label>
+            <label className="text-xs font-medium text-zinc-300">Kanalen</label>
             <div className="mt-2 flex flex-wrap gap-2">
-              {PLATFORMS.map((p) => (
-                <label key={p.key} className="flex items-center gap-1.5 cursor-pointer">
+              {enabledChannels.length === 0 && (
+                <p className="text-xs text-zinc-400">Geen kanalen actief — zet er een aan via het instellingen-icoon.</p>
+              )}
+              {enabledChannels.map((c) => (
+                <label key={c.key} className="flex items-center gap-1.5 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={form.platforms.includes(p.key)}
-                    onChange={() => togglePlatform(p.key)}
+                    checked={form.platforms.includes(c.key)}
+                    onChange={() => togglePlatform(c.key)}
                     className="rounded"
                   />
                   <span
                     className="h-2 w-2 rounded-full inline-block"
-                    style={{ backgroundColor: p.color }}
+                    style={{ backgroundColor: c.color }}
                   />
-                  <span className="text-xs text-zinc-200">{p.label}</span>
+                  <span className="text-xs text-zinc-200">{c.label}</span>
                 </label>
               ))}
             </div>
@@ -641,15 +643,21 @@ function AIBatchDialog({
   open,
   onClose,
   onBatchCreated,
+  enabledChannels,
 }: {
   open: boolean
   onClose: () => void
   onBatchCreated: (items: ContentItem[]) => void
+  enabledChannels: ContentChannel[]
 }) {
   const [topics, setTopics] = useState('')
   const [template, setTemplate] = useState('')
   const [context, setContext] = useState('')
-  const [platforms, setPlatforms] = useState(['instagram', 'linkedin'])
+  const [platforms, setPlatforms] = useState<string[]>([])
+
+  useEffect(() => {
+    if (open) setPlatforms(enabledChannels.slice(0, 2).map((c) => c.key))
+  }, [open, enabledChannels])
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState('')
 
@@ -757,23 +765,23 @@ function AIBatchDialog({
             </div>
           </div>
 
-          {/* Platforms */}
+          {/* Channels */}
           <div>
-            <label className="text-xs font-medium text-zinc-300">Platforms</label>
+            <label className="text-xs font-medium text-zinc-300">Kanalen</label>
             <div className="mt-2 flex flex-wrap gap-2">
-              {PLATFORMS.slice(0, 4).map((p) => (
-                <label key={p.key} className="flex items-center gap-1.5 cursor-pointer">
+              {enabledChannels.map((c) => (
+                <label key={c.key} className="flex items-center gap-1.5 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={platforms.includes(p.key)}
-                    onChange={() => togglePlatform(p.key)}
+                    checked={platforms.includes(c.key)}
+                    onChange={() => togglePlatform(c.key)}
                     className="rounded"
                   />
                   <span
                     className="h-2 w-2 rounded-full inline-block"
-                    style={{ backgroundColor: p.color }}
+                    style={{ backgroundColor: c.color }}
                   />
-                  <span className="text-xs text-zinc-200">{p.label}</span>
+                  <span className="text-xs text-zinc-200">{c.label}</span>
                 </label>
               ))}
             </div>
@@ -812,9 +820,173 @@ function AIBatchDialog({
   )
 }
 
+// ─── Kanaal instellingen ─────────────────────────────────────────────────────
+
+function ChannelSettingsDialog({
+  open,
+  onClose,
+  channels,
+  onSaved,
+}: {
+  open: boolean
+  onClose: () => void
+  channels: (ContentChannel & { enabled: boolean })[]
+  onSaved: (channels: (ContentChannel & { enabled: boolean })[]) => void
+}) {
+  const [local, setLocal] = useState(channels)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (open) setLocal(channels)
+  }, [open, channels])
+
+  if (!open) return null
+
+  const toggle = (key: string) => {
+    setLocal((prev) => prev.map((c) => (c.key === key ? { ...c, enabled: !c.enabled } : c)))
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const res = await fetch('/api/content/channels', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channels: local.map((c) => ({ platform: c.platform, profile_type: c.profile_type, enabled: c.enabled })),
+        }),
+      })
+      if (res.ok) {
+        onSaved(local)
+        onClose()
+      }
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div className="w-full max-w-sm rounded-xl bg-foundri-deep p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-lg font-semibold mb-1">Kanalen</h2>
+        <p className="text-xs text-zinc-400 mb-4">Niet elk bedrijf gebruikt alle vier — zet uit wat je niet gebruikt.</p>
+        <div className="space-y-2">
+          {local.map((c) => (
+            <label key={c.key} className="flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1.5 hover:bg-white/5">
+              <input type="checkbox" checked={c.enabled} onChange={() => toggle(c.key)} className="rounded" />
+              <span className="h-2 w-2 rounded-full inline-block" style={{ backgroundColor: c.color }} />
+              <span className="text-sm text-zinc-200">{c.label}</span>
+            </label>
+          ))}
+        </div>
+        <div className="flex justify-end gap-2 pt-4">
+          <button onClick={onClose} className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:bg-white/10 transition-colors">
+            Annuleren
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 transition-colors"
+          >
+            {saving ? 'Opslaan...' : 'Opslaan'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── KPI Scorecard Header ────────────────────────────────────────────────────
+
+export interface ScorecardChannel {
+  platform: string
+  profile_type: string
+  label: string
+  posts_published: number
+  reach: number
+  interactions: number
+  dms: number
+  qualified_leads: number
+  klanten: number
+  omzet: number
+}
+
+export interface ScorecardResponse {
+  week_start_date: string
+  current: {
+    posts_published: number
+    reach: number
+    interactions: number
+    dms: number
+    qualified_leads: number
+    klanten: number
+    omzet: number
+  }
+  deltas: {
+    reach: number
+    interactions: number
+    dms: number
+    qualified_leads: number
+  }
+  channels: ScorecardChannel[]
+}
+
+export function getCurrentWeekStart(): string {
+  const now = new Date()
+  const monday = new Date(now)
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  monday.setHours(0, 0, 0, 0)
+  return monday.toISOString().slice(0, 10)
+}
+
+function DeltaBadge({ value }: { value: number }) {
+  if (value === 0) return <span className="text-[11px] text-zinc-500">±0</span>
+  const up = value > 0
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-[11px] font-medium ${up ? 'text-emerald-400' : 'text-red-400'}`}>
+      {up ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+      {Math.abs(value)}
+    </span>
+  )
+}
+
+function KpiScorecardHeader({ scorecard, loading }: { scorecard: ScorecardResponse | null; loading: boolean }) {
+  if (loading || !scorecard) {
+    return (
+      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-20 animate-pulse rounded-lg border bg-foundri-deep" />
+        ))}
+      </div>
+    )
+  }
+
+  const cards = [
+    { label: 'Gekwalificeerde aanvragen', value: scorecard.current.qualified_leads, delta: scorecard.deltas.qualified_leads },
+    { label: "DM's", value: scorecard.current.dms, delta: scorecard.deltas.dms },
+    { label: 'Bereik', value: scorecard.current.reach, delta: scorecard.deltas.reach },
+    { label: 'Interacties', value: scorecard.current.interactions, delta: scorecard.deltas.interactions },
+  ]
+
+  return (
+    <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {cards.map((c) => (
+        <div key={c.label} className="rounded-lg border bg-foundri-deep p-4">
+          <p className="text-xs text-zinc-400">{c.label}</p>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-xl font-bold text-white">{c.value.toLocaleString('nl-NL')}</span>
+            <DeltaBadge value={c.delta} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-type View = 'kanban' | 'week' | 'lijst'
+type View = 'kanban' | 'week' | 'lijst' | 'resultaten'
+type EnabledChannel = ContentChannel & { enabled: boolean }
 
 export default function ContentPage() {
   const router = useRouter()
@@ -827,9 +999,18 @@ export default function ContentPage() {
   const [newDefaultStatus, setNewDefaultStatus] = useState<string>('ideeen')
   const [newDefaultDate, setNewDefaultDate] = useState<string>('')
   const [showBatch, setShowBatch] = useState(false)
+  const [showChannelSettings, setShowChannelSettings] = useState(false)
+
+  // Kanalen + scorecard state
+  const [channels, setChannels] = useState<EnabledChannel[]>([])
+  const [scorecard, setScorecard] = useState<ScorecardResponse | null>(null)
+  const [scorecardLoading, setScorecardLoading] = useState(true)
+  const [weekStartDate, setWeekStartDate] = useState(getCurrentWeekStart())
 
   // DnD state
   const [activeId, setActiveId] = useState<string | null>(null)
+
+  const enabledChannels = channels.filter((c) => c.enabled)
 
   // Fetch all content
   const fetchContent = useCallback(async () => {
@@ -840,9 +1021,36 @@ export default function ContentPage() {
     setLoading(false)
   }, [])
 
+  const fetchChannels = useCallback(async () => {
+    const res = await fetch('/api/content/channels')
+    if (!res.ok) return
+    const data = await res.json()
+    if (!Array.isArray(data)) return
+    setChannels(
+      data.map((row: { platform: string; profile_type: string; enabled: boolean }) => {
+        const cfg = CHANNELS.find((c) => c.platform === row.platform && c.profile_type === row.profile_type)
+        return { ...(cfg ?? CHANNELS[0]), enabled: row.enabled }
+      })
+    )
+  }, [])
+
+  const fetchScorecard = useCallback(async (week: string) => {
+    setScorecardLoading(true)
+    const res = await fetch(`/api/content/scorecard?week_start_date=${week}`)
+    if (res.ok) {
+      setScorecard(await res.json())
+    }
+    setScorecardLoading(false)
+  }, [])
+
   useEffect(() => {
     fetchContent()
-  }, [fetchContent])
+    fetchChannels()
+  }, [fetchContent, fetchChannels])
+
+  useEffect(() => {
+    fetchScorecard(weekStartDate)
+  }, [weekStartDate, fetchScorecard])
 
   // Computed stats
   const ideeenCount = items.filter((i) => i.status === 'ideeen').length
@@ -930,10 +1138,16 @@ export default function ContentPage() {
     setItems((prev) => [...newItems, ...prev])
   }
 
+  const handleChannelsSaved = (updated: EnabledChannel[]) => {
+    setChannels(updated)
+    fetchScorecard(weekStartDate)
+  }
+
   const viewButtons: { key: View; label: string; icon: React.ReactNode }[] = [
-    { key: 'kanban', label: 'Kanban', icon: <LayoutGrid className="h-3.5 w-3.5" /> },
-    { key: 'week', label: 'Week', icon: <CalendarDays className="h-3.5 w-3.5" /> },
+    { key: 'kanban', label: 'Uitvoeren', icon: <LayoutGrid className="h-3.5 w-3.5" /> },
+    { key: 'week', label: 'Plannen', icon: <CalendarDays className="h-3.5 w-3.5" /> },
     { key: 'lijst', label: 'Lijst', icon: <List className="h-3.5 w-3.5" /> },
+    { key: 'resultaten', label: 'Resultaten', icon: <BarChart3 className="h-3.5 w-3.5" /> },
   ]
 
   return (
@@ -987,8 +1201,20 @@ export default function ContentPage() {
             <Sparkles className="h-4 w-4 text-violet-500" />
             AI Batch
           </button>
+
+          {/* Channel settings */}
+          <button
+            onClick={() => setShowChannelSettings(true)}
+            title="Kanalen instellen"
+            className="inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-2 text-sm font-medium text-zinc-200 hover:bg-white/5 transition-colors"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
         </div>
       </div>
+
+      {/* KPI scorecard */}
+      <KpiScorecardHeader scorecard={scorecard} loading={scorecardLoading} />
 
       {/* Quick AI Generate */}
       <div className="mb-6 rounded-lg border border-foundri-yellow/20 bg-foundri-yellow/5 p-4">
@@ -1056,8 +1282,17 @@ export default function ContentPage() {
           onDayClick={handleDayClick}
           onCardClick={handleCardClick}
         />
-      ) : (
+      ) : view === 'lijst' ? (
         <LijstView items={items} onCardClick={handleCardClick} />
+      ) : (
+        <ResultatenView
+          channels={channels}
+          weekStartDate={weekStartDate}
+          onWeekChange={setWeekStartDate}
+          scorecard={scorecard}
+          scorecardLoading={scorecardLoading}
+          onSaved={() => fetchScorecard(weekStartDate)}
+        />
       )}
 
       {/* Dialogs */}
@@ -1067,11 +1302,19 @@ export default function ContentPage() {
         onCreated={handleItemCreated}
         defaultStatus={newDefaultStatus}
         defaultDate={newDefaultDate}
+        enabledChannels={enabledChannels}
       />
       <AIBatchDialog
         open={showBatch}
         onClose={() => setShowBatch(false)}
         onBatchCreated={handleBatchCreated}
+        enabledChannels={enabledChannels}
+      />
+      <ChannelSettingsDialog
+        open={showChannelSettings}
+        onClose={() => setShowChannelSettings(false)}
+        channels={channels}
+        onSaved={handleChannelsSaved}
       />
     </div>
   )

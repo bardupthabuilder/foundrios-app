@@ -19,7 +19,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from('content_items')
-    .select('*, content_distributions(*), content_assets(*)')
+    .select('*, content_distributions(*)')
     .eq('id', id)
     .eq('tenant_id', tenantId)
     .single()

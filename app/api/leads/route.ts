@@ -7,13 +7,45 @@ import { notifyNewLead } from '@/lib/notify'
 import { scoreLead } from '@/lib/ai'
 import { z } from 'zod'
 
-const CreateLeadSchema = z.object({
-  name: z.string().min(1).max(200),
-  email: z.string().email().optional().nullable(),
-  phone: z.string().optional().nullable(),
-  source: z.enum(['whatsapp', 'meta_lead_ads', 'form', 'email', 'manual']),
-  message: z.string().optional(),
-})
+export const LEAD_SOURCES = [
+  'facebook_organic', 'instagram_organic', 'facebook_ads', 'instagram_ads',
+  'google_organic', 'personal_brand',
+  'referral', 'bestaande_klant', 'whatsapp', 'meta_lead_ads', 'form', 'email', 'manual', 'overig',
+] as const
+
+// Alleen relevant wanneer source een content-kanaal is (facebook_organic/instagram_organic) —
+// koppelt de aanvraag aan het Content-scorecard (zie app/api/content/scorecard).
+const CONTENT_SOURCES = ['facebook_organic', 'instagram_organic'] as const
+
+const CreateLeadSchema = z
+  .object({
+    name: z.string().min(1).max(200),
+    email: z.string().email().optional().nullable(),
+    phone: z.string().optional().nullable(),
+    street: z.string().optional().nullable(),
+    house_number: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    source: z.enum(LEAD_SOURCES),
+    profile_type: z.enum(['zakelijk', 'persoonlijk']).optional().nullable(),
+    service: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    message: z.string().optional(),
+    budget_amount_cents: z.number().int().optional().nullable(),
+    project_value_estimate: z.number().optional().nullable(),
+    urgency: z.enum(['low', 'medium', 'high']).optional().nullable(),
+    assigned_to: z.string().uuid().optional().nullable(),
+    client_id: z.string().uuid().optional().nullable(),
+    referral_client_id: z.string().uuid().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if ((CONTENT_SOURCES as readonly string[]).includes(data.source) && !data.profile_type) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['profile_type'],
+        message: 'profile_type is verplicht bij Facebook/Instagram Content als bron',
+      })
+    }
+  })
 
 // GET /api/leads — lijst van leads voor de huidige tenant
 export async function GET(request: NextRequest) {
@@ -28,8 +60,9 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url)
-  const statusFilter = searchParams.get('status')
+  const stageFilter = searchParams.get('stage')
   const labelFilter = searchParams.get('label')
+  const sourceFilter = searchParams.get('source')
   const limit = parseInt(searchParams.get('limit') ?? '50')
   const offset = parseInt(searchParams.get('offset') ?? '0')
 
@@ -40,11 +73,14 @@ export async function GET(request: NextRequest) {
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
-  if (statusFilter) {
-    query = query.eq('status', statusFilter as any)
+  if (stageFilter) {
+    query = query.eq('stage', stageFilter as any)
   }
   if (labelFilter) {
     query = query.eq('ai_label', labelFilter as any)
+  }
+  if (sourceFilter) {
+    query = query.eq('source', sourceFilter as any)
   }
 
   const { data, error } = await query
@@ -78,14 +114,22 @@ export async function POST(request: NextRequest) {
   const limitResponse = await enforceLimit(tenantId, 'leads')
   if (limitResponse) return limitResponse
 
-  const { name, email, phone, source, message } = parsed.data
+  const {
+    name, email, phone, source, profile_type, message, street, house_number, city,
+    service, description, budget_amount_cents, project_value_estimate,
+    urgency, assigned_to, client_id, referral_client_id,
+  } = parsed.data
 
   // Elke aanvraag krijgt meteen een volgende actie. Een open aanvraag zonder
   // volgende actie is precies het lek dat FoundriOS hoort te dichten.
   const { data: lead, error: insertError } = await supabase
     .from('leads')
     .insert({
-      tenant_id: tenantId, name, email, phone, source,
+      tenant_id: tenantId, name, email, phone, source, profile_type,
+      street, house_number, city, service, description,
+      budget_amount_cents, project_value_estimate, urgency,
+      assigned_to, client_id, referral_client_id,
+      stage: client_id ? 'gekwalificeerd' : 'nieuw',
       next_action: 'Eerste contact opnemen',
       next_action_at: new Date().toISOString(),
     } as any)
@@ -127,9 +171,9 @@ export async function POST(request: NextRequest) {
         ai_label: score.label,
         ai_summary: score.summary,
         budget_estimate: score.budget_estimate,
-        urgency: score.urgency,
+        urgency: urgency ?? score.urgency,
         intent: score.intent,
-        status: score.label as any, // status synchroon met AI label
+        // `stage` (niet `status`) stuurt de workflow — AI-label is alleen een signaal.
       } as any)
       .eq('id', lead.id)
 

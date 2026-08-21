@@ -4,21 +4,15 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Bot, ExternalLink, Save, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CHANNELS, channelByKey, parseChannelKey } from '@/lib/content-channels'
 
 type Distribution = {
   id: string
   platform: string
+  profile_type: string | null
   status: string
   published_at: string | null
   post_url: string | null
-}
-
-type Asset = {
-  id: string
-  asset_type: string
-  url: string | null
-  file_name: string | null
-  sort_order: number
 }
 
 type ContentItem = {
@@ -45,7 +39,6 @@ type ContentItem = {
   cta_strength: number | null
   created_at: string | null
   content_distributions: Distribution[]
-  content_assets: Asset[]
 }
 
 const STATUSES = [
@@ -71,16 +64,6 @@ const VISUAL_TYPES = [
   { key: 'video', label: 'Video' },
   { key: 'carousel', label: 'Carousel' },
   { key: 'reel', label: 'Reel' },
-]
-
-const PLATFORMS = [
-  { key: 'instagram', label: 'Instagram' },
-  { key: 'linkedin', label: 'LinkedIn' },
-  { key: 'facebook', label: 'Facebook' },
-  { key: 'tiktok', label: 'TikTok' },
-  { key: 'youtube', label: 'YouTube Shorts' },
-  { key: 'google_business', label: 'Google Business' },
-  { key: 'nextdoor', label: 'Nextdoor' },
 ]
 
 export default function ContentDetailPage() {
@@ -212,17 +195,20 @@ export default function ContentDetailPage() {
     setGeneratingField(null)
   }
 
-  async function handlePlatformToggle(platformKey: string, checked: boolean) {
+  async function handleChannelToggle(channelKey: string, checked: boolean) {
     if (!item) return
     const current = item.platforms ?? []
     const updated = checked
-      ? [...current, platformKey]
-      : current.filter((p) => p !== platformKey)
+      ? [...current, channelKey]
+      : current.filter((p) => p !== channelKey)
     updateField('platforms', updated)
+    const channels = updated
+      .map(parseChannelKey)
+      .filter((c): c is { platform: string; profile_type: string } => c !== null)
     await fetch(`/api/content/${id}/distribute`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ platforms: updated }),
+      body: JSON.stringify({ channels }),
     })
     fetchItem()
   }
@@ -471,23 +457,28 @@ export default function ContentDetailPage() {
                 <CardTitle className="text-sm font-semibold text-zinc-200">Platforms</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {PLATFORMS.map((platform) => {
-                  const isEnabled = (item.platforms ?? []).includes(platform.key)
-                  const dist = distributions.find((d) => d.platform === platform.key)
+                {(item.platforms ?? []).some((p) => !channelByKey(p)) && (
+                  <p className="text-xs text-zinc-500">
+                    Bevat kanalen uit een oudere versie ({(item.platforms ?? []).filter((p) => !channelByKey(p)).join(', ')}) — deze blijven zichtbaar maar zijn niet meer aan te passen.
+                  </p>
+                )}
+                {CHANNELS.map((channel) => {
+                  const isEnabled = (item.platforms ?? []).includes(channel.key)
+                  const dist = distributions.find((d) => d.platform === channel.platform && d.profile_type === channel.profile_type)
                   return (
-                    <div key={platform.key} className="flex items-center gap-2">
+                    <div key={channel.key} className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        id={`platform-${platform.key}`}
+                        id={`channel-${channel.key}`}
                         checked={isEnabled}
-                        onChange={(e) => handlePlatformToggle(platform.key, e.target.checked)}
+                        onChange={(e) => handleChannelToggle(channel.key, e.target.checked)}
                         className="h-4 w-4 rounded border-white/15 accent-zinc-800"
                       />
                       <label
-                        htmlFor={`platform-${platform.key}`}
+                        htmlFor={`channel-${channel.key}`}
                         className="flex-1 text-sm text-zinc-200 cursor-pointer"
                       >
-                        {platform.label}
+                        {channel.label}
                       </label>
                       {isEnabled && dist && (
                         <div className="flex items-center gap-1.5">
